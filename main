@@ -17,6 +17,48 @@ sharks = [
     {"name": "small-fin gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1860},
     {"name": "seychelles gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 2003},
     {"name": "leaf-scale gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1788},
+    {"name": "mosaic gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1906},
+    {"name": "little gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1810},
+    {"name": "western gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 2008},
+    {"name": "southern dogfish", "family": "Centrophoridae", "order": "squaliformes", "year": 2008},
+    {"name": "bird-beak dogfish", "family": "Centrophoridae", "order": "squaliformes", "year": 1839},
+    {"name": "rough long-nose dogfish", "family": "Centrophoridae", "order": "squaliformes", "year": 1906},
+    {"name": "arrow-head dogfish", "family": "Centrophoridae", "order": "squaliformes", "year": 1912},
+    {"name": "long-snout dogfish", "family": "Centrophoridae", "order": "squaliformes", "year": 1915},
+    {"name": "kite-fin shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1788},
+    {"name": "tail-light shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1966},
+    {"name": "pygmy shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1824},
+    {"name": "long-nose pygmy shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1934},
+    {"name": "cookiecutter shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1824},
+    {"name": "large-tooth cookiecutter shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1964},
+    {"name": "pocket shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1984},
+    {"name": "small-eye pygmy shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1959},
+    {"name": "spined pygmy shark", "family": "Dalatiidae", "order": "squaliformes", "year": 1912},
+    {"name": "bramble shark", "family": "Echinorhinidae", "order": "squaliformes", "year": 1788},
+    {"name": "prickly shark", "family": "Echinorhinidae", "order": "squaliformes", "year": 1928},
+    {"name": "hook-tooth dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1959},
+    {"name": "high-fin dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1990},
+    {"name": "black dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1825},
+    {"name": "granular dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1887},
+    {"name": "bare-skin dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1966},
+    {"name": "comb-tooth dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1899},
+    {"name": "ornate dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1889},
+    {"name": "white-fin dogfish", "family": "Etmopteridae", "order": "squaliformes", "year": 1903},
+    {"name": "new zealand lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1957},
+    {"name": "ninja lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2015},
+    {"name": "blurred lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1993},
+    {"name": "short-tail lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1912},
+    {"name": "lined lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1957},
+    {"name": "broad-snout lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2006},
+    {"name": "cylindrical lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1985},
+    {"name": "tail-spot lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2002},
+    {"name": "brown lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1990},
+    {"name": "comb-tooth lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1966},
+    {"name": "pink lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2002},
+    {"name": "lined lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2002},
+    {"name": "black-mouth lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2002},
+    {"name": "pygmy lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 2002},
+    {"name": "broad-band lanternshark", "family": "Etmopteridae", "order": "squaliformes", "year": 1968},
 ]
 
 class SharkGuessingGame:
@@ -29,7 +71,7 @@ class SharkGuessingGame:
         self.guesses = []
 
         # Set a fixed window size
-        self.root.geometry("600x400")
+        self.root.geometry("1000x600")
         self.root.resizable(False, False)  # Prevent resizing
 
         # Setup the GUI
@@ -67,7 +109,7 @@ class SharkGuessingGame:
         self.game_running = True
         self.guess_count = 0
         self.guesses = []
-        self.info_label.config(text="Start guessing the shark name. Good luck!")
+        self.info_label.config(text="Keep guessing to narrow it down, Good luck!")
         self.guess_entry.delete(0, tk.END)
 
         # Clear previous guesses display
@@ -76,12 +118,9 @@ class SharkGuessingGame:
 
     def check_guess(self):
         """Check the player's guess and provide feedback."""
-        if not self.game_running:
-            messagebox.showinfo("Game Not Started", "Press 'Start New Game' to begin playing!")
-            return
 
-        if self.guess_count >= 5:
-            messagebox.showinfo("Game Over", "You have reached the maximum number of guesses. You lost!")
+        if self.guess_count >= 7:
+            messagebox.showinfo("Game Over", f"The shark was {self.random_shark['name']}")
             self.game_running = False
             return
 
@@ -103,10 +142,9 @@ class SharkGuessingGame:
 
             if guessed_shark["name"].lower() == self.random_shark["name"].lower():
                 family_color = order_color = year_feedback = "green"
-                year_message = f"{self.random_shark['year']} (Correct!)"
+                year_message = f"{self.random_shark['year']}"
                 name_color = "green"
                 self.game_running = False  # End the game if guessed correctly
-                messagebox.showinfo("You Win!", f"You guessed the correct shark: {self.random_shark['name'].capitalize()}!")
             else:
                 if guessed_shark["family"] == self.random_shark["family"]:
                     family_color = "green"
@@ -118,11 +156,11 @@ class SharkGuessingGame:
                     year_feedback = "red"  # Too early
                     year_message = f"{guessed_shark['year']} (Later)"
                 elif guessed_shark["year"] > self.random_shark["year"]:
-                    year_feedback = "blue"  # Too late
+                    year_feedback = "red"  # Too late
                     year_message = f"{guessed_shark['year']} (Earlier)"
                 else:
                     year_feedback = "green"
-                    year_message = f"{self.random_shark['year']} (Correct!)"
+                    year_message = f"{self.random_shark['year']}"
 
             # Display the guess with colored feedback
             self.display_previous_guess(guessed_shark, family_color, order_color, year_feedback, year_message, name_color)
@@ -149,9 +187,6 @@ class SharkGuessingGame:
         year_label = tk.Label(self.guess_frame, text=year_message, font=("Arial", 12), fg=year_feedback)
         year_label.grid(row=row, column=3, padx=10, pady=5)
 
-        if self.guess_count == 5 and self.game_running:
-            messagebox.showinfo("Game Over", "You have reached the maximum number of guesses. You lost!")
-            self.game_running = False
 
     def show_instructions(self):
         """Show the instructions in a dialog box."""
@@ -162,7 +197,7 @@ class SharkGuessingGame:
             "3. After each guess, you'll receive feedback:\n"
             "   - Green: Correct information (Family/Order/Year)\n"
             "   - Red: Incorrect information\n"
-            "4. You have 5 guesses to try and get the correct shark.\n"
+            "4. You have 7 guesses to try and get the correct shark.\n"
             "5. Try to guess the shark correctly in as few attempts as possible!\n"
         )
         messagebox.showinfo("How to Play", instructions)

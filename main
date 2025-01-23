@@ -99,10 +99,10 @@ class SharkGuessingGame:
                 
                 # Year feedback
                 if guessed_shark["year"] < self.random_shark["year"]:
-                    year_feedback = "yellow"
+                    year_feedback = "red"  # Too early
                     feedback.append(f"Year: {guessed_shark['year']} - Too early!")
                 elif guessed_shark["year"] > self.random_shark["year"]:
-                    year_feedback = "yellow"
+                    year_feedback = "blue"  # Too late
                     feedback.append(f"Year: {guessed_shark['year']} - Too late!")
                 else:
                     year_feedback = "green"

@@ -21,7 +21,7 @@ class SharkGuessingGame:
         self.random_shark = None
         self.guess_count = 0
         self.guesses = []
-        
+
         # Setup the GUI
         self.setup_gui()
 
@@ -80,11 +80,12 @@ class SharkGuessingGame:
             family_color = "red"
             order_color = "red"
             year_feedback = "red"
-            
+
             if guessed_shark["name"].lower() == self.random_shark["name"].lower():
-                feedback = ["Correct!"]
+                feedback = ["Correct! You win!"]
                 family_color = order_color = year_feedback = "green"
                 self.game_running = False  # End the game if guessed correctly
+                messagebox.showinfo("You Win!", f"You guessed the correct shark: {self.random_shark['name'].capitalize()}!")
             else:
                 if guessed_shark["family"] == self.random_shark["family"]:
                     family_color = "green"

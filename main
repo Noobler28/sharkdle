@@ -99,10 +99,12 @@ class SharkGuessingGame:
             order_color = "red"
             year_feedback = "red"
             year_message = ""
+            name_color = "red"
 
             if guessed_shark["name"].lower() == self.random_shark["name"].lower():
                 family_color = order_color = year_feedback = "green"
                 year_message = f"{self.random_shark['year']} (Correct!)"
+                name_color = "green"
                 self.game_running = False  # End the game if guessed correctly
                 messagebox.showinfo("You Win!", f"You guessed the correct shark: {self.random_shark['name'].capitalize()}!")
             else:
@@ -123,17 +125,18 @@ class SharkGuessingGame:
                     year_message = f"{self.random_shark['year']} (Correct!)"
 
             # Display the guess with colored feedback
-            self.display_previous_guess(guessed_shark, family_color, order_color, year_feedback, year_message)
+            self.display_previous_guess(guessed_shark, family_color, order_color, year_feedback, year_message, name_color)
 
         else:
             messagebox.showinfo("Not a valid shark", "No shark with that name exists in the list. Try again!")
         self.guess_entry.delete(0, tk.END)
 
-    def display_previous_guess(self, guessed_shark, family_color, order_color, year_feedback, year_message):
+    def display_previous_guess(self, guessed_shark, family_color, order_color, year_feedback, year_message, name_color):
         """Display previous guesses with color-coded feedback."""
         row = self.guess_count - 1  # Correctly track the row for each guess
 
-        guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {guessed_shark['name'].capitalize()}", font=("Arial", 12))
+        # Display guessed shark name with color (red or green)
+        guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {guessed_shark['name'].capitalize()}", font=("Arial", 12), fg=name_color)
         guess_label.grid(row=row, column=0, padx=10, pady=5)
 
         # Display guessed family, order, and year values with colored feedback

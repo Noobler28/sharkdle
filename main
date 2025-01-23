@@ -28,6 +28,10 @@ class SharkGuessingGame:
         self.guess_count = 0
         self.guesses = []
 
+        # Set a fixed window size
+        self.root.geometry("600x400")
+        self.root.resizable(False, False)  # Prevent resizing
+
         # Setup the GUI
         self.setup_gui()
 
@@ -49,6 +53,10 @@ class SharkGuessingGame:
         # Frame for displaying previous guesses
         self.guess_frame = tk.Frame(self.root)
         self.guess_frame.pack(pady=10)
+
+        # "How to Play" button
+        self.how_to_play_button = tk.Button(self.root, text="How to Play", font=("Arial", 12), command=self.show_instructions)
+        self.how_to_play_button.pack(pady=10)
 
         # Start the game automatically on launch
         self.start_game()
@@ -141,6 +149,21 @@ class SharkGuessingGame:
         if self.guess_count == 5 and self.game_running:
             messagebox.showinfo("Game Over", "You have reached the maximum number of guesses. You lost!")
             self.game_running = False
+
+    def show_instructions(self):
+        """Show the instructions in a dialog box."""
+        instructions = (
+            "How to Play:\n\n"
+            "1. The game will choose a random shark.\n"
+            "2. Your task is to guess the name of the shark.\n"
+            "3. After each guess, you'll receive feedback:\n"
+            "   - Green: Correct information (Family/Order/Year)\n"
+            "   - Red: Incorrect information\n"
+            "4. You have 5 guesses to try and get the correct shark.\n"
+            "5. Try to guess the shark correctly in as few attempts as possible!\n"
+        )
+        messagebox.showinfo("How to Play", instructions)
+
 
 if __name__ == "__main__":
     # Create the main window and start the game

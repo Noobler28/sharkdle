@@ -22,7 +22,7 @@ sharks = [
 class SharkGuessingGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Shark Guessing Game")
+        self.root.title("Sharkdle")
         self.game_running = False
         self.random_shark = None
         self.guess_count = 0
@@ -33,7 +33,7 @@ class SharkGuessingGame:
 
     def setup_gui(self):
         # Title Label
-        self.info_label = tk.Label(self.root, text="Welcome to the Shark Guessing Game! Press 'Start' to begin.", font=("Arial", 14))
+        self.info_label = tk.Label(self.root, text="Welcome to sharkdle!", font=("Arial", 14))
         self.info_label.pack(pady=10)
 
         # Entry for guess
@@ -46,16 +46,16 @@ class SharkGuessingGame:
         self.guess_button = tk.Button(self.root, text="Guess", font=("Arial", 12), command=self.check_guess)
         self.guess_button.pack(pady=10)
 
-        self.start_button = tk.Button(self.root, text="Start New Game", font=("Arial", 12), command=self.start_game)
-        self.start_button.pack(pady=10)
-
         # Frame for displaying previous guesses
         self.guess_frame = tk.Frame(self.root)
         self.guess_frame.pack(pady=10)
 
+        # Start the game automatically on launch
+        self.start_game()
+
     def start_game(self):
         """Start a new game by selecting a random shark and resetting the game state."""
-        self.random_shark = random.choice(sharks)
+        self.random_shark = random.choice(sharks)  # Pick a random shark immediately
         self.game_running = True
         self.guess_count = 0
         self.guesses = []
@@ -87,14 +87,12 @@ class SharkGuessingGame:
 
         if guessed_shark:
             # Evaluate the guess
-            feedback = []
             family_color = "red"
             order_color = "red"
             year_feedback = "red"
             year_message = ""
 
             if guessed_shark["name"].lower() == self.random_shark["name"].lower():
-                feedback = ["Correct! You win!"]
                 family_color = order_color = year_feedback = "green"
                 year_message = f"{self.random_shark['year']} (Correct!)"
                 self.game_running = False  # End the game if guessed correctly
@@ -104,7 +102,7 @@ class SharkGuessingGame:
                     family_color = "green"
                 if guessed_shark["order"] == self.random_shark["order"]:
                     order_color = "green"
-                
+
                 # Year feedback
                 if guessed_shark["year"] < self.random_shark["year"]:
                     year_feedback = "red"  # Too early
@@ -114,32 +112,27 @@ class SharkGuessingGame:
                     year_message = f"{guessed_shark['year']} (Earlier)"
                 else:
                     year_feedback = "green"
-                    year_message = f"{self.random_shark['year']}"
-
-                # Add family and order to feedback
-                feedback.append(f"Family: {guessed_shark['family']}")
-                feedback.append(f"Order: {guessed_shark['order']}")
+                    year_message = f"{self.random_shark['year']} (Correct!)"
 
             # Display the guess with colored feedback
-            self.display_previous_guess(user_guess, family_color, order_color, year_feedback, year_message)
+            self.display_previous_guess(guessed_shark, family_color, order_color, year_feedback, year_message)
 
         else:
             messagebox.showinfo("Not a valid shark", "No shark with that name exists in the list. Try again!")
         self.guess_entry.delete(0, tk.END)
 
-    def display_previous_guess(self, user_guess, family_color, order_color, year_feedback, year_message):
+    def display_previous_guess(self, guessed_shark, family_color, order_color, year_feedback, year_message):
         """Display previous guesses with color-coded feedback."""
-        # Adjusting the row number to correctly update the grid
         row = self.guess_count - 1  # Correctly track the row for each guess
 
-        guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {user_guess.capitalize()}", font=("Arial", 12))
+        guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {guessed_shark['name'].capitalize()}", font=("Arial", 12))
         guess_label.grid(row=row, column=0, padx=10, pady=5)
 
-        # Display actual family, order, and year values with colored feedback
-        family_label = tk.Label(self.guess_frame, text=self.random_shark["family"], font=("Arial", 12), fg=family_color)
+        # Display guessed family, order, and year values with colored feedback
+        family_label = tk.Label(self.guess_frame, text=guessed_shark["family"], font=("Arial", 12), fg=family_color)
         family_label.grid(row=row, column=1, padx=10, pady=5)
 
-        order_label = tk.Label(self.guess_frame, text=self.random_shark["order"], font=("Arial", 12), fg=order_color)
+        order_label = tk.Label(self.guess_frame, text=guessed_shark["order"], font=("Arial", 12), fg=order_color)
         order_label.grid(row=row, column=2, padx=10, pady=5)
 
         year_label = tk.Label(self.guess_frame, text=year_message, font=("Arial", 12), fg=year_feedback)

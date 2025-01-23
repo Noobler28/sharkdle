@@ -41,7 +41,7 @@ class SharkGuessingGame:
         self.info_label.pack(pady=10)
 
         # Entry for guess
-        self.guess_label = tk.Label(self.root, text="Enter your guess (shark name):", font=("Arial", 12))
+        self.guess_label = tk.Label(self.root, text="Enter a shark:", font=("Arial", 12))
         self.guess_label.pack()
 
         self.guess_entry = tk.Entry(self.root, font=("Arial", 12))

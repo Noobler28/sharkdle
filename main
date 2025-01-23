@@ -1,0 +1,28 @@
+import random
+
+# shark name | family | order | year discovered
+sharks =[
+    {"name": "southern african filled shark","family": "chlamydoselachidae","order": "hexanchiformes"},
+    {"name": "frilled shark","family": "chlamydoselachidae","order": "hexanchiformes"},
+    {"name": "sharp-nose seven-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
+    {"name": "blunt-nose six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
+    {"name": "big-eyed six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
+    {"name": "atlantic six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
+    {"name": "broad-nose seven-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
+    ]
+
+random_shark = random.choice(sharks)
+print(random_shark["name"])
+user_input = input("guess the shark: ")
+
+if user_input.lower() == random_shark["name"].lower():
+    print("you guessed it")
+elif any(shark["name"].lower() == user_input.lower() and shark["family"] == random_shark["family"] for shark in sharks):
+    print(f"The family is correct ({random_shark['family']}), but it's the wrong shark!")
+elif any(shark["name"].lower() == user_input.lower() and shark["order"] == random_shark["order"] for shark in sharks):
+    print(f"The order is correct ({random_shark['order']}), but it's the wrong family and shark!")
+elif any(shark["name"].lower() == user_input.lower() and shark["order"] == random_shark["order"] and shark["family"] == random_shark["family"]  for shark in sharks):
+    print(f"The order ({random_shark['order']}) and family({random_shark['family']})is correct , but it's the wrong shark!")
+else:
+    print("Everything is incorrect, OR no shark with that name was found")
+

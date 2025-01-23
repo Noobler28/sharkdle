@@ -4,13 +4,19 @@ from tkinter import messagebox
 
 # Shark name | family | order | year discovered
 sharks = [
-    {"name": "southern african filled shark", "family": "chlamydoselachidae", "order": "hexanchiformes", "year": 1899},
-    {"name": "frilled shark", "family": "chlamydoselachidae", "order": "hexanchiformes", "year": 1884},
+    {"name": "southern african filled shark", "family": "Chlamydoselachidae", "order": "hexanchiformes", "year": 1899},
+    {"name": "frilled shark", "family": "Chlamydoselachidae", "order": "hexanchiformes", "year": 1884},
     {"name": "sharp-nose seven-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1962},
     {"name": "blunt-nose six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1788},
     {"name": "big-eyed six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1969},
     {"name": "atlantic six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 2018},
     {"name": "broad-nose seven-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1788},
+    {"name": "dwarf gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1913},
+    {"name": "gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1801},
+    {"name": "dumb gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1915},
+    {"name": "small-fin gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1860},
+    {"name": "seychelles gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 2003},
+    {"name": "leaf-scale gulper shark", "family": "Centrophoridae", "order": "squaliformes", "year": 1788},
 ]
 
 class SharkGuessingGame:
@@ -102,13 +108,13 @@ class SharkGuessingGame:
                 # Year feedback
                 if guessed_shark["year"] < self.random_shark["year"]:
                     year_feedback = "red"  # Too early
-                    year_message = f"{guessed_shark['year']} (Earlier)"
+                    year_message = f"{guessed_shark['year']} (Later)"
                 elif guessed_shark["year"] > self.random_shark["year"]:
                     year_feedback = "blue"  # Too late
-                    year_message = f"{guessed_shark['year']} (Later)"
+                    year_message = f"{guessed_shark['year']} (Earlier)"
                 else:
                     year_feedback = "green"
-                    year_message = f"{self.random_shark['year']} (Correct!)"
+                    year_message = f"{self.random_shark['year']}"
 
                 # Add family and order to feedback
                 feedback.append(f"Family: {guessed_shark['family']}")

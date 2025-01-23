@@ -1,28 +1,138 @@
 import random
+import tkinter as tk
+from tkinter import messagebox
 
-# shark name | family | order | year discovered
-sharks =[
-    {"name": "southern african filled shark","family": "chlamydoselachidae","order": "hexanchiformes"},
-    {"name": "frilled shark","family": "chlamydoselachidae","order": "hexanchiformes"},
-    {"name": "sharp-nose seven-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
-    {"name": "blunt-nose six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
-    {"name": "big-eyed six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
-    {"name": "atlantic six-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
-    {"name": "broad-nose seven-gill shark","family": "Hexanchidae","order": "hexanchiformes"},
-    ]
+# Shark name | family | order | year discovered
+sharks = [
+    {"name": "southern african filled shark", "family": "chlamydoselachidae", "order": "hexanchiformes", "year": 1899},
+    {"name": "frilled shark", "family": "chlamydoselachidae", "order": "hexanchiformes", "year": 1884},
+    {"name": "sharp-nose seven-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1962},
+    {"name": "blunt-nose six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1788},
+    {"name": "big-eyed six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1969},
+    {"name": "atlantic six-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 2018},
+    {"name": "broad-nose seven-gill shark", "family": "Hexanchidae", "order": "hexanchiformes", "year": 1788},
+]
 
-random_shark = random.choice(sharks)
-print(random_shark["name"])
-user_input = input("guess the shark: ")
+class SharkGuessingGame:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Shark Guessing Game")
+        self.game_running = False
+        self.random_shark = None
+        self.guess_count = 0
+        self.guesses = []
+        
+        # Setup the GUI
+        self.setup_gui()
 
-if user_input.lower() == random_shark["name"].lower():
-    print("you guessed it")
-elif any(shark["name"].lower() == user_input.lower() and shark["family"] == random_shark["family"] for shark in sharks):
-    print(f"The family is correct ({random_shark['family']}), but it's the wrong shark!")
-elif any(shark["name"].lower() == user_input.lower() and shark["order"] == random_shark["order"] for shark in sharks):
-    print(f"The order is correct ({random_shark['order']}), but it's the wrong family and shark!")
-elif any(shark["name"].lower() == user_input.lower() and shark["order"] == random_shark["order"] and shark["family"] == random_shark["family"]  for shark in sharks):
-    print(f"The order ({random_shark['order']}) and family({random_shark['family']})is correct , but it's the wrong shark!")
-else:
-    print("Everything is incorrect, OR no shark with that name was found")
+    def setup_gui(self):
+        # Title Label
+        self.info_label = tk.Label(self.root, text="Welcome to the Shark Guessing Game! Press 'Start' to begin.", font=("Arial", 14))
+        self.info_label.pack(pady=10)
 
+        # Entry for guess
+        self.guess_label = tk.Label(self.root, text="Enter your guess (shark name):", font=("Arial", 12))
+        self.guess_label.pack()
+
+        self.guess_entry = tk.Entry(self.root, font=("Arial", 12))
+        self.guess_entry.pack(pady=10)
+
+        self.guess_button = tk.Button(self.root, text="Guess", font=("Arial", 12), command=self.check_guess)
+        self.guess_button.pack(pady=10)
+
+        self.start_button = tk.Button(self.root, text="Start New Game", font=("Arial", 12), command=self.start_game)
+        self.start_button.pack(pady=10)
+
+        # Frame for displaying previous guesses
+        self.guess_frame = tk.Frame(self.root)
+        self.guess_frame.pack(pady=10)
+
+    def start_game(self):
+        """Start a new game by selecting a random shark and resetting the game state."""
+        self.random_shark = random.choice(sharks)
+        self.game_running = True
+        self.guess_count = 0
+        self.guesses = []
+        self.info_label.config(text="Start guessing the shark name. Good luck!")
+        self.guess_entry.delete(0, tk.END)
+
+        # Clear previous guesses display
+        for widget in self.guess_frame.winfo_children():
+            widget.destroy()
+
+    def check_guess(self):
+        """Check the player's guess and provide feedback."""
+        if not self.game_running:
+            messagebox.showinfo("Game Not Started", "Press 'Start New Game' to begin playing!")
+            return
+
+        user_guess = self.guess_entry.get().strip().lower()
+        if user_guess == "":
+            messagebox.showwarning("Empty Guess", "Please enter a guess!")
+            return
+
+        self.guess_count += 1
+        guessed_shark = next((shark for shark in sharks if shark["name"].lower() == user_guess), None)
+
+        if guessed_shark:
+            # Evaluate the guess
+            feedback = []
+            family_color = "red"
+            order_color = "red"
+            year_feedback = "red"
+            
+            if guessed_shark["name"].lower() == self.random_shark["name"].lower():
+                feedback = ["Correct!"]
+                family_color = order_color = year_feedback = "green"
+                self.game_running = False  # End the game if guessed correctly
+            else:
+                if guessed_shark["family"] == self.random_shark["family"]:
+                    family_color = "green"
+                    feedback.append(f"Family: {self.random_shark['family']}")
+                else:
+                    feedback.append(f"Family: {guessed_shark['family']}")
+
+                if guessed_shark["order"] == self.random_shark["order"]:
+                    order_color = "green"
+                    feedback.append(f"Order: {self.random_shark['order']}")
+                else:
+                    feedback.append(f"Order: {guessed_shark['order']}")
+
+                # Year feedback
+                if guessed_shark["year"] < self.random_shark["year"]:
+                    year_feedback = "yellow"
+                    feedback.append("Year: Too early!")
+                elif guessed_shark["year"] > self.random_shark["year"]:
+                    year_feedback = "yellow"
+                    feedback.append("Year: Too late!")
+                else:
+                    year_feedback = "green"
+                    feedback.append(f"Year: {self.random_shark['year']}")
+
+            # Display the guess with colored feedback
+            self.display_previous_guess(user_guess, family_color, order_color, year_feedback)
+
+        else:
+            messagebox.showinfo("Not a valid shark", "No shark with that name exists in the list. Try again!")
+        self.guess_entry.delete(0, tk.END)
+
+    def display_previous_guess(self, user_guess, family_color, order_color, year_feedback):
+        """Display previous guesses with color-coded feedback."""
+        guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {user_guess.capitalize()}", font=("Arial", 12))
+        guess_label.grid(row=self.guess_count, column=0, padx=10, pady=5)
+
+        # Family, Order, and Year feedback columns
+        family_label = tk.Label(self.guess_frame, text="Family", font=("Arial", 12), fg=family_color)
+        family_label.grid(row=self.guess_count, column=1, padx=10, pady=5)
+
+        order_label = tk.Label(self.guess_frame, text="Order", font=("Arial", 12), fg=order_color)
+        order_label.grid(row=self.guess_count, column=2, padx=10, pady=5)
+
+        year_label = tk.Label(self.guess_frame, text="Year", font=("Arial", 12), fg=year_feedback)
+        year_label.grid(row=self.guess_count, column=3, padx=10, pady=5)
+
+if __name__ == "__main__":
+    # Create the main window and start the game
+    root = tk.Tk()
+    game = SharkGuessingGame(root)
+    root.mainloop()

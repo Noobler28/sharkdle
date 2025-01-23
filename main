@@ -123,18 +123,21 @@ class SharkGuessingGame:
 
     def display_previous_guess(self, user_guess, family_color, order_color, year_feedback, year_message):
         """Display previous guesses with color-coded feedback."""
+        # Adjusting the row number to correctly update the grid
+        row = self.guess_count - 1  # Correctly track the row for each guess
+
         guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {user_guess.capitalize()}", font=("Arial", 12))
-        guess_label.grid(row=self.guess_count, column=0, padx=10, pady=5)
+        guess_label.grid(row=row, column=0, padx=10, pady=5)
 
         # Display actual family, order, and year values with colored feedback
         family_label = tk.Label(self.guess_frame, text=self.random_shark["family"], font=("Arial", 12), fg=family_color)
-        family_label.grid(row=self.guess_count, column=1, padx=10, pady=5)
+        family_label.grid(row=row, column=1, padx=10, pady=5)
 
         order_label = tk.Label(self.guess_frame, text=self.random_shark["order"], font=("Arial", 12), fg=order_color)
-        order_label.grid(row=self.guess_count, column=2, padx=10, pady=5)
+        order_label.grid(row=row, column=2, padx=10, pady=5)
 
         year_label = tk.Label(self.guess_frame, text=year_message, font=("Arial", 12), fg=year_feedback)
-        year_label.grid(row=self.guess_count, column=3, padx=10, pady=5)
+        year_label.grid(row=row, column=3, padx=10, pady=5)
 
         if self.guess_count == 5 and self.game_running:
             messagebox.showinfo("Game Over", "You have reached the maximum number of guesses. You lost!")

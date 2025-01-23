@@ -85,10 +85,12 @@ class SharkGuessingGame:
             family_color = "red"
             order_color = "red"
             year_feedback = "red"
+            year_message = ""
 
             if guessed_shark["name"].lower() == self.random_shark["name"].lower():
                 feedback = ["Correct! You win!"]
                 family_color = order_color = year_feedback = "green"
+                year_message = f"{self.random_shark['year']} (Correct!)"
                 self.game_running = False  # End the game if guessed correctly
                 messagebox.showinfo("You Win!", f"You guessed the correct shark: {self.random_shark['name'].capitalize()}!")
             else:
@@ -100,26 +102,26 @@ class SharkGuessingGame:
                 # Year feedback
                 if guessed_shark["year"] < self.random_shark["year"]:
                     year_feedback = "red"  # Too early
-                    feedback.append(f"Year: {guessed_shark['year']} - Too early!")
+                    year_message = f"{guessed_shark['year']} (Earlier)"
                 elif guessed_shark["year"] > self.random_shark["year"]:
                     year_feedback = "blue"  # Too late
-                    feedback.append(f"Year: {guessed_shark['year']} - Too late!")
+                    year_message = f"{guessed_shark['year']} (Later)"
                 else:
                     year_feedback = "green"
-                    feedback.append(f"Year: {self.random_shark['year']} - Correct!")
+                    year_message = f"{self.random_shark['year']} (Correct!)"
 
                 # Add family and order to feedback
                 feedback.append(f"Family: {guessed_shark['family']}")
                 feedback.append(f"Order: {guessed_shark['order']}")
 
             # Display the guess with colored feedback
-            self.display_previous_guess(user_guess, family_color, order_color, year_feedback)
+            self.display_previous_guess(user_guess, family_color, order_color, year_feedback, year_message)
 
         else:
             messagebox.showinfo("Not a valid shark", "No shark with that name exists in the list. Try again!")
         self.guess_entry.delete(0, tk.END)
 
-    def display_previous_guess(self, user_guess, family_color, order_color, year_feedback):
+    def display_previous_guess(self, user_guess, family_color, order_color, year_feedback, year_message):
         """Display previous guesses with color-coded feedback."""
         guess_label = tk.Label(self.guess_frame, text=f"Guess {self.guess_count}: {user_guess.capitalize()}", font=("Arial", 12))
         guess_label.grid(row=self.guess_count, column=0, padx=10, pady=5)
@@ -131,7 +133,7 @@ class SharkGuessingGame:
         order_label = tk.Label(self.guess_frame, text=self.random_shark["order"], font=("Arial", 12), fg=order_color)
         order_label.grid(row=self.guess_count, column=2, padx=10, pady=5)
 
-        year_label = tk.Label(self.guess_frame, text=f"{self.random_shark['year']} ({year_feedback})", font=("Arial", 12), fg=year_feedback)
+        year_label = tk.Label(self.guess_frame, text=year_message, font=("Arial", 12), fg=year_feedback)
         year_label.grid(row=self.guess_count, column=3, padx=10, pady=5)
 
         if self.guess_count == 5 and self.game_running:

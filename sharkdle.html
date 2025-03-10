@@ -6,18 +6,52 @@
     <title>Sharkdle - Guess the Shark!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        input, button {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+            border: none;
+        }
+        button {
+            background: #ff6f61;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff3b2f;
         }
         .guess-container {
-            margin: 20px auto;
+            margin: 10px auto;
             width: 300px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .feedback {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .category {
             padding: 5px;
@@ -25,68 +59,245 @@
             background: gray;
             color: white;
             width: 200px;
-            margin: 2px;
+            margin: 3px;
+            font-size: 0.9em;
+            transition: 0.3s;
         }
         .correct { background: green; }
         .close { background: yellow; color: black; }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        #attempts-left {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .earlier { background: blue; }
+        .later { background: orange; }
+        #win-lose-screen {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 1.5em;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        #win-lose-screen.win {
+            background-color: green;
+        }
+        #win-lose-screen.lose {
+            background-color: red;
+        }
+        .bubble {
+            position: absolute;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            opacity: 0;
+            animation: bubble 2s ease-in-out infinite;
+        }
+        @keyframes bubble {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px);
+                opacity: 0;
+            }
+        }
+        #key {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            text-align: left;
+        }
+        #key .key-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        #key .key-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
+    <div id="key">
+        <div class="key-item"><div class="key-color" style="background: green;"></div>Correct</div>
+        <div class="key-item"><div class="key-color" style="background: blue;"></div>Earlier</div>
+        <div class="key-item"><div class="key-color" style="background: orange;"></div>Later</div>
+    </div>
     <h1>Sharkdle</h1>
-    <p>Guess the shark! You have 6 attempts.</p>
-    <input type="text" id="sharkGuess" placeholder="Enter shark name">
+    <p>Guess the shark!</p>
+    <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
     <button onclick="makeGuess()">Guess</button>
+    <div id="attempts-left">Attempts left: 6</div>
     <div id="guesses"></div>
+    <div id="message"></div>
+    <div id="win-lose-screen"></div>
 
     <script>
         const sharks = [
-            { name: "Great White Shark", family: "Lamnidae", order: "Lamniformes", genus: "Carcharodon", yod: 1758 },
-            { name: "Goblin Shark", family: "Mitsukurinidae", order: "Lamniformes", genus: "Mitsukurina", yod: 1898 },
-            { name: "Frilled Shark", family: "Chlamydoselachidae", order: "Hexanchiformes", genus: "Chlamydoselachus", yod: 1884 }
+            { "name": "Great White Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Carcharodon", "yod": 1758 },
+            { "name": "Tiger Shark", "family": "Galeocerdonidae", "order": "Carcharhiniformes", "genus": "Galeocerdo", "yod": 1822 },
+            { "name": "Zebra Shark", "family": "Stegostomatidae", "order": "Orectolobiformes", "genus": "Stegostoma", "yod": 1783 },
+            { "name": "Basking Shark", "family": "Cetorhinidae", "order": "Lamniformes", "genus": "Cetorhinus", "yod": 1765 },
+            { "name": "Hammerhead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1820 },
+            { "name": "Bull Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "yod": 1839 },
+            { "name": "Whale Shark", "family": "Rhincodontidae", "order": "Orectolobiformes", "genus": "Rhincodon", "yod": 1828 },
+            { "name": "Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1839 },
+            { "name": "Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Ginglymostoma", "yod": 1789 },
+            { "name": "Leopard Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Triakis", "yod": 1853 },
+            { "name": "Blue Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Prionace", "yod": 1758 },
+            { "name": "Goblin Shark", "family": "Mitsukurinidae", "order": "Lamniformes", "genus": "Mitsukurina", "yod": 1898 },
+            { "name": "Saw Shark", "family": "Pristidae", "order": "Pristiformes", "genus": "Pristis", "yod": 1758 },
+            { "name": "Silky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "yod": 1839 },
+            { "name": "Dusky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "yod": 1839 },
+            { "name": "Blacktip Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "yod": 1839 },
+            { "name": "Whitetip Reef Shark", "family": "Triaenodontidae", "order": "Carcharhiniformes", "genus": "Triaenodon", "yod": 1839 },
+            { "name": "Caribbean Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "yod": 1839 },
+            { "name": "Scalloped Hammerhead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1820 },
+            { "name": "Smooth Hammerhead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1820 },
+            { "name": "Pelagic Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1839 },
+            { "name": "Bigeye Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1839 },
+            { "name": "Common Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1839 },
+            { "name": "Shortfin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1839 },
+            { "name": "Longfin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1839 },
+            { "name": "Goblin Shark", "family": "Mitsukurinidae", "order": "Lamniformes", "genus": "Mitsukurina", "yod": 1898 },
+            { "name": "Cookiecutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1876 },
+            { "name": "Spiny Dogfish", "family": "Squalidae", "order": "Squaliformes", "genus": "Squalus", "yod": 1818 },
+            { "name": "Greenland Shark", "family": "Somniosidae", "order": "Squaliformes", "genus": "Somniosus", "yod": 1801 },
+            { "name": "Megamouth Shark", "family": "Megachasmidae", "order": "Lamniformes", "genus": "Megachasma", "yod": 1976 },
+            { "name": "Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1783 },
+            { "name": "Bluntnose Sixgill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1788 },
+            { "name": "Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 1884 },
+            { "name": "Spined Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Squaliolus", "yod": 1906 },
+            { "name": "Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicrus", "yod": 1865 },
+            { "name": "Dwarf Lanternshark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1964 },
+            { "name": "Japanese Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1878 },
+            { "name": "Brown Catshark", "family": "Scyliorhinidae", "order": "Carcharhiniformes", "genus": "Apristurus", "yod": 1912 }
         ];
 
         let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
-        let attempts = 0;
+        let attempts = 6;
 
         function makeGuess() {
             const guessInput = document.getElementById("sharkGuess").value;
             const guessedShark = sharks.find(s => s.name.toLowerCase() === guessInput.toLowerCase());
+            const messageDiv = document.getElementById("message");
+            const attemptsLeftDiv = document.getElementById("attempts-left");
+            const winLoseScreen = document.getElementById("win-lose-screen");
+
             if (!guessedShark) {
-                alert("Shark not found! Try another.");
+                messageDiv.textContent = "Shark not found! Try another.";
                 return;
             }
+
+            attempts--;
+            attemptsLeftDiv.textContent = `Attempts left: ${attempts}`;
             
-            attempts++;
             const feedback = [
                 { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
                 { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
                 { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
-                { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod }
+                { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod, yodFeedback: getYODFeedback(guessedShark.yod) }
             ];
             
             const guessDiv = document.createElement("div");
             guessDiv.className = "guess-container";
-            guessDiv.innerHTML = `<p>${guessedShark.name}</p>`;
+            guessDiv.innerHTML = `<p style="font-size: 1.2em; font-weight: bold; color: ${guessedShark.name === targetShark.name ? 'green' : 'red'};">${guessedShark.name}</p>`;
             
             const feedbackDiv = document.createElement("div");
             feedbackDiv.className = "feedback";
             
             feedback.forEach(item => {
                 const span = document.createElement("span");
-                span.className = "category" + (item.correct ? " correct" : (item.value === targetShark.value ? " close" : ""));
+                span.className = "category" + (item.correct ? " correct" : "") + (item.yodFeedback ? " " + item.yodFeedback : "");
                 span.textContent = `${item.category}: ${item.value}`;
                 feedbackDiv.appendChild(span);
             });
             
             guessDiv.appendChild(feedbackDiv);
-            document.getElementById("guesses").appendChild(guessDiv);
+            const guessesDiv = document.getElementById("guesses");
+            guessesDiv.prepend(guessDiv);
             
             if (guessedShark.name === targetShark.name) {
-                alert("You guessed the shark!");
-            } else if (attempts >= 6) {
-                alert(`Out of guesses! The shark was ${targetShark.name}.`);
+                messageDiv.textContent = "Congratulations! You guessed the shark!";
+                winLoseScreen.textContent = "You Win!";
+                winLoseScreen.classList.add("win");
+                winLoseScreen.classList.remove("lose");
+                winLoseScreen.style.display = "block";
+
+                // Create and animate bubbles
+                createBubbles();
+
+                // Redirect to end.html with win info after a short delay
+                setTimeout(() => {
+                    window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${6 - attempts}`;
+                }, 2000);
+                
+            } else if (attempts === 0) {
+                messageDiv.textContent = `Out of guesses! The shark was ${targetShark.name}.`;
+                winLoseScreen.textContent = "You Lose!";
+                winLoseScreen.classList.add("lose");
+                winLoseScreen.classList.remove("win");
+                winLoseScreen.style.display = "block";
+
+                // Redirect to end.html with lose info after a short delay
+                setTimeout(() => {
+                    window.location.href = `end.html?result=lose&sharkName=${encodeURIComponent(targetShark.name)}`;
+                }, 2000);
+
+            } else {
+                messageDiv.textContent = "";
+            }
+
+            // Reset the input field
+            document.getElementById("sharkGuess").value = "";
+        }
+
+        function getYODFeedback(yod) {
+            if (yod < targetShark.yod) {
+                return "later";
+            } else if (yod > targetShark.yod) {
+                return "earlier";
+            } else {
+                return "correct";
             }
         }
+
+        function createBubbles() {
+            const winLoseScreen = document.getElementById("win-lose-screen");
+            for (let i = 0; i < 10; i++) {
+                const bubble = document.createElement("div");
+                bubble.className = "bubble";
+                bubble.style.width = `${Math.random() * 20 + 10}px`;
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.animationDelay = `${Math.random() * 2}s`;
+                bubble.style.bottom = '0'; // Ensure bubbles start from the bottom
+                winLoseScreen.appendChild(bubble);
+            }
+        }
+
+        // Allow pressing Enter to make a guess
+        document.getElementById("sharkGuess").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                makeGuess();
+            }
+        });
     </script>
 </body>
 </html>

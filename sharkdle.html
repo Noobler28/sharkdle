@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkdle - Guess the Shark!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .guess-container {
+            margin: 20px auto;
+            width: 300px;
+        }
+        .feedback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .category {
+            padding: 5px;
+            border-radius: 5px;
+            background: gray;
+            color: white;
+            width: 200px;
+            margin: 2px;
+        }
+        .correct { background: green; }
+        .close { background: yellow; color: black; }
+    </style>
+</head>
+<body>
+    <h1>Sharkdle</h1>
+    <p>Guess the shark! You have 6 attempts.</p>
+    <input type="text" id="sharkGuess" placeholder="Enter shark name">
+    <button onclick="makeGuess()">Guess</button>
+    <div id="guesses"></div>
+
+    <script>
+        const sharks = [
+            { name: "Great White Shark", family: "Lamnidae", order: "Lamniformes", genus: "Carcharodon", yod: 1758 },
+            { name: "Goblin Shark", family: "Mitsukurinidae", order: "Lamniformes", genus: "Mitsukurina", yod: 1898 },
+            { name: "Frilled Shark", family: "Chlamydoselachidae", order: "Hexanchiformes", genus: "Chlamydoselachus", yod: 1884 }
+        ];
+
+        let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
+        let attempts = 0;
+
+        function makeGuess() {
+            const guessInput = document.getElementById("sharkGuess").value;
+            const guessedShark = sharks.find(s => s.name.toLowerCase() === guessInput.toLowerCase());
+            if (!guessedShark) {
+                alert("Shark not found! Try another.");
+                return;
+            }
+            
+            attempts++;
+            const feedback = [
+                { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
+                { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
+                { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
+                { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod }
+            ];
+            
+            const guessDiv = document.createElement("div");
+            guessDiv.className = "guess-container";
+            guessDiv.innerHTML = `<p>${guessedShark.name}</p>`;
+            
+            const feedbackDiv = document.createElement("div");
+            feedbackDiv.className = "feedback";
+            
+            feedback.forEach(item => {
+                const span = document.createElement("span");
+                span.className = "category" + (item.correct ? " correct" : (item.value === targetShark.value ? " close" : ""));
+                span.textContent = `${item.category}: ${item.value}`;
+                feedbackDiv.appendChild(span);
+            });
+            
+            guessDiv.appendChild(feedbackDiv);
+            document.getElementById("guesses").appendChild(guessDiv);
+            
+            if (guessedShark.name === targetShark.name) {
+                alert("You guessed the shark!");
+            } else if (attempts >= 6) {
+                alert(`Out of guesses! The shark was ${targetShark.name}.`);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -84,7 +84,11 @@
             font-size: 1.5em;
             color: white;
             text-align: center;
-            position: relative;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
         }
         #win-lose-screen.win {
             background-color: green;
@@ -131,6 +135,24 @@
             border-radius: 5px;
             margin-right: 10px;
         }
+        #previous-guesses {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        #previous-guesses details {
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        #previous-guesses summary {
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -149,6 +171,9 @@
     <div id="guesses"></div>
     <div id="message"></div>
     <div id="win-lose-screen"></div>
+    <div id="previous-guesses">
+        <h2>Previous Guesses</h2>
+    </div>
 
     <script>
         const sharks = [
@@ -189,8 +214,7 @@
             { "name": "Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicrus", "yod": 1865 },
             { "name": "Dwarf Lanternshark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1964 },
             { "name": "Japanese Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1878 },
-            { "name": "Brown Catshark", "family": "Scyliorhinidae", "order": "Carcharhiniformes", "genus": "Apristurus", "yod": 1912 },
-            { "name": "Lemon Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Negaprion", "yod": 1868},
+            { "name": "Brown Catshark", "family": "Scyliorhinidae", "order": "Carcharhiniformes", "genus": "Apristurus", "yod": 1912 }
         ];
 
         let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
@@ -234,6 +258,21 @@
             
             guessDiv.appendChild(feedbackDiv);
             const guessesDiv = document.getElementById("guesses");
+            
+            // Move the previous guess to the previous guesses container
+            if (guessesDiv.firstChild) {
+                const previousGuessesDiv = document.getElementById("previous-guesses");
+                const details = document.createElement("details");
+                const summary = document.createElement("summary");
+                const previousGuessName = guessesDiv.firstChild.querySelector("p").textContent;
+                const previousGuessColor = guessesDiv.firstChild.querySelector("p").style.color;
+                summary.innerHTML = `<span style="color: ${previousGuessColor};">${previousGuessName}</span>`;
+                details.appendChild(summary);
+                details.appendChild(guessesDiv.firstChild.querySelector(".feedback").cloneNode(true));
+                previousGuessesDiv.appendChild(details);
+                guessesDiv.removeChild(guessesDiv.firstChild);
+            }
+            
             guessesDiv.prepend(guessDiv);
             
             if (guessedShark.name === targetShark.name) {

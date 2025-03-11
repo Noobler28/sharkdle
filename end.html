@@ -11,11 +11,29 @@
             background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
             color: white;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
         }
         h1 {
             font-size: 2.5em;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin: 0;
         }
         .message {
             font-size: 1.5em;
@@ -29,7 +47,7 @@
         }
         button {
             font-size: 1.2em;
-            padding: 10px;
+            padding: 10px 20px;
             margin-top: 20px;
             border-radius: 10px;
             border: none;
@@ -41,13 +59,36 @@
         button:hover {
             background: #ff3b2f;
         }
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: bubble 5s infinite;
+        }
+        @keyframes bubble {
+            0% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-800px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1 id="gameOverTitle">GAME OVER</h1>
-    <div class="message" id="message"></div>
-    <div class="result" id="result"></div>
-    <button onclick="restartGame()">Restart Game</button>
+    <div class="card">
+        <h1 id="gameOverTitle">GAME OVER</h1>
+        <div class="message" id="message"></div>
+        <div class="result" id="result"></div>
+        <button onclick="restartGame()">Restart Game</button>
+    </div>
 
     <script>
         // Get the data passed from the main game
@@ -74,6 +115,22 @@
         function restartGame() {
             window.location.href = "index.html"; // Assuming the main game file is index.html
         }
+
+        // Create and animate bubbles
+        function createBubbles() {
+            const body = document.body;
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement("div");
+                bubble.className = "bubble";
+                bubble.style.width = `${Math.random() * 20 + 10}px`;
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                body.appendChild(bubble);
+            }
+        }
+
+        createBubbles();
     </script>
 </body>
 </html>

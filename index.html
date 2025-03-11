@@ -153,6 +153,82 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        #previous-guesses .guess-container {
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: top;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            input, button {
+                font-size: 1em;
+                padding: 8px;
+                margin: 8px;
+            }
+            .guess-container {
+                width: 100%;
+                font-size: 0.9em;
+            }
+            #key {
+                font-size: 0.8em;
+            }
+            #key .key-item {
+                margin-bottom: 3px;
+            }
+            #previous-guesses details {
+                padding: 8px;
+            }
+            #previous-guesses summary {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            input, button {
+                font-size: 0.8em;
+                padding: 6px;
+                margin: 6px;
+            }
+            .guess-container {
+                font-size: 0.8em;
+            }
+            #key {
+                font-size: 0.7em;
+            }
+            #previous-guesses summary {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 320px) {
+            h1 {
+                font-size: 1.2em;
+            }
+            input, button {
+                font-size: 0.7em;
+                padding: 5px;
+                margin: 5px;
+            }
+            .guess-container {
+                font-size: 0.7em;
+            }
+            #key {
+                font-size: 0.6em;
+            }
+            #previous-guesses summary {
+                font-size: 0.8em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -260,17 +336,9 @@
             const guessesDiv = document.getElementById("guesses");
             
             // Move the previous guess to the previous guesses container
+            const previousGuessesDiv = document.getElementById("previous-guesses");
             if (guessesDiv.firstChild) {
-                const previousGuessesDiv = document.getElementById("previous-guesses");
-                const details = document.createElement("details");
-                const summary = document.createElement("summary");
-                const previousGuessName = guessesDiv.firstChild.querySelector("p").textContent;
-                const previousGuessColor = guessesDiv.firstChild.querySelector("p").style.color;
-                summary.innerHTML = `<span style="color: ${previousGuessColor};">${previousGuessName}</span>`;
-                details.appendChild(summary);
-                details.appendChild(guessesDiv.firstChild.querySelector(".feedback").cloneNode(true));
-                previousGuessesDiv.appendChild(details);
-                guessesDiv.removeChild(guessesDiv.firstChild);
+                previousGuessesDiv.appendChild(guessesDiv.firstChild);
             }
             
             guessesDiv.prepend(guessDiv);
@@ -288,7 +356,7 @@
                 // Redirect to end.html with win info after a short delay
                 setTimeout(() => {
                     window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${6 - attempts}`;
-                }, 2000);
+                }, 1000);
                 
             } else if (attempts === 0) {
                 messageDiv.textContent = `Out of guesses! The shark was ${targetShark.name}.`;
@@ -329,7 +397,7 @@
                 bubble.style.height = bubble.style.width;
                 bubble.style.left = `${Math.random() * 100}%`;
                 bubble.style.animationDelay = `${Math.random() * 2}s`;
-                bubble.style.bottom = '0'; // Ensure bubbles start from the bottom
+                bubble.style.bottom = '0';  
                 winLoseScreen.appendChild(bubble);
             }
         }

@@ -27,6 +27,12 @@ You have guessed the correct shark!
 
 ![image](https://github.com/user-attachments/assets/c992140e-a5e0-41da-b268-93c1bef4b26e)
 
+# Info
+
 PLAY HERE: https://noobler28.github.io/sharkdle
 
 Contact me on discord if you find any bugs or misinformation: noobler_28
+
+If you need help, A list of sharks can be found in the repository
+
+Thank you for playing

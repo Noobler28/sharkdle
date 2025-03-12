@@ -15,9 +15,11 @@ The YOD is blue, that means the target sharks YOD is an earlier date
 ![image](https://github.com/user-attachments/assets/7d0044db-9d30-4923-9d8a-1f5e31327c0f)
 
 The sharks name is red, so it has to be a different shark with the same properties
+
 ![image](https://github.com/user-attachments/assets/78e7c5b4-5bc2-4f5b-83eb-247b33697567)
 
 You have guessed the correct shark! 
+
 ![image](https://github.com/user-attachments/assets/c992140e-a5e0-41da-b268-93c1bef4b26e)
 
 

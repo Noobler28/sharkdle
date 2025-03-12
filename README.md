@@ -40,4 +40,6 @@ Contact me on discord if you find any bugs or misinformation: noobler_28
 
 If you need help, A list of sharks can be found in the repository
 
+Made with javascript, html and css
+
 Thank you for playing

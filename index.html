@@ -539,13 +539,6 @@
             guessesDiv.prepend(guessDiv);
             
             if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
-                messageDiv.textContent = "Congratulations! You guessed the shark!";
-                winLoseScreen.textContent = "You Win!";
-                winLoseScreen.classList.add("win");
-                winLoseScreen.classList.remove("lose");
-                winLoseScreen.style.display = "block";
-
-                createBubbles();
 
                 setTimeout(() => {
                     window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${12 - attempts}`;

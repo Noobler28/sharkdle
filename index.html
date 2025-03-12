@@ -235,6 +235,33 @@
                 font-size: 0.8em;
             }
         }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -249,7 +276,7 @@
     <p>Guess the shark!</p>
     <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
     <button onclick="makeGuess()">Guess</button>
-    <div id="attempts-left">Attempts left: 8</div>
+    <div id="attempts-left">Attempts left: 12</div>
     <div id="guesses"></div>
     <div id="message"></div>
     <div id="win-lose-screen"></div>
@@ -262,56 +289,57 @@
             // Cow and Frilled Sharks | Hexanchiformes
             { "name": "Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 1884},
             { "name": "Southern African Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 2009},
-            { "name": "SharpNose SevenGill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Heptranchias", "yod": 1788},
-            { "name": "BluntNose SixGill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1788},
-            { "name": "BigEyed SixGill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1962},
-            { "name": "Atlantic SixGill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1969},
-            { "name": "BroadNose SevenGill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Notorynchus", "yod": 1907},
+            { "name": "Sharp Nose Seven Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Heptranchias", "yod": 1788},
+            { "name": "Blunt Nose Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1788},
+            { "name": "Big Eyed Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1962},
+            { "name": "Atlantic Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1969},
+            { "name": "Broad Nose Seven Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Notorynchus", "yod": 1907},
             // DogFish | Squaliformes
             { "name": "Dwarf Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1837},
             { "name": "Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1801},
             { "name": "Dumb Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1915},
             { "name": "Mosaic Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1906},
             { "name": "Little Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1810},
-            { "name": "BirdBeak Dogfish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1839},
-            { "name": "Rough LongNose Dogfish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1906},
-            { "name": "ArrowHead Dogfish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1912},
-            { "name": "LongSnout dogfish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1915},
-            { "name": "KiteFin Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Dalatias", "yod": 1788},
-            { "name": "TailLight Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicroides", "yod": 1966},
+            { "name": "Bird Beak Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1839},
+            { "name": "Rough Long Nose Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1906},
+            { "name": "Arrow Head Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1912},
+            { "name": "Long Snout Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1915},
+            { "name": "Kite Fin Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Dalatias", "yod": 1788},
+            { "name": "Tail Light Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicroides", "yod": 1966},
             { "name": "Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicrus", "yod": 1824},
-            { "name": "LongNose Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Heteroscymnoides", "yod": 1934},
-            { "name": "CookieCutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1824},
-            { "name": "LargeTooth CookieCutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1964},
+            { "name": "Long Nose Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Heteroscymnoides", "yod": 1934},
+            { "name": "Cookie Cutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1824},
+            { "name": "Large Tooth Cookie Cutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1964},
             { "name": "Pocket Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Mollisquama", "yod": 1984},
             { "name": "American Pocket Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Mollisquama", "yod": 2019},
             { "name": "Bramble Shark", "family": "Echinorhinidae", "order": "Squaliformes", "genus": "Echinorhinus", "yod": 1788},
             { "name": "Prickly Shark", "family": "Echinorhinidae", "order": "Squaliformes", "genus": "Echinorhinus", "yod": 1928},
-            { "name": "HookTooth Dogfish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Aculeola", "yod": 1959},
-            { "name": "HighFin Dogfish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Centroscyllium", "yod": 1990},
-            { "name": "Dwarf LanternShark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1985},
-            { "name": "Great LanternShark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
-            { "name": "Smooth LanternShark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1839},
-            // SawSharks | Pristiophoriformes
-            { "name": "Annas SixGill Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
-            { "name": "Kajas SixGill Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
-            { "name": "SixGill sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 1906},
-            { "name": "LongNose Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1794},
-            { "name": "ShortNose Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
-            { "name": "Japanese Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
-            { "name": "Bahamas Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
-            { "name": "African Sawshark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
+            { "name": "Hook Tooth Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Aculeola", "yod": 1959},
+            { "name": "High Fin Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Centroscyllium", "yod": 1990},
+            { "name": "Dwarf Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1985},
+            { "name": "Great Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
+            { "name": "Smooth Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1839},
+            { "name": "Green Land Shark", "family": "Somniosidae", "order": "Squaliformes", "genus": "Somniosus", "yod": 1801},
+            // Saw Sharks | Pristiophoriformes
+            { "name": "Annas Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
+            { "name": "Kajas Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
+            { "name": "Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 1906},
+            { "name": "Long Nose Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1794},
+            { "name": "Short Nose Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
+            { "name": "Japanese Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
+            { "name": "Bahamas Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
+            { "name": "African Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
             // Angel Sharks | Squantiniformes
             { "name": "Eastern Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 2008},
             { "name": "African Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1908},
             { "name": "Atlantic Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1818},
-            { "name": "ShortCrested Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 2021},
+            { "name": "Short Crested Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 2021},
             { "name": "Clouded Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1906},
             { "name": "Hidden Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1992},
             { "name": "Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1758},
             // BullHead Sharks | Heterodontiformes
             { "name": "Horn Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1855},
-            { "name": "PortJackson Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1793},
+            { "name": "Port Jackson Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1793},
             { "name": "Crested Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1870},
             { "name": "Japanese Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1884},
             { "name": "Painted Horn Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 2023},
@@ -319,27 +347,27 @@
             { "name": "Zebra Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1831},
             // Mackerel Sharks | Lamniformes
             { "name": "Pelagic Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1935},
-            { "name": "BigEye Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1841},
+            { "name": "Big Eye Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1841},
             { "name": "Common Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1788},
             { "name": "Basking Shark", "family": "Cetorhinidae", "order": "Lamniformes", "genus": "Cetorhinus", "yod": 1765},
             { "name": "Great White Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Carcharodon", "yod": 1758},
-            { "name": "ShortFin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1810},
-            { "name": "LongFin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1966},
+            { "name": "Short Fin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1810},
+            { "name": "Long Fin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1966},
             { "name": "Salmon Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Lamna", "yod": 1947},
             { "name": "Porbeagle Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Lamna", "yod": 1788},
             { "name": "Megamouth Shark", "family": "Megachasmidae", "order": "Lamniformes", "genus": "Megachasma", "yod": 1983},
             { "name": "Goblin Shark", "family": "Mitsukurinidae", "order": "Lamniformes", "genus": "Mitsukrina", "yod": 1898},
             { "name": "Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Carcharias", "yod": 1810},
-            { "name": "SmallTooth Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1810},
-            { "name": "BigEye Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1955},
+            { "name": "Small Tooth Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1810},
+            { "name": "Big Eye Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1955},
             { "name": "Crocodile Shark", "family": "Pseudocarchariidae", "order": "Lamniformes", "genus": "Pseudocarcharias", "yod": 1936},
             // Carpet Sharks | Orectolobiformes
-            { "name": "BlueGrey CarpetShark", "family": "Brachaeluridae", "order": "Orectolobiformes", "genus": "Brachaelurus", "yod": 1908},
+            { "name": "Blue Grey Carpet Shark", "family": "Brachaeluridae", "order": "Orectolobiformes", "genus": "Brachaelurus", "yod": 1908},
             { "name": "Blind Shark", "family": "Brachaeluridae", "order": "Orectolobiformes", "genus": "Brachaelurus", "yod": 1801},
             { "name": "Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Ginglymostoma", "yod": 1788},
             { "name": "Pacific Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Ginglymostoma", "yod": 2015},
             { "name": "Tawny Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Nebrius", "yod": 1831},
-            { "name": "ShortTail Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Pseudoginglymostoma", "yod": 1867},
+            { "name": "Short Tail Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Pseudoginglymostoma", "yod": 1867},
             { "name": "Arabian Carpet Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1980},
             { "name": "Grey Bamboo Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1838},
             { "name": "White Spotted Bamboo Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1830},
@@ -349,8 +377,8 @@
             { "name": "Spotted Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Orectolobus", "yod": 1788},
             { "name": "Ornate Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Orectolobus", "yod": 1883},
             { "name": "Whale Shark", "family": "Rhincodontidae", "order": "Orectolobiformes", "genus": "Rhincodon", "yod": 1828},
-            { "name": "Zebra Shark", "family": "Stegostinatudae", "order": "Orectolobiformes", "genus": "Stegostoma", "yod": 1837},
-            // Cat Sharks | Carcharhiniformes
+            { "name": "Zebra Shark", "family": "Stegostinatidae", "order": "Orectolobiformes", "genus": "Stegostoma", "yod": 1837},
+            // Ground Sharks | Carcharhiniformes
             { "name": "Copper Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1870},
             { "name": "Grey Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1856},
             { "name": "Silky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1839},
@@ -366,35 +394,90 @@
             { "name": "Lemon Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Negaprion", "yod": 1868},
             { "name": "Blue Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Prionace", "yod": 1758},
             { "name": "Milk Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Rhizoprionodon", "yod": 1837},
-            { "name": "WingHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Eusphyra", "yod": 1816},
-            { "name": "ShovelBill Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2024},
+            { "name": "Wing Head Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Eusphyra", "yod": 1816},
+            { "name": "Shovel Bill Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2024},
             { "name": "Scalloped BonnetHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
             { "name": "Scalloped HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1834},
-            { "name": "ScoopHead HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
+            { "name": "Scoop Head HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
             { "name": "Great HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1837},
-            { "name": "BonnetHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
-            { "name": "SmallEye HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1822},
+            { "name": "Bonnet Head Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
+            { "name": "Small Eye HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1822},
             { "name": "Carolina HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2013},
             { "name": "Smooth HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
         ];
 
+        const common_names = [
+            // Orders
+            {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
+            {"scientific": "Orectolobiformes", "Common": "Carpet Sharks"},
+            {"scientific": "Lamniformes", "Common": "Mackerel Sharks"},
+            {"scientific": "Heterodontiformes", "Common": "Bullhead Sharks"},
+            {"scientific": "Squantiniformes", "Common": "Angel Sharks"},
+            {"scientific": "Pristiophoriformes", "Common": "Saw Sharks"},
+            {"scientific": "Squaliformes", "Common": "Dog Fish"},
+            {"scientific": "Hexanchiformes", "Common": "Cow and Frilled Sharks"},
+            // Families
+            {"scientific": "Sphyrnidae", "Common": "Hammerhead Sharks"},
+            {"scientific": "Carcharhinidae", "Common": "Requiem Sharks"},
+            {"scientific": "Stegostinatidae", "Common": "Zebra Sharks"},
+            {"scientific": "Rhincodontidae", "Common": "Whale Sharks"},
+            {"scientific": "Orectolobidae", "Common": "Wobbegong Sharks"},
+            {"scientific": "Hemiscylliidae", "Common": "Bamboo Sharks"},
+            {"scientific": "Ginglymostomatidae", "Common": "Nurse Sharks"},
+            {"scientific": "Dalatiidae", "Common": "Kitefin Sharks"},
+            {"scientific": "Etmopteridae", "Common": "Lantern Sharks"},
+            {"scientific": "Echinorhinidae", "Common": "Bramble Sharks"},
+            {"scientific": "Odontaspididae", "Common": "Sand Tiger Sharks"},
+            {"scientific": "Megachasmidae", "Common": "Megamouth Sharks"},
+            {"scientific": "Lamnidae", "Common": "Mackerel Sharks"},
+            {"scientific": "Hexanchidae", "Common": "Cow Sharks"},
+            {"scientific": "Centrophoridae", "Common": "Gulper Sharks"},
+            {"scientific": "Pristiophoridae", "Common": "Saw Sharks"},
+            {"scientific": "Squatinidae", "Common": "Angel Sharks"},
+            {"scientific": "Heterodontidae", "Common": "Bullhead Sharks"},
+            {"scientific": "Alopiidae", "Common": "Thresher Sharks"},
+            {"scientific": "Cetorhinidae", "Common": "Basking Sharks"},
+            {"scientific": "Mitsukurinidae", "Common": "Goblin Sharks"},
+            {"scientific": "Brachaeluridae", "Common": "Blind Sharks"},
+            {"scientific": "Chlamydoselachidae", "Common": "Frilled Sharks"},
+            {"scientific": "Pseudocarchariidae", "Common": "Crocodile Sharks"},
+            {"scientific": "Somniosidae", "Common": "Sleeper Sharks"},
+
+        ];
+
         let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
-        let attempts = 8;
+        let attempts = 12;
+
+        function getLessSpecificName(sharkName) {
+            const words = sharkName.split(' ');
+            if (words.length > 1) {
+                return words.slice(0, -1).join(' ');
+            }
+            return sharkName;
+        }
+
+        function normalizeInput(input) {
+            return input.replace(/\s+/g, '').toLowerCase();
+        }
 
         function makeGuess() {
-            const guessInput = document.getElementById("sharkGuess").value;
-            const guessedSharkIndex = sharks.findIndex(s => s.name.toLowerCase() === guessInput.toLowerCase());
+            const guessInput = normalizeInput(document.getElementById("sharkGuess").value.trim());
             const messageDiv = document.getElementById("message");
             const attemptsLeftDiv = document.getElementById("attempts-left");
             const winLoseScreen = document.getElementById("win-lose-screen");
 
-            if (guessedSharkIndex === -1) {
-                messageDiv.textContent = "You have already guessed that shark, or it is not in the list.";
+            const guessedShark = sharks.find(s => normalizeInput(s.name).startsWith(guessInput));
+            if (!guessedShark) {
+                messageDiv.textContent = "Shark not found in the list.";
                 return;
             }
 
-            const guessedShark = sharks[guessedSharkIndex];
-            sharks.splice(guessedSharkIndex, 1); // Remove the guessed shark from the array
+            if (guessedShark.guessed) {
+                messageDiv.textContent = "You already guessed this shark.";
+                return;
+            }
+
+            guessedShark.guessed = true;
 
             attempts--;
             attemptsLeftDiv.textContent = `Attempts left: ${attempts}`;
@@ -416,7 +499,32 @@
             feedback.forEach(item => {
                 const span = document.createElement("span");
                 span.className = "category" + (item.correct ? " correct" : "") + (item.yodFeedback ? " " + item.yodFeedback : "");
-                span.textContent = `${item.category}: ${item.value}`;
+                
+                let commonName;
+                if (item.category === "Family") {
+                    commonName = common_names.find(cn => cn.scientific === guessedShark.family);
+                } else if (item.category === "Order") {
+                    commonName = common_names.find(cn => cn.scientific === guessedShark.order);
+                } else if (item.category === "Genus") {
+                    commonName = common_names.find(cn => cn.scientific === guessedShark.genus);
+                }
+
+                if (commonName) {
+                    const tooltip = document.createElement("div");
+                    tooltip.className = "tooltip";
+                    tooltip.textContent = `${item.category}: ${item.value}`;
+
+                    const tooltipText = document.createElement("span");
+                    tooltipText.className = "tooltiptext";
+                    tooltipText.textContent = commonName.Common;
+
+                    tooltip.appendChild(tooltipText);
+                    span.innerHTML = "";
+                    span.appendChild(tooltip);
+                } else {
+                    span.textContent = `${item.category}: ${item.value}`;
+                }
+
                 feedbackDiv.appendChild(span);
             });
             
@@ -430,7 +538,7 @@
             
             guessesDiv.prepend(guessDiv);
             
-            if (guessedShark.name === targetShark.name) {
+            if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
                 messageDiv.textContent = "Congratulations! You guessed the shark!";
                 winLoseScreen.textContent = "You Win!";
                 winLoseScreen.classList.add("win");

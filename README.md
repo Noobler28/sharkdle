@@ -19,7 +19,6 @@ the exact same properties as the one you just guessed
 ![image](https://github.com/user-attachments/assets/78e7c5b4-5bc2-4f5b-83eb-247b33697567)
 
 Congratulations, You have guessed the correct shark! 
-Time for another round?
 ![image](https://github.com/user-attachments/assets/c992140e-a5e0-41da-b268-93c1bef4b26e)
 
 

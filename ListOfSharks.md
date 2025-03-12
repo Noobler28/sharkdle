@@ -101,6 +101,7 @@
 | Blue Shark                        | Carcharhinidae       | Carcharhiniformes   | Prionace            | 1758 |
 | Milk Shark                        | Carcharhinidae       | Carcharhiniformes   | Rhizoprionodon      | 1837 |
 | Night Shark                       | Carcharhinidae       | Carcharhiniformes   | Carcharinus         | 1868 |
+| Leopard Shark                     | Pentachidae          | Carcharhiniformes   | Triakis             | 1855 |   
 | Wing Head Shark                   | Sphyrnidae           | Carcharhiniformes   | Eusphyra            | 1816 |
 | Shovel Bill Shark                 | Sphyrnidae           | Carcharhiniformes   | Sphyrna             | 2024 |
 | Scalloped BonnetHead Shark        | Sphyrnidae           | Carcharhiniformes   | Sphyrna             | 1940 |

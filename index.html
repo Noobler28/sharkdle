@@ -24,14 +24,20 @@
             border-radius: 10px;
             border: none;
         }
+        input {
+            display: block;
+            margin: 0 auto 10px auto;
+        }
         button {
-            background: #ff6f61;
+            background: #1e3a46;
             color: white;
+            border-radius: 10px;
+            border: 2px solid white;
             cursor: pointer;
             transition: 0.3s;
         }
         button:hover {
-            background: #ff3b2f;
+            background: #2f5b6e;
         }
         .guess-container {
             margin: 10px auto;
@@ -275,7 +281,6 @@
     <h1>Sharkdle</h1>
     <p>Guess the shark!</p>
     <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
-    <button onclick="makeGuess()">Guess</button>
     <div id="attempts-left">Attempts left: 12</div>
     <div id="guesses"></div>
     <div id="message"></div>
@@ -395,6 +400,7 @@
             { "name": "Blue Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Prionace", "yod": 1758},
             { "name": "Milk Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Rhizoprionodon", "yod": 1837},
             { "name": "Night Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1868},
+            {"name": "Leopard Shark", "family": "Pentachidae", "order": "Carcharhiniformes", "genus": "Triakis", "yod": 1855},
             { "name": "Wing Head Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Eusphyra", "yod": 1816},
             { "name": "Shovel Bill Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2024},
             { "name": "Scalloped BonnetHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
@@ -443,6 +449,7 @@
             {"scientific": "Chlamydoselachidae", "Common": "Frilled Sharks"},
             {"scientific": "Pseudocarchariidae", "Common": "Crocodile Sharks"},
             {"scientific": "Somniosidae", "Common": "Sleeper Sharks"},
+            {"scientific": "Pentachidae", "Common": "Deep-Sea CatSharks"},
 
         ];
 

@@ -1,6 +1,6 @@
-## Welcome to Sharkdle! 🦈
+# Welcome to Sharkdle! 🦈
 
-# How To Play:
+## How To Play:
 
 
 PLAY HERE: https://noobler28.github.io/sharkdle

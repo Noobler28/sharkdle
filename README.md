@@ -10,9 +10,12 @@ The YOD (year of discovery) is yellow, that means the target sharks YOD is a lat
 ![image](https://github.com/user-attachments/assets/0a8321e6-c324-446d-84c4-a4051b76a79e)
 
 The family and order are green, they are correct but the genus is wrong!
+
+![image](https://github.com/user-attachments/assets/02d9eb5a-dccf-4aaa-ac49-d68066072005)
+
 The YOD is blue, that means the target sharks YOD is an earlier date
 
-![image](https://github.com/user-attachments/assets/7d0044db-9d30-4923-9d8a-1f5e31327c0f)
+![image](https://github.com/user-attachments/assets/f6410687-26dc-430b-8bd0-78a3b382b7af)
 
 The sharks name is red, so it has to be a different shark with the same properties
 

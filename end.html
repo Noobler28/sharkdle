@@ -9,7 +9,7 @@
             font-family: 'Arial', sans-serif;
             text-align: center;
             background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
+            color: rgb(255, 255, 255);
             padding: 20px;
             display: flex;
             justify-content: center;
@@ -19,7 +19,7 @@
             overflow: hidden;
         }
         .card {
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(to left, #0f2027, #203a43, #2c5364);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
@@ -27,7 +27,7 @@
             width: 100%;
             text-align: center;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         h1 {
             font-size: 2.5em;
@@ -50,14 +50,14 @@
             padding: 10px 20px;
             margin-top: 20px;
             border-radius: 10px;
-            border: none;
-            background: #ff6f61;
+            border: 2px solid white;
+            background: #1e3a46;
             color: white;
             cursor: pointer;
             transition: 0.3s;
         }
         button:hover {
-            background: #ff3b2f;
+            background: #2f5b6e;
         }
         .bubble {
             position: absolute;
@@ -66,6 +66,7 @@
             border-radius: 50%;
             opacity: 0.6;
             animation: bubble 5s infinite;
+            z-index: 1;
         }
         @keyframes bubble {
             0% {

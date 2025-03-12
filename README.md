@@ -4,6 +4,8 @@
 
 You have 12 guesses to guess the correct shark. Start by guessing a shark!
 
+### Examples:
+
 The family, order and genus are grey, that means they are wrong. 
 The YOD (year of discovery) is yellow, that means the target sharks YOD is a later date
 

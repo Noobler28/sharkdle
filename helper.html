@@ -1,1 +1,30 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkdle Helper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Shark Filter</h1>
+    <div class="filters">
+        <label for="order">Order:</label>
+        <select id="order">
+            <option value="">Select Order</option>
+        </select>
+
+        <label for="family">Family:</label>
+        <select id="family">
+            <option value="">Select Family</option>
+        </select>
+    </div>
+
+    <button id="filterButton">Filter Sharks</button>
+
+    <div id="results"></div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 

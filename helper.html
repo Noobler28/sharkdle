@@ -6,78 +6,201 @@
     <title>Sharkdle Helper</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 20px;
+            margin: 0;
         }
 
         h1 {
-            text-align: center;
-            color: #333;
+            font-size: 2em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
         }
 
         .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
-            background: #fff;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
         }
 
-        label {
-            margin-right: 10px;
+        .filters label {
+            margin: 5px 0;
             font-weight: bold;
+            color: black;
         }
 
-        select, input, button {
-            padding: 8px;
-            margin-right: 10px;
+        .filters select, .filters input {
+            padding: 5px;
+            margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.2);
+            color: black;
         }
 
-        button {
-            background-color: #007bff;
+        .filters button {
+            padding: 5px 10px;
+            background-color: #1e3a46;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .filters button:hover {
+            background-color: #2f5b6e;
+            transform: scale(1.05);
         }
 
         #results {
             margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
         }
 
         .shark {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.1);
             padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+            text-align: left;
+            font-size: 0.9em;
+            transition: transform 0.3s;
+        }
+
+        .shark:hover {
+            transform: translateY(-10px);
         }
 
         #pagination {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 20px;
         }
 
         #pagination button {
             margin: 0 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #1e3a46;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #pagination button:hover {
+            background-color: #2f5b6e;
+            transform: scale(1.05);
+        }
+
+        #pageInfo {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        #sharkCount {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .filters label, .filters select, .filters input {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            #pagination button {
+                padding: 10px;
+                margin: 5px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .filters label, .filters select, .filters input {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            #results {
+                grid-template-columns: 1fr;
+            }
+
+            .shark {
+                font-size: 0.8em;
+            }
+
+            #pagination button {
+                padding: 10px;
+                margin: 5px;
+            }
+
+            #pageInfo, #sharkCount {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2em;
+            }
+
+            .filters {
+                gap: 5px;
+            }
+
+            .filters button {
+                padding: 5px;
+                font-size: 0.8em;
+            }
+
+            .shark {
+                padding: 10px;
+            }
+
+            #pagination button {
+                padding: 8px;
+                font-size: 0.8em;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Shark Filter App</h1>
-
-    <!-- Search Bar -->
-    <div class="filters">
-        <label for="search">Search by Name:</label>
-        <input type="text" id="search" placeholder="Enter shark name">
-        <button id="searchButton">Search</button>
-    </div>
+    <h1>Sharkdle Helper</h1>
 
     <!-- Filters -->
     <div class="filters">
@@ -91,30 +214,23 @@
             <option value="">Select Family</option>
         </select>
 
-        <button id="filterButton">Filter Sharks</button>
-        <button id="resetButton">Reset Filters</button>
-    </div>
+        <label for="genus">Genus:</label>
+        <select id="genus">
+            <option value="">Select Genus</option>
+        </select>
 
-    <!-- Sort Options -->
-    <div class="filters">
         <label for="sort">Sort by:</label>
         <select id="sort">
             <option value="name">Name</option>
-            <option value="yod">Year of Discovery</option>
+            <option value="yod_earliest">Year of Discovery (Earliest)</option>
+            <option value="yod_latest">Year of Discovery (Latest)</option>
         </select>
-        <button id="sortButton">Sort</button>
     </div>
 
     <!-- Results -->
     <div id="results"></div>
-
-    <!-- Pagination -->
-    <div id="pagination">
-        <button id="prevPage">Previous</button>
-        <span id="pageInfo">Page 1 of 1</span>
-        <button id="nextPage">Next</button>
-    </div>
-
+    <div id="sharkCount"></div>
+    
     <script>
         const sharks = [
             // Cow and Frilled Sharks | Hexanchiformes
@@ -282,19 +398,17 @@
         document.addEventListener("DOMContentLoaded", function () {
             const orderSelect = document.getElementById("order");
             const familySelect = document.getElementById("family");
-            const filterButton = document.getElementById("filterButton");
-            const resetButton = document.getElementById("resetButton");
-            const searchInput = document.getElementById("search");
-            const searchButton = document.getElementById("searchButton");
+            const genusSelect = document.getElementById("genus");
             const sortSelect = document.getElementById("sort");
-            const sortButton = document.getElementById("sortButton");
             const resultsDiv = document.getElementById("results");
-            const prevPageButton = document.getElementById("prevPage");
-            const nextPageButton = document.getElementById("nextPage");
-            const pageInfo = document.getElementById("pageInfo");
+            const sharkCountDiv = document.getElementById("sharkCount");
 
-            let currentPage = 1;
-            const resultsPerPage = 10;
+            let filteredSharks = sharks;
+            let blacklist = {
+                orders: [],
+                families: [],
+                genera: []
+            };
 
             // Populate order dropdown
             const orders = [...new Set(sharks.map(shark => shark.order))];
@@ -307,97 +421,72 @@
             });
 
             // Populate family dropdown
-            const families = [...new Set(sharks.map(shark => shark.family))];
-            families.forEach(family => {
-                const commonName = common_names.find(item => item.scientific === family)?.Common || family;
-                const option = document.createElement("option");
-                option.value = family;
-                option.textContent = `${family} (${commonName})`;
-                familySelect.appendChild(option);
-            });
+            function populateFamilyDropdown() {
+                familySelect.innerHTML = '<option value="">Select Family</option>';
+                const selectedOrder = orderSelect.value;
+                const families = [...new Set(sharks.filter(shark => !selectedOrder || shark.order === selectedOrder).map(shark => shark.family))];
+                families.forEach(family => {
+                    const commonName = common_names.find(item => item.scientific === family)?.Common || family;
+                    const option = document.createElement("option");
+                    option.value = family;
+                    option.textContent = `${family} (${commonName})`;
+                    familySelect.appendChild(option);
+                });
+            }
 
-            // Filter sharks based on selected order and family
-            filterButton.addEventListener("click", function () {
-                currentPage = 1;
+            // Populate genus dropdown
+            function populateGenusDropdown() {
+                genusSelect.innerHTML = '<option value="">Select Genus</option>';
+                const selectedFamily = familySelect.value;
+                const genera = [...new Set(sharks.filter(shark => !selectedFamily || shark.family === selectedFamily).map(shark => shark.genus))];
+                genera.forEach(genus => {
+                    const option = document.createElement("option");
+                    option.value = genus;
+                    option.textContent = genus;
+                    genusSelect.appendChild(option);
+                });
+            }
+
+            // Filter sharks based on selected order, family, and genus
+            function filterSharks() {
                 const selectedOrder = orderSelect.value;
                 const selectedFamily = familySelect.value;
-                const filteredSharks = sharks.filter(shark => {
+                const selectedGenus = genusSelect.value;
+                filteredSharks = sharks.filter(shark => {
                     return (!selectedOrder || shark.order === selectedOrder) &&
-                           (!selectedFamily || shark.family === selectedFamily);
+                           (!selectedFamily || shark.family === selectedFamily) &&
+                           (!selectedGenus || shark.genus === selectedGenus) &&
+                           !blacklist.orders.includes(shark.order) &&
+                           !blacklist.families.includes(shark.family) &&
+                           !blacklist.genera.includes(shark.genus);
                 });
-                displayResults(filteredSharks, currentPage);
-            });
-
-            // Reset filters
-            resetButton.addEventListener("click", function () {
-                orderSelect.value = "";
-                familySelect.value = "";
-                searchInput.value = "";
-                resultsDiv.innerHTML = "";
-                pageInfo.textContent = "Page 1 of 1";
-            });
-
-            // Search by name
-            searchButton.addEventListener("click", function () {
-                currentPage = 1;
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredSharks = sharks.filter(shark => shark.name.toLowerCase().includes(searchTerm));
-                displayResults(filteredSharks, currentPage);
-            });
+                displayResults(filteredSharks);
+            }
 
             // Sort results
-            sortButton.addEventListener("click", function () {
+            sortSelect.addEventListener("change", function () {
                 const sortBy = sortSelect.value;
-                const filteredSharks = [...resultsDiv.querySelectorAll(".shark")].map(sharkDiv => {
-                    return sharks.find(shark => shark.name === sharkDiv.querySelector("strong").textContent.split(": ")[1]);
-                });
-
                 if (sortBy === "name") {
                     filteredSharks.sort((a, b) => a.name.localeCompare(b.name));
-                } else if (sortBy === "yod") {
+                } else if (sortBy === "yod_earliest") {
                     filteredSharks.sort((a, b) => a.yod - b.yod);
+                } else if (sortBy === "yod_latest") {
+                    filteredSharks.sort((a, b) => b.yod - a.yod);
                 }
-
-                displayResults(filteredSharks, currentPage);
-            });
-
-            // Pagination
-            prevPageButton.addEventListener("click", () => {
-                currentPage--;
-                const selectedOrder = orderSelect.value;
-                const selectedFamily = familySelect.value;
-                const filteredSharks = sharks.filter(shark => {
-                    return (!selectedOrder || shark.order === selectedOrder) &&
-                           (!selectedFamily || shark.family === selectedFamily);
-                });
-                displayResults(filteredSharks, currentPage);
-            });
-
-            nextPageButton.addEventListener("click", () => {
-                currentPage++;
-                const selectedOrder = orderSelect.value;
-                const selectedFamily = familySelect.value;
-                const filteredSharks = sharks.filter(shark => {
-                    return (!selectedOrder || shark.order === selectedOrder) &&
-                           (!selectedFamily || shark.family === selectedFamily);
-                });
-                displayResults(filteredSharks, currentPage);
+                displayResults(filteredSharks);
             });
 
             // Display results
-            function displayResults(filteredSharks, page = 1) {
+            function displayResults(filteredSharks) {
                 resultsDiv.innerHTML = "";
 
                 if (filteredSharks.length === 0) {
                     resultsDiv.textContent = "No sharks found matching the criteria.";
+                    sharkCountDiv.textContent = "";
                     return;
                 }
 
-                const startIndex = (page - 1) * resultsPerPage;
-                const endIndex = startIndex + resultsPerPage;
-                const paginatedSharks = filteredSharks.slice(startIndex, endIndex);
-
-                paginatedSharks.forEach(shark => {
+                filteredSharks.forEach(shark => {
                     const sharkDiv = document.createElement("div");
                     sharkDiv.className = "shark";
                     sharkDiv.innerHTML = `
@@ -410,12 +499,27 @@
                     resultsDiv.appendChild(sharkDiv);
                 });
 
-                const totalPages = Math.ceil(filteredSharks.length / resultsPerPage);
-                pageInfo.textContent = `Page ${page} of ${totalPages}`;
-
-                prevPageButton.disabled = page === 1;
-                nextPageButton.disabled = page === totalPages;
+                sharkCountDiv.textContent = `Total Sharks: ${filteredSharks.length}`;
             }
+
+            // Initial display
+            displayResults(filteredSharks);
+
+            // Add event listeners for auto-filtering
+            orderSelect.addEventListener("change", () => {
+                populateFamilyDropdown();
+                populateGenusDropdown();
+                filterSharks();
+            });
+            familySelect.addEventListener("change", () => {
+                populateGenusDropdown();
+                filterSharks();
+            });
+            genusSelect.addEventListener("change", filterSharks);
+
+            // Initial population of dropdowns
+            populateFamilyDropdown();
+            populateGenusDropdown();
         });
     </script>
 </body>

@@ -38,7 +38,7 @@ PLAY HERE: https://noobler28.github.io/sharkdle
 
 Contact me on discord if you find any bugs or misinformation: noobler_28
 
-If you need help, A list of sharks can be found in the repository
+If you need help, You can go to a https://noobler28.github.io/sharkdle/helper.html to narrow it down for you
 
 Made with javascript, html and css
 

@@ -3,11 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sharkdle Helper</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Shark Filter App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        select, input, button {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+
+        .shark {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #pagination button {
+            margin: 0 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Shark Filter</h1>
+    <h1>Shark Filter App</h1>
+
+    <!-- Search Bar -->
+    <div class="filters">
+        <label for="search">Search by Name:</label>
+        <input type="text" id="search" placeholder="Enter shark name">
+        <button id="searchButton">Search</button>
+    </div>
+
+    <!-- Filters -->
     <div class="filters">
         <label for="order">Order:</label>
         <select id="order">
@@ -18,45 +90,173 @@
         <select id="family">
             <option value="">Select Family</option>
         </select>
+
+        <button id="filterButton">Filter Sharks</button>
+        <button id="resetButton">Reset Filters</button>
     </div>
 
-    <button id="filterButton">Filter Sharks</button>
+    <!-- Sort Options -->
+    <div class="filters">
+        <label for="sort">Sort by:</label>
+        <select id="sort">
+            <option value="name">Name</option>
+            <option value="yod">Year of Discovery</option>
+        </select>
+        <button id="sortButton">Sort</button>
+    </div>
 
+    <!-- Results -->
     <div id="results"></div>
 
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <!-- Pagination -->
+    <div id="pagination">
+        <button id="prevPage">Previous</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button id="nextPage">Next</button>
+    </div>
+
+    <script>
+        const sharks = [];
+        const common_names = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const orderSelect = document.getElementById("order");
+            const familySelect = document.getElementById("family");
+            const filterButton = document.getElementById("filterButton");
+            const resetButton = document.getElementById("resetButton");
+            const searchInput = document.getElementById("search");
+            const searchButton = document.getElementById("searchButton");
+            const sortSelect = document.getElementById("sort");
+            const sortButton = document.getElementById("sortButton");
+            const resultsDiv = document.getElementById("results");
+            const prevPageButton = document.getElementById("prevPage");
+            const nextPageButton = document.getElementById("nextPage");
+            const pageInfo = document.getElementById("pageInfo");
+
+            let currentPage = 1;
+            const resultsPerPage = 10;
+
+            // Populate order dropdown
+            const orders = [...new Set(sharks.map(shark => shark.order))];
+            orders.forEach(order => {
+                const commonName = common_names.find(item => item.scientific === order)?.Common || order;
+                const option = document.createElement("option");
+                option.value = order;
+                option.textContent = `${order} (${commonName})`;
+                orderSelect.appendChild(option);
+            });
+
+            // Populate family dropdown
+            const families = [...new Set(sharks.map(shark => shark.family))];
+            families.forEach(family => {
+                const commonName = common_names.find(item => item.scientific === family)?.Common || family;
+                const option = document.createElement("option");
+                option.value = family;
+                option.textContent = `${family} (${commonName})`;
+                familySelect.appendChild(option);
+            });
+
+            // Filter sharks based on selected order and family
+            filterButton.addEventListener("click", function () {
+                currentPage = 1;
+                const selectedOrder = orderSelect.value;
+                const selectedFamily = familySelect.value;
+                const filteredSharks = sharks.filter(shark => {
+                    return (!selectedOrder || shark.order === selectedOrder) &&
+                           (!selectedFamily || shark.family === selectedFamily);
+                });
+                displayResults(filteredSharks, currentPage);
+            });
+
+            // Reset filters
+            resetButton.addEventListener("click", function () {
+                orderSelect.value = "";
+                familySelect.value = "";
+                searchInput.value = "";
+                resultsDiv.innerHTML = "";
+                pageInfo.textContent = "Page 1 of 1";
+            });
+
+            // Search by name
+            searchButton.addEventListener("click", function () {
+                currentPage = 1;
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredSharks = sharks.filter(shark => shark.name.toLowerCase().includes(searchTerm));
+                displayResults(filteredSharks, currentPage);
+            });
+
+            // Sort results
+            sortButton.addEventListener("click", function () {
+                const sortBy = sortSelect.value;
+                const filteredSharks = [...resultsDiv.querySelectorAll(".shark")].map(sharkDiv => {
+                    return sharks.find(shark => shark.name === sharkDiv.querySelector("strong").textContent.split(": ")[1]);
+                });
+
+                if (sortBy === "name") {
+                    filteredSharks.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (sortBy === "yod") {
+                    filteredSharks.sort((a, b) => a.yod - b.yod);
+                }
+
+                displayResults(filteredSharks, currentPage);
+            });
+
+            // Pagination
+            prevPageButton.addEventListener("click", () => {
+                currentPage--;
+                const selectedOrder = orderSelect.value;
+                const selectedFamily = familySelect.value;
+                const filteredSharks = sharks.filter(shark => {
+                    return (!selectedOrder || shark.order === selectedOrder) &&
+                           (!selectedFamily || shark.family === selectedFamily);
+                });
+                displayResults(filteredSharks, currentPage);
+            });
+
+            nextPageButton.addEventListener("click", () => {
+                currentPage++;
+                const selectedOrder = orderSelect.value;
+                const selectedFamily = familySelect.value;
+                const filteredSharks = sharks.filter(shark => {
+                    return (!selectedOrder || shark.order === selectedOrder) &&
+                           (!selectedFamily || shark.family === selectedFamily);
+                });
+                displayResults(filteredSharks, currentPage);
+            });
+
+            // Display results
+            function displayResults(filteredSharks, page = 1) {
+                resultsDiv.innerHTML = "";
+
+                if (filteredSharks.length === 0) {
+                    resultsDiv.textContent = "No sharks found matching the criteria.";
+                    return;
+                }
+
+                const startIndex = (page - 1) * resultsPerPage;
+                const endIndex = startIndex + resultsPerPage;
+                const paginatedSharks = filteredSharks.slice(startIndex, endIndex);
+
+                paginatedSharks.forEach(shark => {
+                    const sharkDiv = document.createElement("div");
+                    sharkDiv.className = "shark";
+                    sharkDiv.innerHTML = `
+                        <strong>Name:</strong> ${shark.name}<br>
+                        <strong>Family:</strong> ${shark.family}<br>
+                        <strong>Order:</strong> ${shark.order}<br>
+                        <strong>Genus:</strong> ${shark.genus}<br>
+                        <strong>Year of Discovery:</strong> ${shark.yod}
+                    `;
+                    resultsDiv.appendChild(sharkDiv);
+                });
+
+                const totalPages = Math.ceil(filteredSharks.length / resultsPerPage);
+                pageInfo.textContent = `Page ${page} of ${totalPages}`;
+
+                prevPageButton.disabled = page === 1;
+                nextPageButton.disabled = page === totalPages;
+            }
+        });
+    </script>
 </body>
-</html> 
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-h1 {
-    text-align: center;
-}
-
-.filters {
-    margin-bottom: 20px;
-}
-
-label {
-    margin-right: 10px;
-}
-
-select {
-    margin-right: 20px;
-}
-
-#results {
-    margin-top: 20px;
-}
-
-.shark {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
+</html>

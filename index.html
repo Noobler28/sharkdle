@@ -17,12 +17,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 10px auto;
-        }
         input, button {
             font-size: 1.2em;
             padding: 10px;
@@ -31,8 +25,8 @@
             border: none;
         }
         input {
-            width: 80%;
-            max-width: 300px;
+            display: block;
+            margin: 0 auto 10px auto;
         }
         button {
             background: #1e3a46;
@@ -274,6 +268,54 @@
             visibility: visible;
             opacity: 1;
         }
+
+        #discord-invite {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 0;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        #discord-invite a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #discord-invite img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 600px) {
+            #discord-invite a {
+                font-size: 1em;
+            }
+
+            #discord-invite img {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #discord-invite a {
+                font-size: 0.8em;
+            }
+
+            #discord-invite img {
+                width: 20px;
+                height: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -286,16 +328,19 @@
     </div>
     <h1>Sharkdle</h1>
     <p>Guess the shark!</p>
-    <div class="input-container">
-        <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
-        <button onclick="makeGuess()">Enter</button>
-    </div>
+    <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
     <div id="attempts-left">Attempts left: 12</div>
     <div id="guesses"></div>
     <div id="message"></div>
     <div id="win-lose-screen"></div>
     <div id="previous-guesses">
-        <h2>Previous Guesses:</h2>
+        <h2>Previous Guesses</h2>
+    </div>
+    <div id="discord-invite">
+        <a href="https://discord.gg/nAKMyCAT" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/discord-logo.png" alt="Discord Icon" />
+            Join the Discord Server
+        </a>
     </div>
 
     <script>
@@ -498,25 +543,25 @@
 
             attempts--;
             attemptsLeftDiv.textContent = `Attempts left: ${attempts}`;
-
+            
             const feedback = [
                 { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
                 { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
                 { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
                 { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod, yodFeedback: getYODFeedback(guessedShark.yod) }
             ];
-
+            
             const guessDiv = document.createElement("div");
             guessDiv.className = "guess-container";
             guessDiv.innerHTML = `<p style="font-size: 1.2em; font-weight: bold; color: ${guessedShark.name === targetShark.name ? 'green' : 'red'};">${guessedShark.name}</p>`;
-
+            
             const feedbackDiv = document.createElement("div");
             feedbackDiv.className = "feedback";
-
+            
             feedback.forEach(item => {
                 const span = document.createElement("span");
                 span.className = "category" + (item.correct ? " correct" : "") + (item.yodFeedback ? " " + item.yodFeedback : "");
-
+                
                 let commonName;
                 if (item.category === "Family") {
                     commonName = common_names.find(cn => cn.scientific === guessedShark.family);
@@ -544,23 +589,23 @@
 
                 feedbackDiv.appendChild(span);
             });
-
+            
             guessDiv.appendChild(feedbackDiv);
             const guessesDiv = document.getElementById("guesses");
-
+            
             const previousGuessesDiv = document.getElementById("previous-guesses");
             if (guessesDiv.firstChild) {
                 previousGuessesDiv.appendChild(guessesDiv.firstChild);
             }
-
+            
             guessesDiv.prepend(guessDiv);
-
+            
             if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
 
                 setTimeout(() => {
                     window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${12 - attempts}`;
                 }, 1000);
-
+                
             } else if (attempts === 0) {
                 messageDiv.textContent = `Out of guesses! The shark was ${targetShark.name}.`;
                 winLoseScreen.textContent = "You Lose!";

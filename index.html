@@ -3,656 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sharkdle - Guess the Shark!</title>
+    <title>Sharkdle - Main Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             text-align: center;
             background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
             color: white;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .menu-container {
+            background: linear-gradient(to left, #0f2027, #203a43, #2c5364); /* Opposite gradient */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
         }
         h1 {
-            font-size: 2.5em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-family: 'Pacifico', cursive;
+            font-size: 3em;
+            color: #00d4ff;
+            text-shadow: 0px 0px 10px #00d4ff, 0px 0px 20px #00d4ff;
+            margin-bottom: 20px;
         }
-        input, button {
+        p {
             font-size: 1.2em;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 10px;
-            border: none;
+            margin-bottom: 30px;
+            color: #d1e8e2;
         }
-        input {
+        .menu button {
             display: block;
-            margin: 0 auto 10px auto;
-        }
-        button {
-            background: #1e3a46;
-            color: white;
-            border-radius: 10px;
-            border: 2px solid white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: #2f5b6e;
-        }
-        .guess-container {
-            margin: 10px auto;
-            width: 300px;
-            font-size: 1em;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .feedback {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 5px;
-        }
-        .category {
-            padding: 5px;
-            border-radius: 5px;
-            background: gray;
-            color: white;
-            width: 200px;
-            margin: 3px;
-            font-size: 0.9em;
-            transition: 0.3s;
-        }
-        .correct { background: green; }
-        .close { background: yellow; color: black; }
-        #message {
-            margin-top: 20px;
+            width: 100%;
+            margin: 15px 0;
+            padding: 15px;
             font-size: 1.2em;
             font-weight: bold;
-        }
-        #attempts-left {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .earlier { background: blue; }
-        .later { background: orange; }
-        #win-lose-screen {
-            display: none;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            font-size: 1.5em;
             color: white;
-            text-align: center;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
+            background: linear-gradient(to right, #1e3a46, #2f5b6e);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
-        #win-lose-screen.win {
-            background-color: green;
+        .menu button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
         }
-        #win-lose-screen.lose {
-            background-color: red;
+        .menu button:active {
+            transform: translateY(0);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
         .bubble {
             position: absolute;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.7);
+            bottom: -50px;
+            background-color: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            opacity: 0;
-            animation: bubble 2s ease-in-out infinite;
+            animation: bubble 10s infinite;
+            z-index: 1;
         }
         @keyframes bubble {
             0% {
                 transform: translateY(0);
-                opacity: 1;
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.8;
             }
             100% {
-                transform: translateY(-200px);
+                transform: translateY(-1200px);
                 opacity: 0;
-            }
-        }
-        #key {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.9em;
-            text-align: left;
-        }
-        #key .key-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        #key .key-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        #previous-guesses {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        #previous-guesses details {
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
-        }
-
-        #previous-guesses summary {
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #previous-guesses .guess-container {
-            display: inline-block;
-            margin-right: 10px;
-            vertical-align: top;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            h1 {
-                font-size: 2em;
-            }
-            input, button {
-                font-size: 1em;
-                padding: 8px;
-                margin: 8px;
-            }
-            .guess-container {
-                width: 100%;
-                font-size: 0.9em;
-            }
-            #key {
-                font-size: 0.8em;
-                position: static;
-                margin-bottom: 10px;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            #key .key-item {
-                margin-bottom: 3px;
-                margin-right: 10px;
-            }
-            #previous-guesses details {
-                padding: 8px;
-            }
-            #previous-guesses summary {
-                font-size: 1em;
-            }
-        }
-
-        @media (max-width: 400px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            input, button {
-                font-size: 0.8em;
-                padding: 6px;
-                margin: 6px;
-            }
-            .guess-container {
-                font-size: 0.8em;
-            }
-            #key {
-                font-size: 0.7em;
-            }
-            #previous-guesses summary {
-                font-size: 0.9em;
-            }
-        }
-
-        @media (max-width: 320px) {
-            h1 {
-                font-size: 1.2em;
-            }
-            input, button {
-                font-size: 0.7em;
-                padding: 5px;
-                margin: 5px;
-            }
-            .guess-container {
-                font-size: 0.7em;
-            }
-            #key {
-                font-size: 0.6em;
-            }
-            #previous-guesses summary {
-                font-size: 0.8em;
-            }
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #discord-invite {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 0;
-            text-align: center;
-            z-index: 1000;
-        }
-
-        #discord-invite a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #discord-invite img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
-        @media (max-width: 600px) {
-            #discord-invite a {
-                font-size: 1em;
-            }
-
-            #discord-invite img {
-                width: 25px;
-                height: 25px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            #discord-invite a {
-                font-size: 0.8em;
-            }
-
-            #discord-invite img {
-                width: 20px;
-                height: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div id="key">
-        <div class="key-item"><div class="key-color" style="background: grey;"></div>Incorrect</div>
-        <div class="key-item"><div class="key-color" style="background: green;"></div>Correct</div>
-        <div class="key-item"><div class="key-color" style="background: red;"></div>Wrong Shark</div>
-        <div class="key-item"><div class="key-color" style="background: blue;"></div>Earlier</div>
-        <div class="key-item"><div class="key-color" style="background: orange;"></div>Later</div>
-    </div>
-    <h1>Sharkdle</h1>
-    <p>Guess the shark!</p>
-    <input type="text" id="sharkGuess" placeholder="Enter shark name" autocomplete="off">
-    <div id="attempts-left">Attempts left: 12</div>
-    <div id="guesses"></div>
-    <div id="message"></div>
-    <div id="win-lose-screen"></div>
-    <div id="previous-guesses">
-        <h2>Previous Guesses</h2>
-    </div>
-    <div id="discord-invite">
-        <a href="https://discord.gg/nAKMyCAT" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/discord-logo.png" alt="Discord Icon" />
-            Join the Discord Server
-        </a>
+    <div class="menu-container">
+        <h1>Welcome to Sharkdle</h1>
+        <p>Test your shark knowledge and have fun!</p>
+        <div class="menu">
+            <button onclick="location.href='daily.html'">Daily</button>
+            <button onclick="location.href='infinite.html'">Infinite</button>
+            <button onclick="location.href='how-to-play.html'">How to Play</button>
+            <button onclick="location.href='helper.html'">List of Sharks</button>
+        </div>
     </div>
 
     <script>
-        const sharks = [
-            // Cow and Frilled Sharks | Hexanchiformes
-            { "name": "Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 1884},
-            { "name": "Southern African Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 2009},
-            { "name": "Sharp Nose Seven Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Heptranchias", "yod": 1788},
-            { "name": "Blunt Nose Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1788},
-            { "name": "Big Eyed Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1962},
-            { "name": "Atlantic Six Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Hexanchus", "yod": 1969},
-            { "name": "Broad Nose Seven Gill Shark", "family": "Hexanchidae", "order": "Hexanchiformes", "genus": "Notorynchus", "yod": 1907},
-            // DogFish | Squaliformes
-            { "name": "Dwarf Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1837},
-            { "name": "Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1801},
-            { "name": "Dumb Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1915},
-            { "name": "Mosaic Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1906},
-            { "name": "Little Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1810},
-            { "name": "Bird Beak Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1839},
-            { "name": "Rough Long Nose Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1906},
-            { "name": "Arrow Head Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1912},
-            { "name": "Long Snout Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1915},
-            { "name": "Kite Fin Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Dalatias", "yod": 1788},
-            { "name": "Tail Light Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicroides", "yod": 1966},
-            { "name": "Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Euprotomicrus", "yod": 1824},
-            { "name": "Long Nose Pygmy Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Heteroscymnoides", "yod": 1934},
-            { "name": "Cookie Cutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1824},
-            { "name": "Large Tooth Cookie Cutter Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Isistius", "yod": 1964},
-            { "name": "Pocket Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Mollisquama", "yod": 1984},
-            { "name": "American Pocket Shark", "family": "Dalatiidae", "order": "Squaliformes", "genus": "Mollisquama", "yod": 2019},
-            { "name": "Bramble Shark", "family": "Echinorhinidae", "order": "Squaliformes", "genus": "Echinorhinus", "yod": 1788},
-            { "name": "Prickly Shark", "family": "Echinorhinidae", "order": "Squaliformes", "genus": "Echinorhinus", "yod": 1928},
-            { "name": "Hook Tooth Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Aculeola", "yod": 1959},
-            { "name": "High Fin Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Centroscyllium", "yod": 1990},
-            { "name": "Dwarf Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1985},
-            { "name": "Great Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
-            { "name": "Smooth Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1839},
-            { "name": "Green Land Shark", "family": "Somniosidae", "order": "Squaliformes", "genus": "Somniosus", "yod": 1801},
-            // Saw Sharks | Pristiophoriformes
-            { "name": "Annas Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
-            { "name": "Kajas Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 2020},
-            { "name": "Six Gill Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pliotrema", "yod": 1906},
-            { "name": "Long Nose Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1794},
-            { "name": "Short Nose Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
-            { "name": "Japanese Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1870},
-            { "name": "Bahamas Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
-            { "name": "African Saw Shark", "family": "Pristiophoridae", "order": "Pristiophoriformes", "genus": "Pristiophorus", "yod": 1960},
-            // Angel Sharks | Squantiniformes
-            { "name": "Eastern Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 2008},
-            { "name": "African Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1908},
-            { "name": "Atlantic Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1818},
-            { "name": "Short Crested Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 2021},
-            { "name": "Clouded Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1906},
-            { "name": "Hidden Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1992},
-            { "name": "Angel Shark", "family": "Squatinidae", "order": "Squantiniformes", "genus": "Squatina Albipunctata", "yod": 1758},
-            // BullHead Sharks | Heterodontiformes
-            { "name": "Horn Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1855},
-            { "name": "Port Jackson Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1793},
-            { "name": "Crested Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1870},
-            { "name": "Japanese Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1884},
-            { "name": "Painted Horn Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 2023},
-            { "name": "Mexican Horn Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1972},
-            { "name": "Zebra Bullhead Shark", "family": "Heterodontidae", "order": "Heterodontiformes", "genus": "Heterodontus", "yod": 1831},
-            // Mackerel Sharks | Lamniformes
-            { "name": "Pelagic Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1935},
-            { "name": "Big Eye Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1841},
-            { "name": "Common Thresher Shark", "family": "Alopiidae", "order": "Lamniformes", "genus": "Alopias", "yod": 1788},
-            { "name": "Basking Shark", "family": "Cetorhinidae", "order": "Lamniformes", "genus": "Cetorhinus", "yod": 1765},
-            { "name": "Great White Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Carcharodon", "yod": 1758},
-            { "name": "Short Fin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1810},
-            { "name": "Long Fin Mako Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Isurus", "yod": 1966},
-            { "name": "Salmon Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Lamna", "yod": 1947},
-            { "name": "Porbeagle Shark", "family": "Lamnidae", "order": "Lamniformes", "genus": "Lamna", "yod": 1788},
-            { "name": "Megamouth Shark", "family": "Megachasmidae", "order": "Lamniformes", "genus": "Megachasma", "yod": 1983},
-            { "name": "Goblin Shark", "family": "Mitsukurinidae", "order": "Lamniformes", "genus": "Mitsukrina", "yod": 1898},
-            { "name": "Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Carcharias", "yod": 1810},
-            { "name": "Small Tooth Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1810},
-            { "name": "Big Eye Sand Tiger Shark", "family": "Odontaspididae", "order": "Lamniformes", "genus": "Odontaspis", "yod": 1955},
-            { "name": "Crocodile Shark", "family": "Pseudocarchariidae", "order": "Lamniformes", "genus": "Pseudocarcharias", "yod": 1936},
-            // Carpet Sharks | Orectolobiformes
-            { "name": "Blue Grey Carpet Shark", "family": "Brachaeluridae", "order": "Orectolobiformes", "genus": "Brachaelurus", "yod": 1908},
-            { "name": "Blind Shark", "family": "Brachaeluridae", "order": "Orectolobiformes", "genus": "Brachaelurus", "yod": 1801},
-            { "name": "Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Ginglymostoma", "yod": 1788},
-            { "name": "Pacific Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Ginglymostoma", "yod": 2015},
-            { "name": "Tawny Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Nebrius", "yod": 1831},
-            { "name": "Short Tail Nurse Shark", "family": "Ginglymostomatidae", "order": "Orectolobiformes", "genus": "Pseudoginglymostoma", "yod": 1867},
-            { "name": "Arabian Carpet Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1980},
-            { "name": "Grey Bamboo Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1838},
-            { "name": "White Spotted Bamboo Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1830},
-            { "name": "Brown Banded Bamboo Shark", "family": "Hemiscylliidae", "order": "Orectolobiformes", "genus": "Chiloscyllium", "yod": 1838},
-            { "name": "Cobbler Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Sutorectus", "yod": 1864},
-            { "name": "Tasselled Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Eucrossorhinus", "yod": 1867},
-            { "name": "Spotted Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Orectolobus", "yod": 1788},
-            { "name": "Ornate Wobbegong", "family": "Orectolobidae", "order": "Orectolobiformes", "genus": "Orectolobus", "yod": 1883},
-            { "name": "Whale Shark", "family": "Rhincodontidae", "order": "Orectolobiformes", "genus": "Rhincodon", "yod": 1828},
-            { "name": "Zebra Shark", "family": "Stegostinatidae", "order": "Orectolobiformes", "genus": "Stegostoma", "yod": 1837},
-            // Ground Sharks | Carcharhiniformes
-            { "name": "Copper Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1870},
-            { "name": "Grey Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1856},
-            { "name": "Silky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1839},
-            { "name": "Galapagos Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1905},
-            { "name": "Bull Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1839},
-            { "name": "Black Tip Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1839},
-            { "name": "Oceanic White Tip Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1861},
-            { "name": "Black Tip Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1824},
-            { "name": "Dusky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1818},
-            { "name": "Caribbean Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1876},
-            { "name": "Sandbar Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1827},
-            { "name": "Tiger Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Galeocerdo", "yod": 1822},
-            { "name": "Lemon Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Negaprion", "yod": 1868},
-            { "name": "Blue Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Prionace", "yod": 1758},
-            { "name": "Milk Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Rhizoprionodon", "yod": 1837},
-            { "name": "Night Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharinus", "yod": 1868},
-            {"name": "Leopard Shark", "family": "Pentachidae", "order": "Carcharhiniformes", "genus": "Triakis", "yod": 1855},
-            { "name": "Wing Head Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Eusphyra", "yod": 1816},
-            { "name": "Shovel Bill Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2024},
-            { "name": "Scalloped BonnetHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
-            { "name": "Scalloped HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1834},
-            { "name": "Scoop Head HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1940},
-            { "name": "Great HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1837},
-            { "name": "Bonnet Head Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
-            { "name": "Small Eye HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1822},
-            { "name": "Carolina HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 2013},
-            { "name": "Smooth HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
-        ];
-
-        const common_names = [
-            // Orders
-            {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
-            {"scientific": "Orectolobiformes", "Common": "Carpet Sharks"},
-            {"scientific": "Lamniformes", "Common": "Mackerel Sharks"},
-            {"scientific": "Heterodontiformes", "Common": "Bullhead Sharks"},
-            {"scientific": "Squantiniformes", "Common": "Angel Sharks"},
-            {"scientific": "Pristiophoriformes", "Common": "Saw Sharks"},
-            {"scientific": "Squaliformes", "Common": "Dog Fish"},
-            {"scientific": "Hexanchiformes", "Common": "Cow and Frilled Sharks"},
-            // Families
-            {"scientific": "Sphyrnidae", "Common": "Hammerhead Sharks"},
-            {"scientific": "Carcharhinidae", "Common": "Requiem Sharks"},
-            {"scientific": "Stegostinatidae", "Common": "Zebra Sharks"},
-            {"scientific": "Rhincodontidae", "Common": "Whale Sharks"},
-            {"scientific": "Orectolobidae", "Common": "Wobbegong Sharks"},
-            {"scientific": "Hemiscylliidae", "Common": "Bamboo Sharks"},
-            {"scientific": "Ginglymostomatidae", "Common": "Nurse Sharks"},
-            {"scientific": "Dalatiidae", "Common": "Kitefin Sharks"},
-            {"scientific": "Etmopteridae", "Common": "Lantern Sharks"},
-            {"scientific": "Echinorhinidae", "Common": "Bramble Sharks"},
-            {"scientific": "Odontaspididae", "Common": "Sand Tiger Sharks"},
-            {"scientific": "Megachasmidae", "Common": "Megamouth Sharks"},
-            {"scientific": "Lamnidae", "Common": "Mackerel Sharks"},
-            {"scientific": "Hexanchidae", "Common": "Cow Sharks"},
-            {"scientific": "Centrophoridae", "Common": "Gulper Sharks"},
-            {"scientific": "Pristiophoridae", "Common": "Saw Sharks"},
-            {"scientific": "Squatinidae", "Common": "Angel Sharks"},
-            {"scientific": "Heterodontidae", "Common": "Bullhead Sharks"},
-            {"scientific": "Alopiidae", "Common": "Thresher Sharks"},
-            {"scientific": "Cetorhinidae", "Common": "Basking Sharks"},
-            {"scientific": "Mitsukurinidae", "Common": "Goblin Sharks"},
-            {"scientific": "Brachaeluridae", "Common": "Blind Sharks"},
-            {"scientific": "Chlamydoselachidae", "Common": "Frilled Sharks"},
-            {"scientific": "Pseudocarchariidae", "Common": "Crocodile Sharks"},
-            {"scientific": "Somniosidae", "Common": "Sleeper Sharks"},
-            {"scientific": "Pentachidae", "Common": "Deep-Sea CatSharks"},
-
-        ];
-
-        let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
-        let attempts = 12;
-
-        function getLessSpecificName(sharkName) {
-            const words = sharkName.split(' ');
-            if (words.length > 1) {
-                return words.slice(0, -1).join(' ');
-            }
-            return sharkName;
-        }
-
-        function normalizeInput(input) {
-            return input.replace(/\s+/g, '').toLowerCase();
-        }
-
-        function makeGuess() {
-            const guessInput = normalizeInput(document.getElementById("sharkGuess").value.trim());
-            const messageDiv = document.getElementById("message");
-            const attemptsLeftDiv = document.getElementById("attempts-left");
-            const winLoseScreen = document.getElementById("win-lose-screen");
-
-            const guessedShark = sharks.find(s => normalizeInput(s.name).startsWith(guessInput));
-            if (!guessedShark) {
-                messageDiv.textContent = "Shark not found in the list.";
-                return;
-            }
-
-            if (guessedShark.guessed) {
-                messageDiv.textContent = "You already guessed this shark.";
-                return;
-            }
-
-            guessedShark.guessed = true;
-
-            attempts--;
-            attemptsLeftDiv.textContent = `Attempts left: ${attempts}`;
-            
-            const feedback = [
-                { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
-                { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
-                { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
-                { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod, yodFeedback: getYODFeedback(guessedShark.yod) }
-            ];
-            
-            const guessDiv = document.createElement("div");
-            guessDiv.className = "guess-container";
-            guessDiv.innerHTML = `<p style="font-size: 1.2em; font-weight: bold; color: ${guessedShark.name === targetShark.name ? 'green' : 'red'};">${guessedShark.name}</p>`;
-            
-            const feedbackDiv = document.createElement("div");
-            feedbackDiv.className = "feedback";
-            
-            feedback.forEach(item => {
-                const span = document.createElement("span");
-                span.className = "category" + (item.correct ? " correct" : "") + (item.yodFeedback ? " " + item.yodFeedback : "");
-                
-                let commonName;
-                if (item.category === "Family") {
-                    commonName = common_names.find(cn => cn.scientific === guessedShark.family);
-                } else if (item.category === "Order") {
-                    commonName = common_names.find(cn => cn.scientific === guessedShark.order);
-                } else if (item.category === "Genus") {
-                    commonName = common_names.find(cn => cn.scientific === guessedShark.genus);
-                }
-
-                if (commonName) {
-                    const tooltip = document.createElement("div");
-                    tooltip.className = "tooltip";
-                    tooltip.textContent = `${item.category}: ${item.value}`;
-
-                    const tooltipText = document.createElement("span");
-                    tooltipText.className = "tooltiptext";
-                    tooltipText.textContent = commonName.Common;
-
-                    tooltip.appendChild(tooltipText);
-                    span.innerHTML = "";
-                    span.appendChild(tooltip);
-                } else {
-                    span.textContent = `${item.category}: ${item.value}`;
-                }
-
-                feedbackDiv.appendChild(span);
-            });
-            
-            guessDiv.appendChild(feedbackDiv);
-            const guessesDiv = document.getElementById("guesses");
-            
-            const previousGuessesDiv = document.getElementById("previous-guesses");
-            if (guessesDiv.firstChild) {
-                previousGuessesDiv.appendChild(guessesDiv.firstChild);
-            }
-            
-            guessesDiv.prepend(guessDiv);
-            
-            if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
-
-                setTimeout(() => {
-                    window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${12 - attempts}`;
-                }, 1000);
-                
-            } else if (attempts === 0) {
-                messageDiv.textContent = `Out of guesses! The shark was ${targetShark.name}.`;
-                winLoseScreen.textContent = "You Lose!";
-                winLoseScreen.classList.add("lose");
-                winLoseScreen.classList.remove("win");
-                winLoseScreen.style.display = "block";
-
-                setTimeout(() => {
-                    window.location.href = `end.html?result=lose&sharkName=${encodeURIComponent(targetShark.name)}`;
-                }, 1000);
-
-            } else {
-                messageDiv.textContent = "";
-            }
-
-            document.getElementById("sharkGuess").value = "";
-        }
-
-        function getYODFeedback(yod) {
-            if (yod < targetShark.yod) {
-                return "later";
-            } else if (yod > targetShark.yod) {
-                return "earlier";
-            } else {
-                return "correct";
-            }
-        }
-
+        // Create and animate bubbles
         function createBubbles() {
-            const winLoseScreen = document.getElementById("win-lose-screen");
-            for (let i = 0; i < 10; i++) {
+            const body = document.body;
+            for (let i = 0; i < 20; i++) {
                 const bubble = document.createElement("div");
                 bubble.className = "bubble";
-                bubble.style.width = `${Math.random() * 20 + 10}px`;
+                bubble.style.width = `${Math.random() * 40 + 20}px`;
                 bubble.style.height = bubble.style.width;
                 bubble.style.left = `${Math.random() * 100}%`;
-                bubble.style.animationDelay = `${Math.random() * 2}s`;
-                bubble.style.bottom = '0';  
-                winLoseScreen.appendChild(bubble);
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                body.appendChild(bubble);
             }
         }
-
-        document.getElementById("sharkGuess").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                makeGuess();
-            }
-        });
+        createBubbles();
     </script>
 </body>
 </html>

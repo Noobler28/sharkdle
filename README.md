@@ -34,7 +34,7 @@ You have guessed the correct shark!
 
 # Info
 
-PLAY HERE: https://noobler28.github.io/sharkdle.index.html
+PLAY HERE: https://noobler28.github.io/sharkdle/index.html
 
 Contact me on discord if you find any bugs or misinformation: noobler_28
 

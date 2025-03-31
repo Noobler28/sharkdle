@@ -741,7 +741,16 @@
 
                 bubbleContainer.appendChild(bubble);
             }
+
+            // Make the bubble container visible
+            bubbleContainer.style.display = "block";
         }
+
+        // Hide the bubble container initially
+        window.addEventListener("load", () => {
+            const bubbleContainer = document.getElementById("bubble-container");
+            bubbleContainer.style.display = "none";
+        });
 
         // Call the function on page load
         window.addEventListener("load", () => {

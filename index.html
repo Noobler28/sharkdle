@@ -18,15 +18,18 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            position: relative;
         }
         .menu-container {
-            background: linear-gradient(to left, #0f2027, #203a43, #2c5364); /* Opposite gradient */
+            background: linear-gradient(to left, #0f2027, #203a43, #2c5364);
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
             text-align: center;
             width: 90%;
             max-width: 500px;
+            z-index: 1;
+            position: relative;
         }
         h1 {
             font-family: 'Pacifico', cursive;
@@ -49,7 +52,7 @@
             font-weight: bold;
             color: white;
             background: linear-gradient(to right, #1e3a46, #2f5b6e);
-            border: 2px solid white; /* Added white outline */
+            border: 2px solid white;
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -69,7 +72,7 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             animation: bubble 10s infinite;
-            z-index: 1;
+            z-index: -1;
         }
         @keyframes bubble {
             0% {

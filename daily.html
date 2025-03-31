@@ -285,7 +285,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            z-index: -1; /* Ensure bubbles are behind other elements */
+            z-index: -1;
         }
 
         .bubble {
@@ -307,10 +307,24 @@
                 opacity: 0;
             }
         }
+
+        @media (max-width: 600px) {
+            input#sharkGuess {
+                display: block;
+                margin: 0 auto;
+                width: 90%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            input#sharkGuess {
+                width: 95%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="bubble-container"></div>
     <div id="key">
         <div class="key-item"><div class="key-color" style="background: grey;"></div>Incorrect</div>
         <div class="key-item"><div class="key-color" style="background: green;"></div>Correct</div>
@@ -324,7 +338,9 @@
     <div id="attempts-left">Attempts left: 12</div>
     <div id="guesses"></div>
     <div id="message"></div>
-    <div id="win-lose-screen"></div>
+    <div id="win-lose-screen">
+        <div id="bubble-container"></div>
+    </div>
     <div id="previous-guesses"></div>
 
     <script>
@@ -360,7 +376,7 @@
             { "name": "Hook Tooth Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Aculeola", "yod": 1959},
             { "name": "High Fin Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Centroscyllium", "yod": 1990},
             { "name": "Dwarf Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1985},
-            { "name": "Great Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
+            { "name": "Great Lantern Shark", "  family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
             { "name": "Smooth Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1839},
             { "name": "Green Land Shark", "family": "Somniosidae", "order": "Squaliformes", "genus": "Somniosus", "yod": 1801},
             // Saw Sharks | Pristiophoriformes
@@ -625,6 +641,9 @@
             if (status === "win") {
                 resultMessage.textContent = `🎉 YOU WON! 🎉`;
                 messageContainer.style.backgroundColor = "green";
+
+                // Create bubbles for the win screen
+                createBubbles();
             } else {
                 resultMessage.textContent = `😢 YOU LOST! 😢`;
                 messageContainer.style.backgroundColor = "red";

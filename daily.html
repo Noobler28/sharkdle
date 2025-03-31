@@ -279,6 +279,7 @@
         }
 
         #bubble-container {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -623,6 +624,7 @@
         function displayResult(result) {
             const [status, sharkName, guessesTaken] = result.split('|');
             const winLoseScreen = document.getElementById("win-lose-screen");
+            const bubbleContainer = document.getElementById("bubble-container");
 
             // Clear previous content
             winLoseScreen.innerHTML = "";
@@ -647,6 +649,9 @@
             } else {
                 resultMessage.textContent = `😢 YOU LOST! 😢`;
                 messageContainer.style.backgroundColor = "red";
+
+                // Create bubbles for the lose screen
+                createBubbles();
             }
             messageContainer.appendChild(resultMessage);
 
@@ -698,6 +703,9 @@
             // Show the win/lose screen
             winLoseScreen.style.display = "block";
             document.getElementById("sharkGuess").disabled = true;
+
+            // Make the bubble container visible
+            bubbleContainer.style.display = "block";
         }
 
         function normalizeInput(input) {

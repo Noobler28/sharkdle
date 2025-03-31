@@ -8,7 +8,6 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            text-align: center;
             background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
             color: white;
             margin: 0;
@@ -20,51 +19,78 @@
             overflow: hidden;
         }
         .content-container {
-            background: linear-gradient(to left, #0f2027, #203a43, #2c5364);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
-            text-align: left;
-            width: 100%;
-            max-width: 600px;
+            background: rgba(15, 32, 39, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 2.5em;
+            font-size: 3em;
             color: #00d4ff;
-            text-shadow: 0px 0px 10px #00d4ff, 0px 0px 20px #00d4ff;
-            margin-bottom: 20px;
-            text-align: center;
+            text-shadow: 0px 0px 15px #00d4ff, 0px 0px 30px #00d4ff;
+            margin-bottom: 30px;
         }
-        p, ol, ul {
+        p {
             font-size: 1.2em;
             color: #d1e8e2;
             line-height: 1.8;
+            margin-bottom: 20px;
         }
         ol {
             padding-left: 20px;
+            text-align: left;
+            margin: 20px 0;
         }
         ul {
-            list-style-type: disc;
-            margin-left: 40px;
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0 20px 0;
         }
         li {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+        li strong {
+            margin-right: 10px;
+        }
+        li::before {
+            content: "•";
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin-right: 10px;
         }
         .back-button {
-            display: block;
-            margin: 20px auto 0;
-            padding: 15px 30px;
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
             font-size: 1.2em;
             font-weight: bold;
             color: white;
             background: linear-gradient(to right, #1e3a46, #2f5b6e);
-            border: 2px solid white;
-            border-radius: 10px;
+            border: none;
+            border-radius: 50px;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
+            outline: 2px solid white;
         }
         .back-button:hover {
             transform: translateY(-5px);
@@ -73,6 +99,11 @@
         .back-button:active {
             transform: translateY(0);
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .feedback-list li strong {
+            display: inline-block;
+            width: 100px;
+            text-align: left;
         }
     </style>
 </head>
@@ -84,22 +115,12 @@
             <li>Enter the name of a shark in the input box.</li>
             <li>Submit your guess by pressing "Enter".</li>
             <li>After each guess, you'll receive feedback to help you refine your next guess:</li>
-            <ul>
-                <li>
-                    <strong style="color: grey;">Grey:</strong> The information is incorrect.
-                </li>
-                <li>
-                    <strong style="color: green;">Green:</strong> The information is correct.
-                </li>
-                <li>
-                    <strong style="color: red;">Red:</strong> The guessed shark is not the correct shark.
-                </li>
-                <li>
-                    <strong style="color: blue;">Blue:</strong> The year of discovery for the correct shark is earlier.
-                </li>
-                <li>
-                    <strong style="color: orange;">Orange:</strong> The year of discovery for the correct shark is later.
-                </li>
+            <ul class="feedback-list">
+                <li><strong style="color: grey;">Grey:</strong> The information is incorrect.</li>
+                <li><strong style="color: green;">Green:</strong> The information is correct.</li>
+                <li><strong style="color: red;">Red:</strong> The guessed shark is not the correct shark.</li>
+                <li><strong style="color: blue;">Blue:</strong> The year of discovery for the correct shark is earlier.</li>
+                <li><strong style="color: orange;">Orange:</strong> The year of discovery for the correct shark is later.</li>
             </ul>
             <li>Use the feedback to refine your guesses and identify the correct shark.</li>
             <li>You have 12 attempts to guess the shark. Good luck!</li>

@@ -25,12 +25,12 @@
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
             text-align: center;
-            width: 100%;
+            width: 90%;
             max-width: 500px;
         }
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 3em;
+            font-size: 2.5em;
             color: #00d4ff;
             text-shadow: 0px 0px 10px #00d4ff, 0px 0px 20px #00d4ff;
             margin-bottom: 20px;
@@ -49,7 +49,7 @@
             font-weight: bold;
             color: white;
             background: linear-gradient(to right, #1e3a46, #2f5b6e);
-            border: none;
+            border: 2px solid white; /* Added white outline */
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -84,17 +84,45 @@
                 opacity: 0;
             }
         }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 1em;
+            }
+            .menu button {
+                font-size: 1em;
+                padding: 10px;
+            }
+        }
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 0.9em;
+            }
+            .menu button {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="menu-container">
         <h1>Welcome to Sharkdle</h1>
-        <p>Test your shark knowledge and have fun!</p>
+        <p>The shark guessing game!</p>
         <div class="menu">
             <button onclick="location.href='daily.html'">Daily</button>
             <button onclick="location.href='infinite.html'">Infinite</button>
             <button onclick="location.href='how-to-play.html'">How to Play</button>
             <button onclick="location.href='helper.html'">List of Sharks</button>
+            <button onclick="location.href='https://discord.gg/CGUbaUS5'" style="display: flex; align-items: center; justify-content: center;">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/discord.svg" alt="Discord" style="width: 20px; height: 20px; margin-right: 10px;">
+                Join our Discord
+            </button>
         </div>
     </div>
 

@@ -95,12 +95,36 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 400px;
         }
         #win-lose-screen.win {
             background-color: green;
         }
         #win-lose-screen.lose {
             background-color: red;
+        }
+        #win-lose-screen h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        #win-lose-screen p {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        #win-lose-screen button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #1e3a46;
+            color: white;
+            transition: 0.3s;
+        }
+        #win-lose-screen button:hover {
+            background-color: #2f5b6e;
         }
         .bubble {
             position: absolute;
@@ -209,6 +233,21 @@
             #previous-guesses summary {
                 font-size: 1em;
             }
+            #win-lose-screen {
+                font-size: 1.2em;
+                padding: 15px;
+                width: 90%;
+            }
+            #win-lose-screen h2 {
+                font-size: 1.5em;
+            }
+            #win-lose-screen p {
+                font-size: 1em;
+            }
+            #win-lose-screen button {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -228,6 +267,20 @@
             }
             #previous-guesses summary {
                 font-size: 0.9em;
+            }
+            #win-lose-screen {
+                font-size: 1em;
+                padding: 10px;
+            }
+            #win-lose-screen h2 {
+                font-size: 1.2em;
+            }
+            #win-lose-screen p {
+                font-size: 0.9em;
+            }
+            #win-lose-screen button {
+                font-size: 0.8em;
+                padding: 6px 10px;
             }
         }
 

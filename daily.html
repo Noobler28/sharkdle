@@ -764,10 +764,10 @@
         window.addEventListener("load", () => {
             createBubbles();
 
-            // Check if the user has already played today's shark
-            const dailyResult = localStorage.getItem(`sharkdle-daily-${today}`);
-            if (dailyResult) {
-                displayResult(dailyResult);
+        // Check if the user has already played today's shark
+        const dailyResult = localStorage.getItem(`sharkdle-daily-${today}`);
+        if (dailyResult) {
+            displayResult(dailyResult);
             }
         });
     </script>

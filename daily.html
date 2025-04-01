@@ -377,7 +377,7 @@
             { "name": "Hook Tooth Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Aculeola", "yod": 1959},
             { "name": "High Fin Dog fish", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Centroscyllium", "yod": 1990},
             { "name": "Dwarf Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1985},
-            { "name": "Great Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
+            { "name": "Great Lantern Shark", "  family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1904},
             { "name": "Smooth Lantern Shark", "family": "Etmopteridae", "order": "Squaliformes", "genus": "Etmopterus", "yod": 1839},
             { "name": "Green Land Shark", "family": "Somniosidae", "order": "Squaliformes", "genus": "Somniosus", "yod": 1801},
             // Saw Sharks | Pristiophoriformes
@@ -731,6 +731,12 @@
         function createBubbles() {
             const bubbleContainer = document.getElementById("bubble-container");
 
+            // Check if bubbleContainer exists
+            if (!bubbleContainer) {
+                console.error("Bubble container not found in the DOM.");
+                return;
+            }
+
             // Clear existing bubbles
             bubbleContainer.innerHTML = "";
 
@@ -764,10 +770,10 @@
         window.addEventListener("load", () => {
             createBubbles();
 
-        // Check if the user has already played today's shark
-        const dailyResult = localStorage.getItem(`sharkdle-daily-${today}`);
-        if (dailyResult) {
-            displayResult(dailyResult);
+            // Check if the user has already played today's shark
+            const dailyResult = localStorage.getItem(`sharkdle-daily-${today}`);
+            if (dailyResult) {
+                displayResult(dailyResult);
             }
         });
     </script>

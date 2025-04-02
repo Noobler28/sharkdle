@@ -89,8 +89,8 @@
         <h1 id="gameOverTitle">GAME OVER</h1>
         <div class="message" id="message"></div>
         <div class="result" id="result"></div>
-        <button onclick="restartGame()">Restart Game</button>
-        </div>
+        <button onclick="playAgain()">Play Again</button>
+        <button onclick="returnToMenu()">Return to Menu</button>
     </div>
 
     <script>
@@ -114,8 +114,13 @@
             messageDiv.textContent = `You failed to guess the shark: ${sharkName}.`;
         }
 
-        // Restart the game
-        function restartGame() {
+        // Function to restart the game
+        function playAgain() {
+            window.location.href = "infinite.html";
+        }
+
+        // Function to return to the main menu
+        function returnToMenu() {
             window.location.href = "index.html";
         }
 

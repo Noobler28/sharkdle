@@ -495,24 +495,24 @@
             }
 
             // Populate dropdowns
-            function populateOrderDropdown() {
-                const orders = [...new Set(sharks.map(shark => shark.order))].map(order => ({
+            function populateOrderDropdown(filteredSharks) {
+                const orders = [...new Set(filteredSharks.map(shark => shark.order))].map(order => ({
                     label: common_names.find(item => item.scientific === order)?.Common || order,
                     value: order
                 }));
                 populateDropdown('orderDropdown', orders, 'label', 'value');
             }
 
-            function populateFamilyDropdown() {
-                const families = [...new Set(sharks.map(shark => shark.family))].map(family => ({
+            function populateFamilyDropdown(filteredSharks) {
+                const families = [...new Set(filteredSharks.map(shark => shark.family))].map(family => ({
                     label: common_names.find(item => item.scientific === family)?.Common || family,
                     value: family
                 }));
                 populateDropdown('familyDropdown', families, 'label', 'value');
             }
 
-            function populateGenusDropdown() {
-                const genera = [...new Set(sharks.map(shark => shark.genus))].map(genus => ({
+            function populateGenusDropdown(filteredSharks) {
+                const genera = [...new Set(filteredSharks.map(shark => shark.genus))].map(genus => ({
                     label: genus,
                     value: genus
                 }));
@@ -531,12 +531,38 @@
                 const blacklistedFamilies = getSelectedValues('familyDropdown');
                 const blacklistedGenera = getSelectedValues('genusDropdown');
 
+                // Filter sharks based on blacklisted orders and families
                 filteredSharks = sharks.filter(shark => {
-                    return (!blacklistedOrders.includes(shark.order)) &&
-                           (!blacklistedFamilies.includes(shark.family)) &&
-                           (!blacklistedGenera.includes(shark.genus));
+                    return !blacklistedOrders.includes(shark.order) &&
+                           !blacklistedFamilies.includes(shark.family) &&
+                           !blacklistedGenera.includes(shark.genus);
                 });
+
+                // Update dropdowns based on filtered sharks
+                const remainingSharksByFamily = sharks.filter(shark => !blacklistedFamilies.includes(shark.family));
+                const remainingSharksByOrder = sharks.filter(shark => !blacklistedOrders.includes(shark.order));
+
+                populateOrderDropdown(remainingSharksByFamily); // Update orders based on families
+                populateFamilyDropdown(remainingSharksByOrder); // Update families based on orders
+                populateGenusDropdown(filteredSharks); // Update genera based on filtered sharks
+
+                // Reapply selected values to dropdowns
+                reapplySelections('orderDropdown', blacklistedOrders);
+                reapplySelections('familyDropdown', blacklistedFamilies);
+                reapplySelections('genusDropdown', blacklistedGenera);
+
                 displayResults(filteredSharks);
+            }
+
+            // Reapply selected values to dropdowns
+            function reapplySelections(dropdownId, selectedValues) {
+                const dropdown = document.getElementById(dropdownId);
+                selectedValues.forEach(value => {
+                    const checkbox = dropdown.querySelector(`input[value="${value}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
             }
 
             // Sort results
@@ -579,9 +605,9 @@
             }
 
             // Initial population of dropdowns and display all sharks
-            populateOrderDropdown();
-            populateFamilyDropdown();
-            populateGenusDropdown();
+            populateOrderDropdown(sharks);
+            populateFamilyDropdown(sharks);
+            populateGenusDropdown(sharks);
             displayResults(sharks);
 
             // Add event listeners for auto-filtering

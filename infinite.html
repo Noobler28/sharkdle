@@ -494,6 +494,35 @@
             return input.replace(/\s+/g, '').toLowerCase();
         }
 
+        function updateStats(isWin, guessesTaken = 0) {
+            const stats = {
+                gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
+                wins: parseInt(localStorage.getItem('wins') || 0),
+                losses: parseInt(localStorage.getItem('losses') || 0),
+                totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0),
+                currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
+                highestStreak: parseInt(localStorage.getItem('highestStreak') || 0),
+            };
+
+            stats.gamesPlayed++;
+            if (isWin) {
+                stats.wins++;
+                stats.totalGuesses += guessesTaken;
+                stats.currentStreak++;
+                stats.highestStreak = Math.max(stats.highestStreak, stats.currentStreak);
+            } else {
+                stats.losses++;
+                stats.currentStreak = 0;
+            }
+
+            localStorage.setItem('gamesPlayed', stats.gamesPlayed);
+            localStorage.setItem('wins', stats.wins);
+            localStorage.setItem('losses', stats.losses);
+            localStorage.setItem('totalGuesses', stats.totalGuesses);
+            localStorage.setItem('currentStreak', stats.currentStreak);
+            localStorage.setItem('highestStreak', stats.highestStreak);
+        }
+
         function makeGuess() {
             const guessInput = normalizeInput(document.getElementById("sharkGuess").value.trim());
             const messageDiv = document.getElementById("message");
@@ -573,12 +602,13 @@
             guessesDiv.prepend(guessDiv);
             
             if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
-
+                updateStats(true, 12 - attempts);
                 setTimeout(() => {
                     window.location.href = `end.html?result=win&sharkName=${encodeURIComponent(targetShark.name)}&guessesTaken=${12 - attempts}`;
                 }, 1000);
                 
             } else if (attempts === 0) {
+                updateStats(false);
                 messageDiv.textContent = `Out of guesses! The shark was ${targetShark.name}.`;
                 winLoseScreen.textContent = "You Lose!";
                 winLoseScreen.classList.add("lose");

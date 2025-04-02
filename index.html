@@ -111,6 +111,23 @@
                 padding: 8px;
             }
         }
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: left;
+        }
+        .stats h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+        .stats p {
+            font-size: 1.1em;
+            margin: 5px 0;
+            color: #d1e8e2;
+        }
     </style>
 </head>
 <body>
@@ -126,6 +143,15 @@
                 <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/discord.svg" alt="Discord" style="width: 20px; height: 20px; margin-right: 10px;">
                 Join our Discord
             </button>
+        </div>
+        <div class="stats">
+            <h2>Your Stats</h2>
+            <p>Games Played: <span id="games-played">0</span></p>
+            <p>Wins: <span id="wins">0</span></p>
+            <p>Losses: <span id="losses">0</span></p>
+            <p>Average Guesses: <span id="average-guesses">0</span></p>
+            <p>Current Streak: <span id="current-streak">0</span></p>
+            <p>Highest Streak: <span id="highest-streak">0</span></p>
         </div>
     </div>
 
@@ -144,6 +170,45 @@
             }
         }
         createBubbles();
+
+        // Initialize stats
+        const stats = {
+            gamesPlayed: localStorage.getItem('gamesPlayed') || 0,
+            wins: localStorage.getItem('wins') || 0,
+            losses: localStorage.getItem('losses') || 0,
+            averageGuesses: localStorage.getItem('averageGuesses') || 0,
+            currentStreak: localStorage.getItem('currentStreak') || 0,
+            highestStreak: localStorage.getItem('highestStreak') || 0
+        };
+
+        // Display stats
+        document.getElementById('games-played').textContent = stats.gamesPlayed;
+        document.getElementById('wins').textContent = stats.wins;
+        document.getElementById('losses').textContent = stats.losses;
+        document.getElementById('average-guesses').textContent = stats.averageGuesses;
+        document.getElementById('current-streak').textContent = stats.currentStreak;
+        document.getElementById('highest-streak').textContent = stats.highestStreak;
+
+        // Example: Update stats (call this function when a game ends)
+        function updateStats(isWin) {
+            stats.gamesPlayed++;
+            if (isWin) {
+                stats.wins++;
+                stats.currentStreak++;
+            } else {
+                stats.currentStreak = 0;
+            }
+
+            // Save to localStorage
+            localStorage.setItem('gamesPlayed', stats.gamesPlayed);
+            localStorage.setItem('wins', stats.wins);
+            localStorage.setItem('currentStreak', stats.currentStreak);
+
+            // Update the UI
+            document.getElementById('games-played').textContent = stats.gamesPlayed;
+            document.getElementById('wins').textContent = stats.wins;
+            document.getElementById('current-streak').textContent = stats.currentStreak;
+        }
     </script>
 </body>
 </html>

@@ -679,13 +679,6 @@
             const winLoseScreen = document.getElementById("win-lose-screen");
             const bubbleContainer = document.getElementById("bubble-container");
 
-            // Update stats
-            if (status === "win") {
-                updateStats(true, parseInt(guessesTaken));
-            } else {
-                updateStats(false);
-            }
-
             // Clear previous content
             winLoseScreen.innerHTML = "";
 

@@ -273,19 +273,21 @@
     <div class="filters">
         <div id="orderDropdown" class="custom-dropdown">
             <label>Blacklist Order:</label>
-            <div class="dropdown-content">
-            </div>
+            <div class="dropdown-content"></div>
         </div>
         <div id="familyDropdown" class="custom-dropdown">
             <label>Blacklist Family:</label>
-            <div class="dropdown-content">
-            </div>
+            <div class="dropdown-content"></div>
         </div>
         <div id="genusDropdown" class="custom-dropdown">
             <label>Blacklist Genera:</label>
-            <div class="dropdown-content">
-            </div>
+            <div class="dropdown-content"></div>
         </div>
+    </div>
+
+    <!-- Move the search bar here -->
+    <div id="searchContainer" class="custom-dropdown" style="margin: 0 auto; text-align: center;">
+        <input type="text" id="searchBar" placeholder="Search sharks..." class="modern-dropdown">
     </div>
 
     <!-- Sort By -->
@@ -551,44 +553,23 @@
                 return Array.from(checkboxes).map(checkbox => checkbox.value);
             }
 
-            // Filter sharks based on blacklist
+            // Filter sharks based on blacklist and search
             function filterSharks() {
                 const blacklistedOrders = getSelectedValues('orderDropdown');
                 const blacklistedFamilies = getSelectedValues('familyDropdown');
                 const blacklistedGenera = getSelectedValues('genusDropdown');
+                const searchQuery = document.getElementById('searchBar').value.toLowerCase();
 
-                // Filter sharks based on blacklisted orders and families
+                // Filter sharks based on blacklist and search query
                 filteredSharks = sharks.filter(shark => {
-                    return !blacklistedOrders.includes(shark.order) &&
-                           !blacklistedFamilies.includes(shark.family) &&
-                           !blacklistedGenera.includes(shark.genus);
+                    const matchesSearch = shark.name.toLowerCase().includes(searchQuery);
+                    const notBlacklisted = !blacklistedOrders.includes(shark.order) &&
+                                           !blacklistedFamilies.includes(shark.family) &&
+                                           !blacklistedGenera.includes(shark.genus);
+                    return matchesSearch && notBlacklisted;
                 });
-
-                // Update dropdowns based on filtered sharks
-                const remainingSharksByFamily = sharks.filter(shark => !blacklistedFamilies.includes(shark.family));
-                const remainingSharksByOrder = sharks.filter(shark => !blacklistedOrders.includes(shark.order));
-
-                populateOrderDropdown(remainingSharksByFamily); // Update orders based on families
-                populateFamilyDropdown(remainingSharksByOrder); // Update families based on orders
-                populateGenusDropdown(filteredSharks); // Update genera based on filtered sharks
-
-                // Reapply selected values to dropdowns
-                reapplySelections('orderDropdown', blacklistedOrders);
-                reapplySelections('familyDropdown', blacklistedFamilies);
-                reapplySelections('genusDropdown', blacklistedGenera);
 
                 displayResults(filteredSharks);
-            }
-
-            // Reapply selected values to dropdowns
-            function reapplySelections(dropdownId, selectedValues) {
-                const dropdown = document.getElementById(dropdownId);
-                selectedValues.forEach(value => {
-                    const checkbox = dropdown.querySelector(`input[value="${value}"]`);
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
             }
 
             // Sort results
@@ -640,6 +621,7 @@
             document.getElementById('orderDropdown').addEventListener('change', filterSharks);
             document.getElementById('familyDropdown').addEventListener('change', filterSharks);
             document.getElementById('genusDropdown').addEventListener('change', filterSharks);
+            document.getElementById('searchBar').addEventListener('input', filterSharks);
         });
     </script>
 </body>

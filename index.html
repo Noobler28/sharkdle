@@ -4,210 +4,970 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sharkdle - Main Menu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            text-align: center;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
+        :root {
+            --deep-blue: #0a2463;
+            --ocean-blue: #3e92cc;
+            --wave-teal: #1b9aaa;
+            --sea-green: #2a9d8f;
+            --sand: #e9c46a;
+            --coral: #f4a261;
+            --shark-gray: #264653;
+            --text-light: #E2E8F0;
+            --text-muted: #94A3B8;
+            --success: #2a9d8f;
+            --danger: #e76f51;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--deep-blue);
+            color: var(--text-light);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: row;
+            background-image: 
+                linear-gradient(135deg, rgba(10, 36, 99, 0.8) 0%, rgba(27, 154, 170, 0.5) 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: bottom;
+            background-repeat: no-repeat;
+        }
+
+        .sidebar {
+            width: 30%;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--ocean-blue), var(--wave-teal), var(--sea-green));
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .sidebar .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--ocean-blue), var(--sea-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .sidebar .logo p {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar .logo::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--ocean-blue), var(--wave-teal));
+            margin: 15px auto;
+            border-radius: 3px;
+        }
+
+        .sidebar .menu {
+            margin-top: -10px;
+            padding-top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, var(--ocean-blue), var(--wave-teal));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+            display: flex;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .menu-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .menu-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(62, 146, 204, 0.6);
+        }
+
+        .menu-btn:hover::before {
+            left: 100%;
+        }
+
+        .menu-btn:active {
+            transform: translateX(0);
+            box-shadow: none;
+        }
+
+        .menu-btn i {
+            font-size: 1.2rem;
+        }
+
+        .sidebar .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .sidebar .footer::before {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--wave-teal), transparent);
+            margin: 20px 0;
+        }
+
+        .sidebar .footer a {
+            color: var(--sea-green);
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .footer a:hover {
+            color: var(--ocean-blue);
+            text-decoration: underline;
+        }
+
+        .main-content {
+            width: 70%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .stats {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(62, 146, 204, 0.2);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--wave-teal) 0%, transparent 70%);
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .stats i {
+            font-size: 2rem;
+            color: var(--sea-green);
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .stats h2 {
+            font-size: 1.5rem;
+            color: var(--sea-green);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 5px;
+        }
+
+        .stats h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--sea-green), transparent);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(62, 146, 204, 0.2);
+            transition: background 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(62, 146, 204, 0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--sea-green);
+        }
+
+        .stat-bar-container {
+            width: 100%;
+            height: 25px;
+            background: var(--shark-gray);
+            border-radius: 10px;
             overflow: hidden;
             position: relative;
         }
-        .menu-container {
-            background: linear-gradient(to left, #0f2027, #203a43, #2c5364);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.6);
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-            z-index: 1;
+
+        .stat-bar {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
             position: relative;
         }
-        h1 {
-            font-family: 'Pacifico', cursive;
-            font-size: 2.5em;
-            color: #00d4ff;
-            text-shadow: 0px 0px 10px #00d4ff, 0px 0px 20px #00d4ff;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            color: #d1e8e2;
-        }
-        .menu button {
-            display: block;
-            width: 100%;
-            margin: 15px 0;
-            padding: 15px;
-            font-size: 1.2em;
-            font-weight: bold;
+
+        .stat-bar .win, .stat-bar .loss {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            background: linear-gradient(to right, #1e3a46, #2f5b6e);
-            border: 2px solid white;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
-        .menu button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+
+        .stat-bar .win {
+            background: var(--success);
         }
-        .menu button:active {
-            transform: translateY(0);
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+
+        .stat-bar .loss {
+            background: var(--danger);
         }
-        .bubble {
-            position: absolute;
-            bottom: -50px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            animation: bubble 10s infinite;
-            z-index: -1;
+
+        .recent-games {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            backdrop-filter: blur(6px);
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes bubble {
-            0% {
-                transform: translateY(0);
-                opacity: 0.6;
+
+        .recent-games h2 {
+            font-size: 1.8rem;
+            color: var(--sea-green);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .recent-games .no-games {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .recent-games .game-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(62, 146, 204, 0.2);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .recent-games .game-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-games .game-item:hover {
+            background: rgba(62, 146, 204, 0.15);
+            transform: scale(1.02);
+        }
+
+        .recent-games .game-date {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .recent-games .game-result {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .recent-games .game-result.win {
+            color: var(--success);
+        }
+
+        .recent-games .game-result.loss {
+            color: var(--danger);
+        }
+
+        .recent-games .game-guesses {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
             }
-            50% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-1200px);
-                opacity: 0;
+            .sidebar, .main-content {
+                width: 100%;
             }
         }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-            p {
-                font-size: 1em;
-            }
-            .menu button {
-                font-size: 1em;
-                padding: 10px;
-            }
+
+        body.light-mode {
+            background: #e0f7fa; /* Light ocean blue */
+            color: #004d40; /* Deep teal for text */
         }
-        @media (max-width: 400px) {
-            h1 {
-                font-size: 1.8em;
-            }
-            p {
-                font-size: 0.9em;
-            }
-            .menu button {
-                font-size: 0.9em;
-                padding: 8px;
-            }
+
+        body.light-mode .sidebar {
+            background: #b2ebf2; /* Soft teal */
+            color: #004d40; /* Deep teal for text */
         }
-        .stats {
-            margin-top: 20px;
+
+        body.light-mode .menu-btn {
+            background: linear-gradient(135deg, #80deea, #4dd0e1); /* Ocean gradient */
+            color: #004d40; /* Deep teal */
+        }
+
+        body.light-mode .menu-btn:hover {
+            background: linear-gradient(135deg, #4dd0e1, #26c6da); /* Brighter ocean gradient */
+        }
+
+        body.light-mode .stats, body.light-mode .recent-games {
+            background: #ffffff; /* White for contrast */
+            color: #004d40; /* Deep teal */
+            border: 1px solid #80deea; /* Ocean blue border */
+        }
+
+        body.light-mode .stats h2, body.light-mode .recent-games h2 {
+            color: #00796b; /* Darker teal for headings */
+        }
+
+        body.light-mode .stat-bar .win {
+            background: #00796b; /* Teal for wins */
+        }
+
+        body.light-mode .stat-bar .loss {
+            background: #e57373; /* Coral red for losses */
+        }
+
+        body.light-mode .recent-games .game-item:hover {
+            background: rgba(128, 222, 234, 0.2); /* Light ocean blue hover effect */
+        }
+
+        body.light-mode .sidebar .footer a {
+            color: #00796b; /* Teal links */
+        }
+
+        body.light-mode .sidebar .footer a:hover {
+            color: #004d40; /* Darker teal on hover */
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+        background: rgba(30, 41, 59, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        width: 90%;
+        max-width: 400px;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: var(--text-light);
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .options-section {
+            margin-bottom: 20px;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(51, 65, 85, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .stats h2 {
-            font-size: 1.5em;
+
+        .options-section h3 {
+            font-size: 1.3rem;
+            color: var(--text-light);
             margin-bottom: 10px;
-            color: #00d4ff;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
         }
-        .stats p {
-            font-size: 1.1em;
-            margin: 5px 0;
-            color: #d1e8e2;
+
+        .option-btn {
+            background: linear-gradient(135deg, var(--ocean-blue), var(--wave-teal));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover {
+            background: linear-gradient(135deg, var(--wave-teal), var(--sea-green));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .close-btn {
+            background: var(--danger);
+        }
+
+        .close-btn:hover {
+            background: #d9534f;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .slider-container label {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .slider-container input[type="range"] {
+            width: 80%;
+            appearance: none;
+            height: 8px;
+            background: var(--wave-teal);
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--ocean-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-container input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--ocean-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .options-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .options-section h3 {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="menu-container">
-        <h1>Welcome to Sharkdle</h1>
-        <p>The shark guessing game!</p>
+    <div class="sidebar">
+        <div class="logo">
+            <h1>Sharkdle</h1>
+            <p>Dive into the shark guessing game!</p>
+        </div>
         <div class="menu">
-            <button onclick="location.href='daily.html'">Daily</button>
-            <button onclick="location.href='infinite.html'">Infinite</button>
-            <button onclick="location.href='how-to-play.html'">How to Play</button>
-            <button onclick="location.href='helper.html'">List of Sharks</button>
-            <button onclick="location.href='https://discord.gg/CGUbaUS5'" style="display: flex; align-items: center; justify-content: center;">
-                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/discord.svg" alt="Discord" style="width: 20px; height: 20px; margin-right: 10px;">
-                Join our Discord
+            <button class="menu-btn" onclick="navigateTo('daily.html')">
+                <i class="fas fa-calendar-day"></i> Daily Challenge
+            </button>
+            <button class="menu-btn" onclick="navigateTo('infinite.html')">
+                <i class="fas fa-infinity"></i> Infinite Mode
+            </button>
+            <button class="menu-btn" onclick="navigateTo('how-to-play.html')">
+                <i class="fas fa-question-circle"></i> How to Play
+            </button>
+            <button class="menu-btn" onclick="navigateTo('helper.html')">
+                <i class="fas fa-fish"></i> List of Sharks
+                <button class="menu-btn" onclick="navigateTo('leader.html')">
+                    <i class="fas fa-trophy"></i> Leaderboards
+            </button>
+            <button class="menu-btn" onclick="openOptionsMenu()">
+                <i class="fas fa-cog"></i> Options
             </button>
         </div>
+        <div class="footer">
+            <p>Made with <i class="fas fa-heart" style="color: var(--danger);"></i> by the Sharkdle Team</p>
+            <p>
+                <a href="" target="_blank">Placeholder</a> |
+                <a href="https://github.com/Noobler28/sharkdle" target="_blank">GitHub</a> |
+                <a href="https://discord.gg/CGUbaUS5" target="_blank">Discord</a>
+            </p>
+        </div>
+    </div>
+    <div class="main-content">
         <div class="stats">
             <h2>Your Stats</h2>
-            <p>Games Played: <span id="games-played">0</span></p>
-            <p>Wins: <span id="wins">0</span></p>
-            <p>Losses: <span id="losses">0</span></p>
-            <p>Average Guesses: <span id="average-guesses">0</span></p>
-            <p>Current Streak: <span id="current-streak">0</span></p>
-            <p>Highest Streak: <span id="highest-streak">0</span></p>
+            <div class="stat-item">
+                <span class="stat-label">Games Played:</span>
+                <span class="stat-value" id="games-played">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Wins:</span>
+                <span class="stat-value" id="wins">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Losses:</span>
+                <span class="stat-value" id="losses">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Average Guesses:</span>
+                <span class="stat-value" id="average-guesses">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Current Streak:</span>
+                <span class="stat-value" id="current-streak">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Highest Streak:</span>
+                <span class="stat-value" id="highest-streak">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Best Game (Fewest Guesses):</span>
+                <span class="stat-value" id="best-game">N/A</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Win/Loss Ratio:</span>
+                <div class="stat-bar-container">
+                    <div class="stat-bar" id="win-loss-bar"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <button class="menu-btn" onclick="resetStats()">Reset Stats</button>
+            </div>
+        </div>
+        <div class="recent-games">
+            <h2>Recent Games</h2>
+            <div id="recent-games-list">
+                <!-- Games will be dynamically added here -->
+                <p class="no-games">No games played yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Updated Options Modal -->
+    <div id="options-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Options</h2>
+            <div class="options-container">
+                <!-- Theme Settings -->
+                <div class="options-section">
+                    <h3>Theme Settings</h3>
+                    <button class="option-btn" onclick="toggleTheme()">
+                        <i class="fas fa-adjust"></i> Toggle Theme
+                    </button>
+                </div>
+
+                <!-- Audio Settings -->
+                <div class="options-section">
+                    <h3>Audio Settings</h3>
+                    <div class="slider-container">
+                        <label for="music-slider">Music Volume</label>
+                        <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
+                    </div>
+                    <div class="slider-container">
+                        <label for="sound-slider">Sound Effects Volume</label>
+                        <input type="range" id="sound-slider" min="0" max="100" value="50" oninput="updateSoundVolume(this.value)">
+                    </div>
+                </div>
+
+                <!-- Gameplay Settings -->
+                <div class="options-section">
+                    <h3>Gameplay Settings</h3>
+                    <button class="option-btn" onclick="resetStats()">
+                        <i class="fas fa-redo"></i> Reset Stats
+                    </button>
+                </div>
+
+                <!-- Daily Challenge Countdown -->
+                <div class="options-section">
+                    <h3>Next Daily Challenge</h3>
+                    <p id="daily-countdown">Loading...</p>
+                </div>
+
+                <!-- Close Button -->
+                <button class="option-btn close-btn" onclick="closeOptionsMenu()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Create and animate bubbles
-        function createBubbles() {
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        function toggleTheme() {
             const body = document.body;
-            for (let i = 0; i < 20; i++) {
-                const bubble = document.createElement("div");
-                bubble.className = "bubble";
-                bubble.style.width = `${Math.random() * 40 + 20}px`;
-                bubble.style.height = bubble.style.width;
-                bubble.style.left = `${Math.random() * 100}%`;
-                bubble.style.animationDelay = `${Math.random() * 5}s`;
-                body.appendChild(bubble);
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        // Open the Options menu
+        function openOptionsMenu() {
+            document.getElementById('options-modal').classList.remove('hidden');
+        }
+
+        // Close the Options menu
+        function closeOptionsMenu() {
+            document.getElementById('options-modal').classList.add('hidden');
+        }
+
+        // JavaScript to dynamically update the Recent Games section
+        const recentGamesList = document.getElementById('recent-games-list');
+
+        function addRecentGame(date, result, guesses) {
+            // Remove "No games played yet" message if it exists
+            const noGamesMessage = document.querySelector('.no-games');
+            if (noGamesMessage) {
+                noGamesMessage.remove();
+            }
+
+            // Create a new game item
+            const gameItem = document.createElement('div');
+            gameItem.classList.add('game-item');
+
+            // Add game details
+            gameItem.innerHTML = `
+                <span class="game-date">${date}</span>
+                <span class="game-result ${result.toLowerCase()}">${result}</span>
+                <span class="game-guesses">${guesses} Guesses</span>
+            `;
+
+            // Append the new game item to the list
+            recentGamesList.appendChild(gameItem);
+        }
+
+        function loadRecentGames() {
+            let recentGames;
+            try {
+                recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+            } catch (error) {
+                console.error('Error parsing recent games from localStorage:', error);
+                recentGames = []; // Reset to an empty array if parsing fails
+                localStorage.setItem('recentGames', JSON.stringify(recentGames));
+            }
+
+            const recentGamesList = document.getElementById('recent-games-list');
+
+            if (recentGames.length === 0) {
+                recentGamesList.innerHTML = '<p class="no-games">No games played yet.</p>';
+                return;
+            }
+
+            recentGamesList.innerHTML = ''; // Clear existing content
+
+            // Only display the 5 most recent games
+            recentGames.slice(0, 5).forEach(game => {
+                const gameItem = document.createElement('div');
+                gameItem.classList.add('game-item');
+                gameItem.innerHTML = `
+                    <span class="game-date">${game.date} at ${game.time}</span>
+                    <span class="game-result ${game.result.toLowerCase()}">${game.result}</span>
+                    <span class="game-guesses">${game.guesses} Guesses</span>
+                    <span class="game-shark">Shark: ${game.sharkName}</span>
+                `;
+                recentGamesList.appendChild(gameItem);
+            });
+        }
+
+        function loadStats() {
+            const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed') || 0);
+            const wins = parseInt(localStorage.getItem('wins') || 0);
+            const losses = parseInt(localStorage.getItem('losses') || 0);
+            const currentStreak = parseInt(localStorage.getItem('currentStreak') || 0);
+            const highestStreak = parseInt(localStorage.getItem('highestStreak') || 0);
+            const averageGuesses = parseFloat(localStorage.getItem('averageGuesses') || 0).toFixed(2);
+            const bestGame = localStorage.getItem('bestGame') || 'N/A';
+
+            const winPercentage = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(2) : 0;
+            const lossPercentage = gamesPlayed > 0 ? ((losses / gamesPlayed) * 100).toFixed(2) : 0;
+
+            // Safely update DOM elements if they exist
+            const gamesPlayedElement = document.getElementById('games-played');
+            if (gamesPlayedElement) gamesPlayedElement.textContent = gamesPlayed;
+
+            const winsElement = document.getElementById('wins');
+            if (winsElement) winsElement.textContent = wins;
+
+            const lossesElement = document.getElementById('losses');
+            if (lossesElement) lossesElement.textContent = losses;
+
+            const currentStreakElement = document.getElementById('current-streak');
+            if (currentStreakElement) currentStreakElement.textContent = currentStreak;
+
+            const highestStreakElement = document.getElementById('highest-streak');
+            if (highestStreakElement) highestStreakElement.textContent = highestStreak;
+
+            const averageGuessesElement = document.getElementById('average-guesses');
+            if (averageGuessesElement) averageGuessesElement.textContent = averageGuesses;
+
+            const bestGameElement = document.getElementById('best-game');
+            if (bestGameElement) bestGameElement.textContent = bestGame;
+
+            // Update win/loss bar if it exists
+            const winLossBar = document.getElementById('win-loss-bar');
+            if (winLossBar) {
+                winLossBar.innerHTML = `
+                    <div class="win" style="width: ${winPercentage}%; ${winPercentage > 10 ? '' : 'text-indent: -9999px;'}">
+                        ${winPercentage > 10 ? `${winPercentage}%` : ''}
+                    </div>
+                    <div class="loss" style="width: ${lossPercentage}%; ${lossPercentage > 10 ? '' : 'text-indent: -9999px;'}">
+                        ${lossPercentage > 10 ? `${lossPercentage}%` : ''}
+                    </div>
+                `;
             }
         }
-        createBubbles();
 
-        // Initialize stats
-        const stats = {
-            gamesPlayed: localStorage.getItem('gamesPlayed') || 0,
-            wins: localStorage.getItem('wins') || 0,
-            losses: localStorage.getItem('losses') || 0,
-            averageGuesses: localStorage.getItem('averageGuesses') || 0,
-            currentStreak: localStorage.getItem('currentStreak') || 0,
-            highestStreak: localStorage.getItem('highestStreak') || 0
-        };
+        function updateStats(result, guesses) {
+            const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed') || 0) + 1;
+            const wins = parseInt(localStorage.getItem('wins') || 0) + (result === 'win' ? 1 : 0);
+            const losses = parseInt(localStorage.getItem('losses') || 0) + (result === 'loss' ? 1 : 0);
+            const currentStreak = result === 'win' ? (parseInt(localStorage.getItem('currentStreak') || 0) + 1) : 0;
+            const highestStreak = Math.max(currentStreak, parseInt(localStorage.getItem('highestStreak') || 0));
+            const totalGuesses = parseInt(localStorage.getItem('totalGuesses') || 0) + guesses;
+            const averageGuesses = totalGuesses / gamesPlayed;
 
-        // Display stats
-        document.getElementById('games-played').textContent = stats.gamesPlayed;
-        document.getElementById('wins').textContent = stats.wins;
-        document.getElementById('losses').textContent = stats.losses;
-        document.getElementById('average-guesses').textContent = stats.averageGuesses;
-        document.getElementById('current-streak').textContent = stats.currentStreak;
-        document.getElementById('highest-streak').textContent = stats.highestStreak;
+            // Update the best game (fewest guesses)
+            const previousBestGame = parseInt(localStorage.getItem('bestGame') || Infinity);
+            const bestGame = result === 'win' ? Math.min(previousBestGame, guesses) : previousBestGame;
 
-        // Example: Update stats (call this function when a game ends)
-        function updateStats(isWin) {
-            stats.gamesPlayed++;
-            if (isWin) {
-                stats.wins++;
-                stats.currentStreak++;
-            } else {
-                stats.currentStreak = 0;
+            // Save updated stats to localStorage
+            localStorage.setItem('gamesPlayed', gamesPlayed);
+            localStorage.setItem('wins', wins);
+            localStorage.setItem('losses', losses);
+            localStorage.setItem('currentStreak', currentStreak);
+            localStorage.setItem('highestStreak', highestStreak);
+            localStorage.setItem('totalGuesses', totalGuesses);
+            localStorage.setItem('averageGuesses', averageGuesses);
+            localStorage.setItem('bestGame', bestGame === Infinity ? 'N/A' : bestGame);
+
+            // Reload stats on the page
+            loadStats();
+        }
+
+        function endGame(result, guesses) {
+            // Example: result = 'win' or 'loss', guesses = number of guesses
+            updateStats(result, guesses);
+
+            // Add the game to recent games
+            const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+            const now = new Date();
+            recentGames.unshift({
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString(),
+                result: result,
+                guesses: guesses,
+                sharkName: 'Great White' // Example shark name
+            });
+            localStorage.setItem('recentGames', JSON.stringify(recentGames));
+
+            // Reload recent games
+            loadRecentGames();
+        }
+
+        function updateMusicVolume(value) {
+            console.log(`Music Volume: ${value}`);
+            localStorage.setItem('musicVolume', value);
+            // Add logic to adjust music volume in your game
+        }
+
+        function updateSoundVolume(value) {
+            console.log(`Sound Effects Volume: ${value}`);
+            localStorage.setItem('soundVolume', value);
+            // Add logic to adjust sound effects volume in your game
+        }
+
+        function toggleHints() {
+            const hintsEnabled = localStorage.getItem('hintsEnabled') === 'true';
+            localStorage.setItem('hintsEnabled', !hintsEnabled);
+            alert(`Hints have been ${!hintsEnabled ? 'enabled' : 'disabled'}.`);
+        }
+
+        function updateDailyCountdown() {
+            const now = new Date();
+            const nextChallenge = new Date();
+            nextChallenge.setHours(24, 0, 0, 0); // Midnight
+
+            const timeLeft = nextChallenge - now;
+            const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+            const seconds = Math.floor((timeLeft / 1000) % 60);
+
+            document.getElementById('daily-countdown').textContent = 
+                `${hours}h ${minutes}m ${seconds}s`;
+
+            setTimeout(updateDailyCountdown, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
             }
+            loadStats();
+            loadRecentGames();
 
-            // Save to localStorage
-            localStorage.setItem('gamesPlayed', stats.gamesPlayed);
-            localStorage.setItem('wins', stats.wins);
-            localStorage.setItem('currentStreak', stats.currentStreak);
+            // Load saved slider values
+            const savedMusicVolume = localStorage.getItem('musicVolume') || 50;
+            const savedSoundVolume = localStorage.getItem('soundVolume') || 50;
 
-            // Update the UI
-            document.getElementById('games-played').textContent = stats.gamesPlayed;
-            document.getElementById('wins').textContent = stats.wins;
-            document.getElementById('current-streak').textContent = stats.currentStreak;
+            document.getElementById('music-slider').value = savedMusicVolume;
+            document.getElementById('sound-slider').value = savedSoundVolume;
+
+            updateDailyCountdown();
+        });
+
+        document.addEventListener('DOMContentLoaded', updateDailyCountdown);
+
+        function resetStats() {
+            if (confirm("Are you sure you want to reset your stats? This action cannot be undone.")) {
+                localStorage.clear();
+                loadStats();
+                loadRecentGames();
+                alert("Stats have been reset!");
+            }
         }
     </script>
 </body>

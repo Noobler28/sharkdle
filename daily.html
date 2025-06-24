@@ -8,8 +8,8 @@
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
-            background: linear-gradient(to right, #f0f8ff, #f0ffff, #fffafa);
-            color: black;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
             padding: 20px;
         }
         h1 {
@@ -27,7 +27,6 @@
         input {
             display: block;
             margin: 0 auto 10px auto;
-            border: 2px black;
         }
         button {
             background: #1e3a46;
@@ -689,11 +688,15 @@
             if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
                 const result = `win|${targetShark.name}|${12 - attempts}`;
                 localStorage.setItem(`sharkdle-daily-${today}`, result);
+                updateStats(true, 12 - attempts);
                 displayResult(result);
+                return;
             } else if (attempts === 0) {
                 const result = `lose|${targetShark.name}`;
                 localStorage.setItem(`sharkdle-daily-${today}`, result);
+                updateStats(false);
                 displayResult(result);
+                return;
             } else {
                 messageDiv.textContent = "";
             }
@@ -768,7 +771,7 @@
             infiniteButton.style.transition = "0.3s";
             infiniteButton.addEventListener("mouseover", () => {
                 infiniteButton.style.backgroundColor = "#2f5b6e";
-            });
+            }); 
             infiniteButton.addEventListener("mouseout", () => {
                 infiniteButton.style.backgroundColor = "#1e3a46";
             });
@@ -878,6 +881,7 @@
                 stats.currentStreak = 0;
             }
 
+            // Save updated stats to localStorage
             localStorage.setItem('gamesPlayed', stats.gamesPlayed);
             localStorage.setItem('wins', stats.wins);
             localStorage.setItem('losses', stats.losses);

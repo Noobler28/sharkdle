@@ -599,6 +599,19 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding-bottom: 5px;
         }
+
+        .event-banner {
+            background: linear-gradient(90deg, var(--ocean-blue), var(--wave-teal));
+            color: white;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(30,41,59,0.15);
+        }
     </style>
 </head>
 <body>
@@ -617,7 +630,7 @@
             <button class="menu-btn" onclick="navigateTo('how-to-play.html')">
                 <i class="fas fa-question-circle"></i> How to Play
             </button>
-            <button class="menu-btn" onclick="navigateTo('helper.html')">
+            <button class="menu-btn" onclick="navigateTo('library.html')">
                 <i class="fas fa-fish"></i> List of Sharks
                 <button class="menu-btn" onclick="navigateTo('leader.html')">
                     <i class="fas fa-trophy"></i> Leaderboards
@@ -636,6 +649,10 @@
         </div>
     </div>
     <div class="main-content">
+        <div class="event-banner" style="background: linear-gradient(90deg, var(--ocean-blue), var(--wave-teal)); color: white; text-align: center; padding: 18px 0; font-size: 1.25rem; font-weight: 600; letter-spacing: 1px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(30,41,59,0.15);">
+            <span style="margin-right: 10px;">UPDATE COUNTDOWN (July 20, 13:00 UTC):</span>
+            <span id="event-countdown-main">Loading...</span>
+        </div>
         <div class="stats">
             <h2>Your Stats</h2>
             <div class="stat-item">
@@ -723,6 +740,12 @@
                 <div class="options-section">
                     <h3>Next Daily Challenge</h3>
                     <p id="daily-countdown">Loading...</p>
+                </div>
+
+                <!-- Countdown for July 20th, 13:00 UTC -->
+                <div class="options-section">
+                    <h3>Shark Week Update Countdown: (July 20, 13:00 UTC)</h3>
+                    <p id="event-countdown">Loading...</p>
                 </div>
 
                 <!-- Close Button -->
@@ -941,6 +964,34 @@
             setTimeout(updateDailyCountdown, 1000);
         }
 
+        // Countdown for July 20th, 13:00 UTC (works for all time zones)
+        function updateEventCountdown() {
+            // Set the target date/time in UTC (2025-07-20 13:00:00 UTC)
+            const targetUTC = Date.UTC(2025, 6, 20, 13, 0, 0); // Month is 0-indexed
+            const now = new Date();
+            const nowUTC = now.getTime();
+            const timeLeft = targetUTC - nowUTC;
+
+            let countdownText;
+            if (timeLeft <= 0) {
+                countdownText = 'Event has started!';
+            } else {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+                countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            // Update both the main banner and the options modal if present
+            const mainBanner = document.getElementById('event-countdown-main');
+            if (mainBanner) mainBanner.textContent = countdownText;
+            const modalBanner = document.getElementById('event-countdown');
+            if (modalBanner) modalBanner.textContent = countdownText;
+
+            if (timeLeft > 0) setTimeout(updateEventCountdown, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -957,6 +1008,7 @@
             document.getElementById('sound-slider').value = savedSoundVolume;
 
             updateDailyCountdown();
+            updateEventCountdown();
         });
 
         document.addEventListener('DOMContentLoaded', updateDailyCountdown);

@@ -392,9 +392,8 @@
     <div id="attempts-left">Attempts left: 12</div>
     <div id="guesses"></div>
     <div id="message"></div>
-    <div id="win-lose-screen">
-        <div id="bubble-container"></div>
-    </div>
+    <div id="win-lose-screen" style="display:none;"></div>
+    <div id="bubble-container" style="display:none;"></div>
     <div id="previous-guesses"></div>
 
     <script>
@@ -726,14 +725,10 @@
             if (status === "win") {
                 resultMessage.textContent = `🎉 YOU WON! 🎉`;
                 messageContainer.style.backgroundColor = "green";
-
-                // Create bubbles for the win screen
                 createBubbles();
             } else {
                 resultMessage.textContent = `😢 YOU LOST! 😢`;
                 messageContainer.style.backgroundColor = "red";
-
-                // Create bubbles for the lose screen
                 createBubbles();
             }
             messageContainer.appendChild(resultMessage);
@@ -889,55 +884,6 @@
             localStorage.setItem('currentStreak', stats.currentStreak);
             localStorage.setItem('highestStreak', stats.highestStreak);
         }
-    </script>
-    <script>
-        // Example: Update stats (call this function when a game ends)
-        function updateStats(isWin, guessesTaken = 0) {
-            stats.gamesPlayed++;
-            if (isWin) {
-                stats.wins++;
-                stats.totalGuesses = parseInt(localStorage.getItem('totalGuesses') || 0) + guessesTaken;
-                stats.averageGuesses = (stats.totalGuesses / stats.gamesPlayed).toFixed(1); // Calculate average guesses
-                stats.currentStreak++;
-            } else {
-                stats.losses++;
-                stats.currentStreak = 0;
-            }
-
-            // Save to localStorage
-            localStorage.setItem('gamesPlayed', stats.gamesPlayed);
-            localStorage.setItem('wins', stats.wins);
-            localStorage.setItem('losses', stats.losses);
-            localStorage.setItem('totalGuesses', stats.totalGuesses);
-            localStorage.setItem('averageGuesses', stats.averageGuesses);
-            localStorage.setItem('currentStreak', stats.currentStreak);
-
-            // Update the UI
-            document.getElementById('games-played').textContent = stats.gamesPlayed;
-            document.getElementById('wins').textContent = stats.wins;
-            document.getElementById('losses').textContent = stats.losses;
-            document.getElementById('average-guesses').textContent = stats.averageGuesses;
-            document.getElementById('current-streak').textContent = stats.currentStreak;
-        }
-    </script>
-    <script>
-        const stats = {
-            gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
-            wins: parseInt(localStorage.getItem('wins') || 0),
-            losses: parseInt(localStorage.getItem('losses') || 0),
-            totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0),
-            averageGuesses: parseFloat(localStorage.getItem('averageGuesses') || 0).toFixed(1),
-            currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
-            highestStreak: parseInt(localStorage.getItem('highestStreak') || 0)
-        };
-
-        // Display stats
-        document.getElementById('games-played').textContent = stats.gamesPlayed;
-        document.getElementById('wins').textContent = stats.wins;
-        document.getElementById('losses').textContent = stats.losses;
-        document.getElementById('average-guesses').textContent = stats.averageGuesses;
-        document.getElementById('current-streak').textContent = stats.currentStreak;
-        document.getElementById('highest-streak').textContent = stats.highestStreak;
     </script>
 </body>
 </html>

@@ -650,7 +650,7 @@
     </div>
     <div class="main-content">
         <div class="event-banner" style="background: linear-gradient(90deg, var(--ocean-blue), var(--wave-teal)); color: white; text-align: center; padding: 18px 0; font-size: 1.25rem; font-weight: 600; letter-spacing: 1px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(30,41,59,0.15);">
-            <span style="margin-right: 10px;">UPDATE COUNTDOWN (July 20, 13:00 UTC):</span>
+            <span id="event-banner-label" style="margin-right: 10px;"></span>
             <span id="event-countdown-main">Loading...</span>
         </div>
         <div class="stats">
@@ -688,9 +688,6 @@
                 <div class="stat-bar-container">
                     <div class="stat-bar" id="win-loss-bar"></div>
                 </div>
-            </div>
-            <div class="stat-item">
-                <button class="menu-btn" onclick="resetStats()">Reset Stats</button>
             </div>
         </div>
         <div class="recent-games">
@@ -958,13 +955,13 @@
             setTimeout(updateDailyCountdown, 1000);
         }
 
-        // Countdown for July 20th, 13:00 UTC (works for all time zones)
+        // Countdown for July 20th, 13:00 British time (Europe/London), but show local time for all users
         function updateEventCountdown() {
-            // Set the target date/time in UTC (2025-07-20 13:00:00 UTC)
-            const targetUTC = Date.UTC(2025, 6, 20, 13, 0, 0); // Month is 0-indexed
+            // Target: 2025-07-20 13:00 in Europe/London (BST)
+            // Calculate the UTC time for 13:00 BST (UTC+1) on July 20, 2025
+            const eventDateLondon = new Date(Date.UTC(2025, 6, 20, 12, 0, 0)); // 13:00 BST = 12:00 UTC
             const now = new Date();
-            const nowUTC = now.getTime();
-            const timeLeft = targetUTC - nowUTC;
+            const timeLeft = eventDateLondon.getTime() - now.getTime();
 
             let countdownText;
             if (timeLeft <= 0) {
@@ -1000,6 +997,13 @@
 
             document.getElementById('music-slider').value = savedMusicVolume;
             document.getElementById('sound-slider').value = savedSoundVolume;
+
+            // Set the event banner label to show the event's local time for the user
+            const eventDateLondon = new Date(Date.UTC(2025, 6, 20, 12, 0, 0)); // 13:00 BST = 12:00 UTC
+            const eventBannerLabel = document.getElementById('event-banner-label');
+            if (eventBannerLabel) {
+                eventBannerLabel.textContent = `UPDATE COUNTDOWN (${eventDateLondon.toLocaleString()}):`;
+            }
 
             updateDailyCountdown();
             updateEventCountdown();

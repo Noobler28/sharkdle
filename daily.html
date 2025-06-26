@@ -726,10 +726,12 @@
                 resultMessage.textContent = `🎉 YOU WON! 🎉`;
                 messageContainer.style.backgroundColor = "green";
                 createBubbles();
+                bubbleContainer.style.display = "block";
             } else {
                 resultMessage.textContent = `😢 YOU LOST! 😢`;
                 messageContainer.style.backgroundColor = "red";
-                createBubbles();
+                // Hide bubbles on loss
+                bubbleContainer.style.display = "none";
             }
             messageContainer.appendChild(resultMessage);
 
@@ -842,17 +844,6 @@
         window.addEventListener("load", () => {
             const bubbleContainer = document.getElementById("bubble-container");
             bubbleContainer.style.display = "none";
-        });
-
-        // Call the function on page load
-        window.addEventListener("load", () => {
-            createBubbles();
-
-            // Check if the user has already played today's shark
-            const dailyResult = localStorage.getItem(`sharkdle-daily-${today}`);
-            if (dailyResult) {
-                displayResult(dailyResult);
-            }
         });
 
         function updateStats(isWin, guessesTaken = 0) {

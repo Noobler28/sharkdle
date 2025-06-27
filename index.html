@@ -445,7 +445,9 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(6px) brightness(0.8);
+            backdrop-filter: blur(10px) brightness(0.85) saturate(1.1);
+            /* Add a soft vignette */
+            box-shadow: 0 0 0 100vw rgba(10,20,40,0.18) inset;
         }
 
         .modal.hidden {
@@ -453,83 +455,133 @@
         }
 
         .modal-content {
-        background: linear-gradient(135deg, rgba(30,41,59,0.98) 80%, rgba(62,146,204,0.12) 100%);
-        padding: 38px 28px 28px 28px;
-        border-radius: 18px;
-        text-align: center;
-        box-shadow: 0 12px 40px 0 rgba(30,41,59,0.45), 0 1.5px 8px 0 rgba(42,157,143,0.08);
-        width: 99%;
-        max-width: 650px;
-        animation: fadeIn 0.3s ease-out;
-        position: relative;
-    }
+            background: linear-gradient(135deg, #1b2a49 70%, #3e92cc44 100%);
+            box-shadow: 0 32px 80px 0 rgba(30,41,59,0.90), 0 4px 24px 0 rgba(42,157,143,0.22);
+            border-radius: 36px;
+            border: 3px solid #3e92cc55;
+            padding: 56px 64px 48px 64px;
+            min-width: 540px;
+            max-width: 720px;
+            width: 90vw;
+            margin: 0 16px;
+            position: relative;
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: box-shadow 0.25s, border 0.22s;
+        }
 
-        .modal-content h2 {
-            margin-bottom: 28px;
-            color: var(--sea-green);
-            font-size: 2.1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            background: linear-gradient(90deg, var(--ocean-blue), var(--sea-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        @media (max-width: 900px) {
+            .modal-content {
+                min-width: 0;
+                max-width: 99vw;
+                width: 99vw;
+                padding: 18px 2vw 18px 2vw;
+            }
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 26px;
+            gap: 36px;
+            padding: 0 2px 0 2px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 8px;
+            width: 100%;
+        }
+
+        .options-tabs {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 36px;
+            width: 100%;
+            justify-content: cent\er;
+            background: linear-gradient(90deg, #18304a 60%, #1b9aaa22 100%);
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 4px 18px rgba(30,41,59,0.15);
+            border-bottom: 2.5px solid #3e92cc44;
+            padding: 6px 0 0 0;
+            margin-bottom: 32px;
+        }
+
+        .options-tab-btn {
+            padding: 16px 48px;
+            font-size: 1.22rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 20px 20px 0 0;
+            background: rgba(51,65,85,0.88);
+            color: #b3e5fc;
+            border: none;
+            margin-bottom: -2px;
+            box-shadow: 0 2px 8px rgba(30,41,59,0.10);
+            transition: background 0.22s, color 0.22s, box-shadow 0.18s, transform 0.18s;
+        }
+
+        .options-tab-btn.active {
+            background: linear-gradient(135deg,#3e92cc 70%,#1b9aaa 100%);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(62,146,204,0.25);
+            z-index: 2;
+            transform: scale(1.08);
+        }
+
+        .options-tab-btn:hover {
+            background: linear-gradient(135deg,#1b9aaa,#3e92cc 80%);
+            color: #fff;
+            transform: scale(1.06);
         }
 
         .options-section {
             margin-bottom: 0;
-            padding: 22px 18px 18px 18px;
-            border: none;
-            border-radius: 14px;
-            background: linear-gradient(120deg, rgba(51,65,85,0.93) 80%, rgba(42,157,143,0.08) 100%);
-            box-shadow: 0 2px 10px rgba(62,146,204,0.10);
-            position: relative;
-            transition: box-shadow 0.2s;
+            padding: 38px 36px 28px 36px;
+            border: 2px solid #3e92cc33;
+            background: linear-gradient(120deg, rgba(51,65,85,0.99) 70%, rgba(42,157,143,0.18) 100%);
+            box-shadow: 0 8px 28px rgba(62,146,204,0.18);
+            border-radius: 22px;
+            transition: box-shadow 0.22s, background 0.22s, border 0.18s;
         }
 
         .options-section:not(:last-child) {
-            box-shadow: 0 2px 10px rgba(62,146,204,0.10), 0 1px 0 0 rgba(42,157,143,0.10);
+            box-shadow: 0 6px 22px rgba(62,146,204,0.15), 0 1.5px 0 0 rgba(42,157,143,0.13);
+            margin-bottom: 24px;
         }
 
         .options-section h3 {
-            font-size: 1.18rem;
+            font-size: 1.35rem;
             color: var(--sea-green);
-            margin-bottom: 14px;
+            margin-bottom: 18px;
             text-align: left;
-            border-bottom: 1.5px solid rgba(42,157,143,0.18);
-            padding-bottom: 6px;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+            border-bottom: 2px solid rgba(42,157,143,0.22);
+            padding-bottom: 10px;
+            letter-spacing: 0.7px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(30,41,59,0.10);
         }
 
         .option-btn {
             background: linear-gradient(135deg, var(--ocean-blue), var(--wave-teal));
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 12px 22px;
-            font-size: 1.08rem;
-            font-weight: 600;
+            border-radius: 14px;
+            padding: 16px 32px;
+            font-size: 1.18rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.25s, transform 0.18s, box-shadow 0.18s;
+            transition: background 0.22s, transform 0.18s, box-shadow 0.18s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 2px 8px rgba(62,146,204,0.10);
+            gap: 12px;
+            box-shadow: 0 6px 24px rgba(62,146,204,0.16);
         }
 
         .option-btn:hover {
             background: linear-gradient(135deg, var(--wave-teal), var(--sea-green));
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 4px 16px rgba(42,157,143,0.18);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(42,157,143,0.28);
         }
 
         .option-btn:active {
@@ -540,107 +592,84 @@
         .close-btn {
             background: linear-gradient(90deg, #e76f51, #f4a261);
             color: #fff;
-            font-weight: 700;
+            font-weight: 800;
             margin-top: 18px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(231,111,81,0.10);
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(231,111,81,0.18);
             position: absolute;
-            right: 18px;
-            top: 18px;
-            padding: 8px 18px;
+            right: 40px;
+            top: 40px;
+            padding: 14px 32px;
             min-width: 0;
+            font-size: 1.18rem;
+            border: none;
+            z-index: 10;
+            transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
         }
 
         .close-btn i {
-            margin-right: 6px;
+            margin-right: 8px;
         }
 
         .close-btn:hover {
             background: linear-gradient(90deg, #d9534f, #f4a261);
+            box-shadow: 0 10px 32px rgba(231,111,81,0.28);
+            transform: scale(1.06);
         }
 
-        .slider-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 7px;
-            margin-bottom: 10px;
+        .close-btn:active {
+            transform: scale(0.98);
+            box-shadow: none;
         }
 
-        .slider-container label {
-            font-size: 1.01rem;
-            color: var(--sea-green);
-            font-weight: 500;
+        /* Profile picture options */
+        .profile-pic-option {
+            box-shadow: 0 2px 8px rgba(30,41,59,0.10);
+            border: 3px solid #3e92cc;
+            transition: border 0.18s, box-shadow 0.18s, transform 0.18s;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
         }
 
-        .slider-container input[type="range"] {
+        .profile-pic-option.selected {
+            border: 4px solid #f4a261 !important;
+            box-shadow: 0 10px 32px rgba(244,162,97,0.28);
+            transform: scale(1.12);
+        }
+
+        .profile-pic-option:hover {
+            border: 4px solid #f4a261 !important;
+            box-shadow: 0 8px 28px rgba(244,162,97,0.22);
+            transform: scale(1.09);
+        }
+
+        #profile-pic-preview {
+            box-shadow: 0 4px 16px rgba(62,146,204,0.18);
+            border: 4px solid #2a9d8f;
+            width: 90px !important;
+            height: 90px !important;
+            border-radius: 50%;
+        }
+
+        /* Divider between tabs */
+        .options-tabs::after {
+            content: "";
+            display: block;
             width: 100%;
-            appearance: none;
-            height: 10px;
-            background: linear-gradient(90deg, var(--wave-teal), var(--ocean-blue));
-            border-radius: 6px;
-            outline: none;
-            transition: background 0.3s;
+            height: 2px;
+            background: linear-gradient(90deg, #3e92cc33, transparent);
             margin-top: 2px;
         }
 
-        .slider-container input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            background: var(--sea-green);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(30,41,59,0.18);
-            border: 2px solid #fff;
-        }
-
-        .slider-container input[type="range"]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
-            background: var(--sea-green);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(30,41,59,0.18);
-            border: 2px solid #fff;
-        }
-
-        .slider-container input[type="range"]:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--sea-green);
-        }
-
-        #leaderboard-name-input {
-            padding: 10px 12px;
-            border-radius: 7px;
-            border: 1.5px solid var(--ocean-blue);
-            width: 100%;
-            margin-bottom: 8px;
-            font-size: 1.05rem;
-            background: rgba(255,255,255,0.08);
-            color: var(--text-light);
-            transition: border 0.2s, box-shadow 0.2s;
-        }
-
-        #leaderboard-name-input:focus {
-            border: 1.5px solid var(--sea-green);
-            box-shadow: 0 2px 8px rgba(42,157,143,0.10);
-            outline: none;
-        }
-
-        #leaderboard-name-msg {
-            margin-top: 8px;
-            font-size: 0.97em;
-            min-height: 1.2em;
-        }
-        /* Responsive for modal */
-        @media (max-width: 600px) {
+        /* Responsive tweaks */
+        @media (max-width: 900px) {
             .modal-content {
-                padding: 16px 2vw 16px 2vw;
+                min-width: 0;
                 max-width: 99vw;
-            }
-            .options-section {
-                padding: 12px 6px 10px 6px;
+                width: 99vw;
+                padding: 18px 2vw 18px 2vw;
             }
         }
     </style>
@@ -734,58 +763,101 @@
     <div id="options-modal" class="modal hidden">
         <div class="modal-content">
             <h2>Options</h2>
+            <div class="options-tabs" style="display:flex;gap:18px;margin-bottom:36px;width:100%;justify-content:center;">
+                <button class="options-tab-btn active" id="tab-btn-account" onclick="showOptionsTab('account')" style="padding:12px 36px;font-size:1.18rem;font-weight:700;border:none;border-radius:20px 20px 0 0;background:linear-gradient(135deg,#3e92cc 70%,#1b9aaa 100%);color:white;cursor:pointer;transition:background 0.2s;">Account</button>
+                <button class="options-tab-btn" id="tab-btn-settings" onclick="showOptionsTab('settings')" style="padding:12px 36px;font-size:1.18rem;font-weight:700;border:none;border-radius:20px 20px 0 0;background:rgba(51,65,85,0.88);color:#b3e5fc;cursor:pointer;transition:background 0.2s;">Settings</button>
+            </div>
             <div class="options-container">
-                <!-- Theme Settings -->
-                <div class="options-section">
-                    <h3>Theme Settings</h3>
-                    <button class="option-btn" onclick="toggleTheme()">
-                        <i class="fas fa-adjust"></i> Toggle Theme
-                    </button>
-                </div>
-
-                <!-- Audio Settings -->
-                <div class="options-section">
-                    <h3>Audio Settings</h3>
-                    <div class="slider-container">
-                        <label for="music-slider">Music Volume</label>
-                        <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
-                    </div>
-                    <div class="slider-container">
-                        <label for="sound-slider">Sound Effects Volume</label>
-                        <input type="range" id="sound-slider" min="0" max="100" value="50" oninput="updateSoundVolume(this.value)">
-                    </div>
-                </div>
-
-                <!-- Gameplay Settings -->
-                <div class="options-section">
-                    <h3>Gameplay Settings</h3>
-                    <button class="option-btn" onclick="resetStats()">
-                        <i class="fas fa-redo"></i> Reset Stats
-                    </button>
-                </div>
-
-                <!-- Leaderboard Name Settings -->
-                <div class="options-section">
-                    <h3>Leaderboard Display Name</h3>
-                    <div style="margin-bottom:10px;">
-                        <span style="color:#b3e5fc;">Current: </span>
-                        <span id="current-leaderboard-name" style="font-weight:bold;"></span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:10px;width:100%;margin-bottom:8px;">
-                        <button class="option-btn" style="padding:10px 16px;min-width:0;" onclick="updateLeaderboardName()">
-                            <i class="fas fa-user-edit"></i>
+                <!-- Account Tab Content -->
+                <div class="options-tab-content" id="tab-content-account" style="display:block;">
+                    <div class="options-section">
+                        <h3 style="display:flex;align-items:center;gap:8px;">Account
+                        <button id="user-agreement-info-btn" type="button" title="View User Agreement" style="background:none;border:none;cursor:pointer;padding:0;margin-left:4px;color:#b3e5fc;font-size:1.15em;vertical-align:middle;">
+                            <i class="fas fa-info-circle"></i>
                         </button>
-                        <input type="text" id="leaderboard-name-input" maxlength="16" placeholder="Enter new display name" style="padding:10px 12px;border-radius:7px;border:1.5px solid #3e92cc;width:100%;font-size:1.05rem;background:rgba(255,255,255,0.08);color:var(--text-light);transition:border 0.2s,box-shadow 0.2s;">
+                    </h3>
+                        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
+                            <input type="email" id="auth-email" placeholder="Email" style="padding:10px 12px;border-radius:7px;border:1.5px solid #3e92cc;width:100%;font-size:1.05rem;background:rgba(255,255,255,0.08);color:var(--text-light);transition:border 0.2s,box-shadow 0.2s;">
+                            <div style="position:relative;">
+                                <input type="password" id="auth-password" placeholder="Password" style="padding:10px 12px;border-radius:7px;border:1.5px solid #3e92cc;width:100%;font-size:1.05rem;background:rgba(255,255,255,0.08);color:var(--text-light);transition:border 0.2s,box-shadow 0.2s;">
+                                <a href="#" id="forgot-password-link" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0.97em;color:#f4a261;text-decoration:underline;cursor:pointer;">Forgot?</a>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-bottom:8px;">
+                            <button class="option-btn" style="padding:10px 16px;min-width:0;" onclick="signInUser()">Sign In</button>
+                            <button class="option-btn" style="padding:10px 16px;min-width:0;" onclick="signUpUser()">Sign Up</button>
+                            <button class="option-btn" id="signout-btn" style="padding:10px 16px;min-width:0;display:none;background:linear-gradient(90deg,#e76f51,#f4a261);" onclick="signOutUser()">Sign Out</button>
+                        </div>
+                        <div id="auth-msg" style="margin-top:4px;font-size:0.95em;min-height:1.2em;"></div>
+                        <div id="user-agreement" style="margin-top:18px;font-size:0.97em;color:#b3e5fc;background:rgba(30,41,59,0.7);padding:12px 14px;border-radius:8px;text-align:left; display:none;">
+                            <b>User Agreement:</b><br>
+                            By creating an account, you agree that your email and game stats are stored securely using Google Firebase. Your email is only used for authentication and password recovery. Your stats are synced across devices. We do not share your data with third parties. You can delete your account by contacting support. By using this feature, you agree to these terms.
+                            <br><br>
+                            <a href="mailto:support@sharkdle.com" style="color:#f4a261;text-decoration:underline;font-weight:600;display:inline-block;margin-top:8px;">
+                                <i class="fas fa-envelope"></i> Contact Support
+                            </a>
+                        </div>
                     </div>
-                    <div id="leaderboard-name-msg" style="margin-top:8px;font-size:0.95em;"></div>
+                    <div class="options-section">
+                        <h3>Leaderboard Display Name</h3>
+                        <div style="margin-bottom:10px;">
+                            <span style="color:#b3e5fc;">Current: </span>
+                            <span id="current-leaderboard-name" style="font-weight:bold;"></span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;width:100%;margin-bottom:8px;">
+                            <button class="option-btn" style="padding:10px 16px;min-width:0;" onclick="updateLeaderboardName()">
+                                <i class="fas fa-user-edit"></i>
+                            </button>
+                            <input type="text" id="leaderboard-name-input" maxlength="16" placeholder="Enter new display name" style="padding:10px 12px;border-radius:7px;border:1.5px solid #3e92cc;width:100%;font-size:1.05rem;background:rgba(255,255,255,0.08);color:var(--text-light);transition:border 0.2s,box-shadow 0.2s;">
+                        </div>
+                        <div id="leaderboard-name-msg" style="margin-top:8px;font-size:0.95em;"></div>
+                    </div>
+                    <div class="options-section">
+                        <h3 style="display:flex;align-items:center;gap:8px;">Profile Picture</h3>
+                        <div id="profile-pic-preview-container" style="display:flex;align-items:center;gap:18px;margin-bottom:10px;">
+                            <img id="profile-pic-preview" src="images/pfp/shark1.png" alt="Profile Picture" style="width:90px;height:90px;border-radius:50%;border:4px solid #2a9d8f;background:#18304a;box-shadow:0 2px 8px rgba(30,41,59,0.18);object-fit:cover;transition:border 0.2s;">
+                            <span id="profile-pic-label" style="color:#b3e5fc;font-size:1.08em;font-weight:600;">Your Profile Picture</span>
+                        </div>
+                        <div id="profile-pic-selector" style="display:flex;gap:16px;flex-wrap:wrap;justify-content:left;margin-bottom:8px;">
+                            <img src="images/pfp/shark1.png" class="profile-pic-option" data-pic="shark1.png" alt="Shark 1" style="width:60px;height:60px;border-radius:50%;border:3px solid #3e92cc;cursor:pointer;object-fit:cover;transition:border 0.18s;">
+                            <img src="images/pfp/shark2.png" class="profile-pic-option" data-pic="shark2.png" alt="Shark 2" style="width:60px;height:60px;border-radius:50%;border:3px solid #3e92cc;cursor:pointer;object-fit:cover;transition:border 0.18s;">
+                            <img src="images/pfp/shark3.png" class="profile-pic-option" data-pic="shark3.png" alt="Shark 3" style="width:60px;height:60px;border-radius:50%;border:3px solid #3e92cc;cursor:pointer;object-fit:cover;transition:border 0.18s;">
+                            <img src="images/pfp/shark4.png" class="profile-pic-option" data-pic="shark4.png" alt="Shark 4" style="width:60px;height:60px;border-radius:50%;border:3px solid #3e92cc;cursor:pointer;object-fit:cover;transition:border 0.18s;">
+                            <img src="images/pfp/shark5.png" class="profile-pic-option" data-pic="shark5.png" alt="Shark 5" style="width:60px;height:60px;border-radius:50%;border:3px solid #3e92cc;cursor:pointer;object-fit:cover;transition:border 0.18s;">
+                        </div>
+                        <div id="profile-pic-msg" style="font-size:0.97em;min-height:1.2em;"></div>
+                    </div>
                 </div>
-
-                <!-- Daily Challenge Countdown -->
-                <div class="options-section">
-                    <h3>Next Daily Challenge</h3>
-                    <p id="daily-countdown">Loading...</p>
+                <!-- Settings Tab Content -->
+                <div class="options-tab-content" id="tab-content-settings" style="display:none;">
+                    <div class="options-section">
+                        <h3>Theme Settings</h3>
+                        <button class="option-btn" onclick="toggleTheme()">
+                            <i class="fas fa-adjust"></i> Toggle Theme
+                        </button>
+                    </div>
+                    <div class="options-section">
+                        <h3>Audio Settings</h3>
+                        <div class="slider-container">
+                            <label for="music-slider">Music Volume</label>
+                            <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
+                        </div>
+                        <div class="slider-container">
+                            <label for="sound-slider">Sound Effects Volume</label>
+                            <input type="range" id="sound-slider" min="0" max="100" value="50" oninput="updateSoundVolume(this.value)">
+                        </div>
+                    </div>
+                    <div class="options-section">
+                        <h3>Gameplay Settings</h3>
+                        <button class="option-btn" onclick="resetStats()">
+                            <i class="fas fa-redo"></i> Reset Stats
+                        </button>
+                    </div>
+                    <div class="options-section">
+                        <h3>Next Daily Challenge</h3>
+                        <p id="daily-countdown">Loading...</p>
+                    </div>
                 </div>
-
                 <!-- Close Button -->
                 <button class="option-btn close-btn" onclick="closeOptionsMenu()">
                     <i class="fas fa-times"></i> Close
@@ -798,11 +870,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <!-- Firebase Firestore (for leaderboard database) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- Firebase Auth (for user authentication) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
     <script>
         // Firebase config and init
         const firebaseConfig = {
-            apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZB0",
+            apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZ0",
             authDomain: "sharkdle-leaderboard.firebaseapp.com",
             projectId: "sharkdle-leaderboard",
             storageBucket: "sharkdle-leaderboard.firebasestorage.app",
@@ -892,6 +966,122 @@
                 recentGamesList.appendChild(gameItem);
             });
         }
+
+        // Helper: Get current user
+function getCurrentUser() {
+    return firebase.auth().currentUser;
+}
+
+// Save stats to Firestore if signed in, else localStorage
+function saveStats(stats) {
+    const user = getCurrentUser();
+    if (user) {
+        const db = firebase.firestore();
+        db.collection('userStats').doc(user.uid).set(stats, { merge: true });
+    } else {
+        // Save to localStorage as fallback
+        Object.keys(stats).forEach(key => localStorage.setItem(key, stats[key]));
+    }
+}
+
+// Load stats from Firestore if signed in, else localStorage
+function loadStats(callback) {
+    const user = getCurrentUser();
+    if (user) {
+        const db = firebase.firestore();
+        db.collection('userStats').doc(user.uid).get().then(doc => {
+            let stats = {};
+            if (doc.exists) {
+                stats = doc.data();
+            }
+            callback(stats);
+        }).catch(() => {
+            callback({});
+        });
+    } else {
+        // Load from localStorage
+        const stats = {
+            gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
+            wins: parseInt(localStorage.getItem('wins') || 0),
+            losses: parseInt(localStorage.getItem('losses') || 0),
+            currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
+            highestStreak: parseInt(localStorage.getItem('highestStreak') || 0),
+            averageGuesses: parseFloat(localStorage.getItem('averageGuesses') || 0),
+            bestGame: localStorage.getItem('bestGame') || 'N/A',
+            totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0)
+        };
+        callback(stats);
+    }
+}
+
+// Update UI with stats
+function updateStatsUI(stats) {
+    const gamesPlayed = stats.gamesPlayed || 0;
+    const wins = stats.wins || 0;
+    const losses = stats.losses || 0;
+    const currentStreak = stats.currentStreak || 0;
+    const highestStreak = stats.highestStreak || 0;
+    const averageGuesses = (stats.averageGuesses || 0).toFixed ? (stats.averageGuesses || 0).toFixed(2) : '0.00';
+    const bestGame = stats.bestGame || 'N/A';
+    const winPercentage = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(2) : 0;
+    const lossPercentage = gamesPlayed > 0 ? ((losses / gamesPlayed) * 100).toFixed(2) : 0;
+    // ...existing code to update DOM elements...
+    const gamesPlayedElement = document.getElementById('games-played');
+    if (gamesPlayedElement) gamesPlayedElement.textContent = gamesPlayed;
+    const winsElement = document.getElementById('wins');
+    if (winsElement) winsElement.textContent = wins;
+    const lossesElement = document.getElementById('losses');
+    if (lossesElement) lossesElement.textContent = losses;
+    const currentStreakElement = document.getElementById('current-streak');
+    if (currentStreakElement) currentStreakElement.textContent = currentStreak;
+    const highestStreakElement = document.getElementById('highest-streak');
+    if (highestStreakElement) highestStreakElement.textContent = highestStreak;
+    const averageGuessesElement = document.getElementById('average-guesses');
+    if (averageGuessesElement) averageGuessesElement.textContent = averageGuesses;
+    const bestGameElement = document.getElementById('best-game');
+    if (bestGameElement) bestGameElement.textContent = bestGame;
+    const winLossBar = document.getElementById('win-loss-bar');
+    if (winLossBar) {
+        winLossBar.innerHTML = `
+            <div class="win" style="width: ${winPercentage}%; ${winPercentage > 10 ? '' : 'text-indent: -9999px;'}">
+                ${winPercentage > 10 ? `${winPercentage}%` : ''}
+            </div>
+            <div class="loss" style="width: ${lossPercentage}%; ${lossPercentage > 10 ? '' : 'text-indent: -9999px;'}">
+                ${lossPercentage > 10 ? `${lossPercentage}%` : ''}
+            </div>
+        `;
+    }
+}
+
+// Call this to refresh stats UI
+function refreshStats() {
+    loadStats(updateStatsUI);
+}
+
+// Update stats and save
+function updateStats(result, guesses) {
+    loadStats(function(stats) {
+        stats.gamesPlayed = (stats.gamesPlayed || 0) + 1;
+        stats.wins = (stats.wins || 0) + (result === 'win' ? 1 : 0);
+        stats.losses = (stats.losses || 0) + (result === 'loss' ? 1 : 0);
+        stats.currentStreak = result === 'win' ? ((stats.currentStreak || 0) + 1) : 0;
+        stats.highestStreak = Math.max(stats.currentStreak, stats.highestStreak || 0);
+        stats.totalGuesses = (stats.totalGuesses || 0) + guesses;
+        stats.averageGuesses = stats.totalGuesses / stats.gamesPlayed;
+        const previousBestGame = parseInt(stats.bestGame) || Infinity;
+        stats.bestGame = result === 'win' ? Math.min(previousBestGame, guesses) : previousBestGame;
+        if (stats.bestGame === Infinity) stats.bestGame = 'N/A';
+        saveStats(stats);
+        updateStatsUI(stats);
+    });
+}
+
+// On sign in, load stats from Firestore
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        refreshStats();
+    }
+});
 
         function loadStats() {
             const gamesPlayed = parseInt(localStorage.getItem('gamesPlayed') || 0);
@@ -1148,6 +1338,204 @@
             if (nameSpan) nameSpan.textContent = currentName;
             window.lastLeaderboardUsername = currentName;
         });
+
+        // Firebase Auth: Sign In
+        function signInUser() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const msg = document.getElementById('auth-msg');
+            msg.textContent = '';
+            if (!email || !password) {
+                msg.textContent = 'Please enter both email and password.';
+                msg.style.color = '#e76f51';
+                return;
+            }
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    msg.textContent = 'Signed in successfully!';
+                    msg.style.color = '#2a9d8f';
+                    document.getElementById('signout-btn').style.display = 'inline-block'; // Show Sign Out button
+                })
+                .catch(error => {
+                    msg.textContent = error.message;
+                    msg.style.color = '#e76f51';
+                });
+        }
+
+        // Firebase Auth: Sign Up
+        function signUpUser() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const msg = document.getElementById('auth-msg');
+            msg.textContent = '';
+            if (!email || !password) {
+                msg.textContent = 'Please enter both email and password.';
+                msg.style.color = '#e76f51';
+                return;
+            }
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    msg.textContent = 'Account created! You are now signed in.';
+                    msg.style.color = '#2a9d8f';
+                    document.getElementById('signout-btn').style.display = 'inline-block'; // Show Sign Out button
+                })
+                .catch(error => {
+                    msg.textContent = error.message;
+                    msg.style.color = '#e76f51';
+                });
+        }
+
+        // Firebase Auth: Sign Out
+        function signOutUser() {
+            firebase.auth().signOut().then(() => {
+                document.getElementById('auth-msg').textContent = 'Signed out.';
+                document.getElementById('auth-msg').style.color = '#e76f51';
+                document.getElementById('signout-btn').style.display = 'none';
+                // Optionally clear input fields
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                refreshStats();
+            });
+        }
+
+        // Show signed-in user email if available, and toggle sign out button
+        firebase.auth().onAuthStateChanged(function(user) {
+            const msg = document.getElementById('auth-msg');
+            const signoutBtn = document.getElementById('signout-btn');
+            if (user) {
+                msg.textContent = `Signed in as: ${user.email}`;
+                msg.style.color = '#2a9d8f';
+                if (signoutBtn) signoutBtn.style.display = '';
+            } else {
+                if (signoutBtn) signoutBtn.style.display = 'none';
+            }
+        });
+
+        // User Agreement toggle logic
+        document.addEventListener('DOMContentLoaded', function() {
+            var infoBtn = document.getElementById('user-agreement-info-btn');
+            var agreement = document.getElementById('user-agreement');
+            if (infoBtn && agreement) {
+                infoBtn.addEventListener('click', function(e) {
+                    agreement.style.display = (agreement.style.display === 'none' || agreement.style.display === '') ? 'block' : 'none';
+                });
+            }
+        });
+
+        // Firebase Auth: Forgot Password
+        document.addEventListener('DOMContentLoaded', function() {
+            var forgotLink = document.getElementById('forgot-password-link');
+            if (forgotLink) {
+                forgotLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var email = document.getElementById('auth-email').value.trim();
+                    var msg = document.getElementById('auth-msg');
+                    if (!email) {
+                        msg.textContent = 'Enter your email above to reset password.';
+                        msg.style.color = '#e76f51';
+                        return;
+                    }
+                    firebase.auth().sendPasswordResetEmail(email)
+                        .then(function() {
+                            msg.textContent = 'Password reset email sent! Check your inbox.';
+                            msg.style.color = '#2a9d8f';
+                        })
+                        .catch(function(error) {
+                            msg.textContent = error.message;
+                            msg.style.color = '#e76f51';
+                        });
+                });
+            }
+        });
+
+        // Tab switching logic
+        function showOptionsTab(tab) {
+            var accountBtn = document.getElementById('tab-btn-account');
+            var settingsBtn = document.getElementById('tab-btn-settings');
+            var accountContent = document.getElementById('tab-content-account');
+            var settingsContent = document.getElementById('tab-content-settings');
+            if (tab === 'account') {
+                accountBtn.classList.add('active');
+                settingsBtn.classList.remove('active');
+                accountContent.style.display = 'block';
+                settingsContent.style.display = 'none';
+                accountBtn.style.background = 'linear-gradient(135deg,#3e92cc,#1b9aaa)';
+                accountBtn.style.color = 'white';
+                settingsBtn.style.background = 'rgba(51,65,85,0.88)';
+                settingsBtn.style.color = '#b3e5fc';
+            } else {
+                accountBtn.classList.remove('active');
+                settingsBtn.classList.add('active');
+                accountContent.style.display = 'none';
+                settingsContent.style.display = 'block';
+                settingsBtn.style.background = 'linear-gradient(135deg,#3e92cc,#1b9aaa)';
+                settingsBtn.style.color = 'white';
+                accountBtn.style.background = 'rgba(51,65,85,0.88)';
+                accountBtn.style.color = '#b3e5fc';
+            }
+        }
+
+        // === Profile Picture Selection Logic ===
+function setProfilePic(picture) {
+    // Update preview
+    const preview = document.getElementById('profile-pic-preview');
+    if (preview) preview.src = `images/pfp/${picture}`;
+    // Save to localStorage
+    localStorage.setItem('profilePic', picture);
+    // Save to Firestore if signed in
+    const user = getCurrentUser && getCurrentUser();
+    if (user && firebase && firebase.firestore) {
+        firebase.firestore().collection('userStats').doc(user.uid).set({ profilePic: picture }, { merge: true });
+    }
+    // Update selection highlight
+    document.querySelectorAll('.profile-pic-option').forEach(img => {
+        if (img.getAttribute('data-pic') === picture) {
+            img.classList.add('selected');
+        } else {
+            img.classList.remove('selected');
+        }
+    });
+    // Optional: show a message
+    const msg = document.getElementById('profile-pic-msg');
+    if (msg) {
+        msg.textContent = 'Profile picture updated!';
+        setTimeout(() => { msg.textContent = ''; }, 1500);
+    }
+}
+
+function loadProfilePic() {
+    // Try Firestore if signed in, else localStorage
+    const user = getCurrentUser && getCurrentUser();
+    if (user && firebase && firebase.firestore) {
+        firebase.firestore().collection('userStats').doc(user.uid).get().then(doc => {
+            let pic = 'shark1.png';
+            if (doc.exists && doc.data().profilePic) {
+                pic = doc.data().profilePic;
+            } else {
+                // fallback to localStorage
+                pic = localStorage.getItem('profilePic') || 'shark1.png';
+            }
+            setProfilePic(pic);
+        }).catch(() => {
+            setProfilePic(localStorage.getItem('profilePic') || 'shark1.png');
+        });
+    } else {
+        setProfilePic(localStorage.getItem('profilePic') || 'shark1.png');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click listeners to profile pic options
+    document.querySelectorAll('.profile-pic-option').forEach(img => {
+        img.addEventListener('click', function() {
+            const pic = img.getAttribute('data-pic');
+            setProfilePic(pic);
+        });
+    });
+    loadProfilePic();
+});
+        // On sign in/out, reload profile pic
+        firebase.auth().onAuthStateChanged(function() { loadProfilePic(); });
     </script>
 </body>
 </html>

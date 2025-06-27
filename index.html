@@ -1291,6 +1291,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                 msg.style.color = '#e76f51';
                 return;
             }
+            const oldUsername = window.lastLeaderboardUsername || null;
             localStorage.setItem('sharkdle-username', username);
             document.getElementById('current-leaderboard-name').textContent = username;
             msg.textContent = 'Leaderboard name updated!';
@@ -1300,8 +1301,8 @@ firebase.auth().onAuthStateChanged(function(user) {
             if (window.firebase && firebase.apps && firebase.apps.length && firebase.firestore) {
                 try {
                     const db = firebase.firestore();
-                    // Get the old username (before change)
-                    const oldUsername = window.lastLeaderboardUsername || null;
+                    // Get the profilePic from localStorage or userStats
+                    const profilePic = localStorage.getItem('profilePic') || 'shark1.png';
                     // If oldUsername exists and is different, update the document
                     if (oldUsername && oldUsername !== username) {
                         db.collection('leaderboard').doc(oldUsername).get().then(docSnap => {
@@ -1310,18 +1311,19 @@ firebase.auth().onAuthStateChanged(function(user) {
                                 // Copy stats to new username, then delete old doc
                                 db.collection('leaderboard').doc(username).set({
                                     ...data,
-                                    username: username
+                                    username: username,
+                                    profilePic: profilePic
                                 }, { merge: true }).then(() => {
                                     db.collection('leaderboard').doc(oldUsername).delete();
                                 });
                             } else {
                                 // If no old doc, just update/create new one
-                                db.collection('leaderboard').doc(username).set({ username: username }, { merge: true });
+                                db.collection('leaderboard').doc(username).set({ username: username, profilePic: profilePic }, { merge: true });
                             }
                         });
                     } else {
                         // No old username, just update/create new one
-                        db.collection('leaderboard').doc(username).set({ username: username }, { merge: true });
+                        db.collection('leaderboard').doc(username).set({ username: username, profilePic: profilePic }, { merge: true });
                     }
                     window.lastLeaderboardUsername = username;
                 } catch (e) {
@@ -1330,14 +1332,6 @@ firebase.auth().onAuthStateChanged(function(user) {
                 }
             }
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set leaderboard name in options
-            const currentName = localStorage.getItem('sharkdle-username') || '(not set)';
-            const nameSpan = document.getElementById('current-leaderboard-name');
-            if (nameSpan) nameSpan.textContent = currentName;
-            window.lastLeaderboardUsername = currentName;
-        });
 
         // Firebase Auth: Sign In
         function signInUser() {
@@ -1487,10 +1481,10 @@ function setProfilePic(picture) {
     if (user && firebase && firebase.firestore) {
         // Update userStats
         firebase.firestore().collection('userStats').doc(user.uid).set({ profilePic: picture }, { merge: true });
-        // Update leaderboard (by username)
+        // Update leaderboard for current username with both username and profilePic
         const username = localStorage.getItem('sharkdle-username');
         if (username) {
-            firebase.firestore().collection('leaderboard').doc(username).set({ profilePic: picture }, { merge: true });
+            firebase.firestore().collection('leaderboard').doc(username).set({ username: username, profilePic: picture }, { merge: true });
         }
     }
     // Update selection highlight

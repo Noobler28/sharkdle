@@ -5,49 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sharkdle - Daily</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Montserrat', Arial, sans-serif;
             text-align: center;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
+            background: linear-gradient(135deg, #0a2342 0%, #164e63 100%);
+            color: #e0f7fa;
             padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Underwater caustics overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.18;
+            background: none;
+            /* SVG caustics filter */
+            filter: url(#caustics-filter);
+            background: linear-gradient(135deg, rgba(10,35,66,0.7) 0%, rgba(22,78,99,0.7) 100%);
+        }
+        /* SVG filter for caustics effect */
+        /* Will be injected into the HTML below */
+        @keyframes caustics {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
+        /* Bubbles */
+        #bubble-container {
+            display: block !important;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .bubble {
+            position: absolute;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, #e0f7fa 80%, #b2ebf2 100%);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: bubble 8s linear infinite;
+            filter: blur(0.5px);
+        }
+        @keyframes bubble {
+            0% { transform: translateY(0) scale(1); opacity: 0.5; }
+            80% { opacity: 0.7; }
+            100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            color: #b3e5fc;
+            text-shadow: 0 4px 24px #0a2342, 0 1px 0 #fff;
+            margin-bottom: 0.2em;
+            z-index: 3;
+            position: relative;
+        }
+        p {
+            color: #b3e5fc;
+            font-size: 1.2em;
+            margin-bottom: 1.5em;
         }
         input, button {
             font-size: 1.2em;
-            padding: 10px;
+            padding: 12px 18px;
             margin: 10px;
-            border-radius: 10px;
+            border-radius: 16px;
             border: none;
+            outline: none;
+            background: rgba(255,255,255,0.12);
+            color: #e0f7fa;
+            box-shadow: 0 2px 12px rgba(10,35,66,0.12);
+            transition: background 0.3s, box-shadow 0.3s;
         }
         input {
             display: block;
             margin: 0 auto 10px auto;
+            width: 90%;
+            max-width: 350px;
+            background: rgba(255,255,255,0.18);
+            color: #0a2342;
+            font-weight: 600;
+        }
+        input:focus {
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 0 0 2px #4dd0e1;
         }
         button {
-            background: #1e3a46;
-            color: white;
-            border-radius: 10px;
-            border: 2px solid white;
+            background: linear-gradient(90deg, #00bcd4 0%, #1976d2 100%);
+            color: #fff;
+            border-radius: 16px;
+            border: none;
             cursor: pointer;
-            transition: 0.3s;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(0,188,212,0.18);
         }
         button:hover {
-            background: #2f5b6e;
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+            box-shadow: 0 4px 24px rgba(25,118,210,0.18);
         }
         .guess-container {
-            margin: 10px auto;
-            width: 300px;
-            font-size: 1em;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            margin: 16px auto;
+            width: 340px;
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.18);
+            padding: 18px 12px;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(10,35,66,0.18);
             animation: fadeIn 0.5s ease-in-out;
+            backdrop-filter: blur(4px);
+            border: 1.5px solid rgba(76, 175, 255, 0.18);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -57,56 +130,66 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 5px;
+            margin-top: 8px;
         }
         .category {
-            padding: 5px;
-            border-radius: 5px;
-            background: gray;
-            color: white;
-            width: 200px;
-            margin: 3px;
-            font-size: 0.9em;
+            padding: 7px 0;
+            border-radius: 8px;
+            background: rgba(0,188,212,0.18);
+            color: #e0f7fa;
+            width: 220px;
+            margin: 4px 0;
+            font-size: 1em;
             transition: 0.3s;
+            font-weight: 600;
+            box-shadow: 0 1px 6px rgba(0,188,212,0.08);
         }
-        .correct { background: green; }
-        .close { background: yellow; color: black; }
+        .correct { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); color: #0a2342; }
+        .close { background: linear-gradient(90deg, #fffde4 0%, #005aa7 100%); color: #0a2342; }
+        .earlier { background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%); color: #fff; }
+        .later { background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%); color: #0a2342; }
         #message {
             margin-top: 20px;
             font-size: 1.2em;
             font-weight: bold;
+            color: #ffcc33;
+            text-shadow: 0 1px 0 #0a2342;
         }
         #attempts-left {
             margin-top: 10px;
             font-weight: bold;
+            color: #b3e5fc;
+            font-size: 1.1em;
         }
-        .earlier { background: blue; }
-        .later { background: orange; }
         #win-lose-screen {
             display: none;
-            padding: 20px;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            border-radius: 10px;
+            padding: 24px;
+            background: rgba(10,35,66,0.98);
+            border-radius: 18px;
             font-size: 1.5em;
-            color: white;
+            color: #e0f7fa;
             text-align: center;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            max-width: 90%;
-            width: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            max-width: 95vw;
+            width: 420px;
+            border: 2px solid #00bcd4;
+            backdrop-filter: blur(6px);
         }
         #win-lose-screen.win {
-            background-color: green;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #0a2342;
         }
         #win-lose-screen.lose {
-            background-color: red;
+            background: linear-gradient(135deg, #ff5858 0%, #f09819 100%);
+            color: #fff;
         }
         #win-lose-screen h2 {
-            font-size: 1.8em;
+            font-size: 2em;
             margin-bottom: 15px;
         }
         #win-lose-screen p {
@@ -114,94 +197,102 @@
             margin-bottom: 10px;
         }
         #win-lose-screen button {
-            padding: 10px 20px;
-            font-size: 1em;
-            border: 2px solid white;
-            border-radius: 5px;
+            padding: 12px 28px;
+            font-size: 1.1em;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
             cursor: pointer;
-            background-color: #1e3a46;
-            color: white;
+            background: linear-gradient(90deg, #00bcd4 0%, #1976d2 100%);
+            color: #fff;
             transition: 0.3s;
+            margin-top: 10px;
         }
         #win-lose-screen button:hover {
-            background-color: #2f5b6e;
-        }
-        .bubble {
-            position: absolute;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            opacity: 0;
-            animation: bubble 2s ease-in-out infinite;
-        }
-        @keyframes bubble {
-            0% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-200px);
-                opacity: 0;
-            }
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
         }
         #key {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.9em;
+            top: 18px;
+            left: 18px;
+            background: rgba(10,35,66,0.7);
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 1em;
             text-align: left;
+            z-index: 10;
+            box-shadow: 0 2px 12px rgba(0,188,212,0.08);
+            border: 1.5px solid #00bcd4;
+            backdrop-filter: blur(2px);
         }
         #key .key-item {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
         }
         #key .key-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 5px;
-            margin-right: 10px;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            margin-right: 12px;
         }
         #previous-guesses {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 14px;
+            margin-top: 24px;
             text-align: left;
             position: relative;
             z-index: 1;
             padding-bottom: 60px;
         }
-
         #previous-guesses details {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.10);
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0px 0px 10px rgba(255,255,255,0.12);
         }
-
         #previous-guesses summary {
             font-size: 1.2em;
             font-weight: bold;
             cursor: pointer;
         }
-
         #previous-guesses .guess-container {
             display: inline-block;
             margin-right: 10px;
             vertical-align: top;
         }
-
         #guesses {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #0a2342;
+            color: #e0f7fa;
+            text-align: center;
+            border-radius: 8px;
+            padding: 7px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.95em;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 8px;
             }
             h1 {
                 font-size: 2em;
@@ -213,10 +304,10 @@
             }
             .guess-container {
                 width: 100%;
-                font-size: 0.9em;
+                font-size: 0.95em;
             }
             #key {
-                font-size: 0.8em;
+                font-size: 0.9em;
                 position: static;
                 margin-bottom: 10px;
                 display: flex;
@@ -236,7 +327,7 @@
             #win-lose-screen {
                 font-size: 1.2em;
                 padding: 15px;
-                width: 90%;
+                width: 98vw;
             }
             #win-lose-screen h2 {
                 font-size: 1.5em;
@@ -249,7 +340,6 @@
                 padding: 8px 15px;
             }
         }
-
         @media (max-width: 400px) {
             h1 {
                 font-size: 1.5em;
@@ -283,7 +373,6 @@
                 padding: 6px 10px;
             }
         }
-
         @media (max-width: 320px) {
             h1 {
                 font-size: 1.2em;
@@ -301,79 +390,6 @@
             }
             #previous-guesses summary {
                 font-size: 0.8em;
-            }
-        }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        #bubble-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .bubble {
-            position: absolute;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            opacity: 0;
-            animation: bubble 2s ease-in-out infinite;
-        }
-
-        @keyframes bubble {
-            0% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-200px);
-                opacity: 0;
-            }
-        }
-
-        @media (max-width: 600px) {
-            input#sharkGuess {
-                display: block;
-                margin: 0 auto;
-                width: 90%;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 400px) {
-            input#sharkGuess {
-                width: 95%;
             }
         }
     </style>
@@ -396,6 +412,50 @@
     <div id="bubble-container" style="display:none;"></div>
     <div id="previous-guesses"></div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZ0",
+        authDomain: "sharkdle-leaderboard.firebaseapp.com",
+        projectId: "sharkdle-leaderboard",
+        storageBucket: "sharkdle-leaderboard.firebasestorage.app",
+        messagingSenderId: "429123174628",
+        appId: "1:429123174628:web:42ae9baed69c4b087c2cf1",
+        measurementId: "G-HV5FFNKM5C"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Prompt for username if not set
+    function getUsername() {
+        let username = localStorage.getItem('sharkdle-username');
+        while (!username || username.length < 3 || username.length > 16 || /[^a-zA-Z0-9_\-]/.test(username)) {
+            username = prompt('Enter your username for the leaderboard. This can be changed later in settings:', username || '');
+            if (username === null) return null;
+            username = username.trim();
+        }
+        localStorage.setItem('sharkdle-username', username);
+        return username;
+    }
+
+    // Submit stats to leaderboard
+    function submitStatsToLeaderboard(isWin, guessesTaken) {
+        const username = getUsername();
+        if (!username) return;
+        // Gather stats from localStorage
+        const stats = {
+            username: username,
+            gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
+            wins: parseInt(localStorage.getItem('wins') || 0),
+            bestGame: localStorage.getItem('bestGame') === 'N/A' ? null : parseInt(localStorage.getItem('bestGame')),
+            lastPlayed: new Date().toISOString(),
+        };
+        db.collection('leaderboard').doc(username).set(stats, { merge: true });
+    }
+    </script>
     <script>
         const sharks = [
             // Cow and Frilled Sharks | Hexanchiformes | Completed
@@ -410,8 +470,15 @@
             { "name": "Dwarf Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1837},
             { "name": "Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1801},
             { "name": "Dumb Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1915},
+            { "name": "African Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 2017},
+            { "name": "Longfin Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 2017},
+            { "name": "Smallfin Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1860},
+            { "name": "Seychelles Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 2003},
+            { "name": "Leafscale Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1788},
             { "name": "Mosaic Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1906},
             { "name": "Little Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 1810},
+            { "name": "Western Gulper Shark", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 2008},
+            { "name": "Southern Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Centrophorus", "yod": 2008},
             { "name": "Bird Beak Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1839},
             { "name": "Rough Long Nose Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1906},
             { "name": "Arrow Head Dog fish", "family": "Centrophoridae", "order": "Squaliformes", "genus": "Deania", "yod": 1912},
@@ -755,7 +822,15 @@
             comebackMessage.style.marginBottom = "20px";
             messageContainer.appendChild(comebackMessage);
 
-            // Add a button to try the infinite mode
+            // Add a container for the two buttons
+            const buttonRow = document.createElement("div");
+            buttonRow.style.display = "flex";
+            buttonRow.style.justifyContent = "center";
+            buttonRow.style.gap = "16px";
+            buttonRow.style.flexWrap = "wrap";
+            buttonRow.style.marginTop = "10px";
+
+            // Add a "Try Infinite Mode" button
             const infiniteButton = document.createElement("button");
             infiniteButton.textContent = "Try Infinite Mode";
             infiniteButton.style.padding = "10px 20px";
@@ -775,7 +850,32 @@
             infiniteButton.addEventListener("click", () => {
                 window.location.href = "infinite.html";
             });
-            messageContainer.appendChild(infiniteButton);
+            buttonRow.appendChild(infiniteButton);
+
+            // Add a "Go to Home" button
+            const homeButton = document.createElement("button");
+            homeButton.textContent = "Go to Home";
+            homeButton.style.padding = "10px 20px";
+            homeButton.style.fontSize = "1em";
+            homeButton.style.border = "2px solid white";
+            homeButton.style.borderRadius = "5px";
+            homeButton.style.cursor = "pointer";
+            homeButton.style.backgroundColor = "#1e3a46";
+            homeButton.style.color = "white";
+            homeButton.style.transition = "0.3s";
+            homeButton.addEventListener("mouseover", () => {
+                homeButton.style.backgroundColor = "#2f5b6e";
+            }); 
+            homeButton.addEventListener("mouseout", () => {
+                homeButton.style.backgroundColor = "#1e3a46";
+            });
+            homeButton.addEventListener("click", () => {
+                window.location.href = "index.html";
+            });
+            buttonRow.appendChild(homeButton);
+
+            // Append the button row to the message container
+            messageContainer.appendChild(buttonRow);
 
             // Append the message container to the win/lose screen
             winLoseScreen.appendChild(messageContainer);
@@ -786,6 +886,13 @@
 
             // Make the bubble container visible
             bubbleContainer.style.display = "block";
+
+            // Call submitStatsToLeaderboard in your win/lose logic, e.g. in displayResult or updateStats
+            if (status === "win") {
+                submitStatsToLeaderboard(true, guessesTaken); // guessesTaken should be the number of guesses used
+            } else if (status === "lose") {
+                submitStatsToLeaderboard(false, attempts);
+            }
         }
 
         function normalizeInput(input) {
@@ -843,10 +950,25 @@
         // Hide the bubble container initially
         window.addEventListener("load", () => {
             const bubbleContainer = document.getElementById("bubble-container");
-            bubbleContainer.style.display = "none";
+            bubbleContainer.style.display = "block";
+            // Animated light rays
+            const rays = document.getElementById('light-rays');
+            if (rays && rays.childElementCount === 0) {
+                for (let i = 0; i < 12; i++) {
+                    const ray = document.createElement('div');
+                    ray.className = 'ray';
+                    ray.style.left = `${Math.random() * 100}%`;
+                    ray.style.height = `${80 + Math.random() * 20}vh`;
+                    ray.style.width = `${1 + Math.random() * 2}px`;
+                    ray.style.opacity = 0.12 + Math.random() * 0.18;
+                    ray.style.animationDelay = `${Math.random() * 8}s`;
+                    rays.appendChild(ray);
+                }
+            }
         });
 
         function updateStats(isWin, guessesTaken = 0) {
+            // Load current stats
             const stats = {
                 gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
                 wins: parseInt(localStorage.getItem('wins') || 0),
@@ -854,6 +976,7 @@
                 totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0),
                 currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
                 highestStreak: parseInt(localStorage.getItem('highestStreak') || 0),
+                bestGame: localStorage.getItem('bestGame') || 'N/A',
             };
 
             stats.gamesPlayed++;
@@ -862,6 +985,10 @@
                 stats.totalGuesses += guessesTaken;
                 stats.currentStreak++;
                 stats.highestStreak = Math.max(stats.highestStreak, stats.currentStreak);
+                // Update best game (fewest guesses)
+                if (stats.bestGame === 'N/A' || guessesTaken < parseInt(stats.bestGame)) {
+                    stats.bestGame = guessesTaken;
+                }
             } else {
                 stats.losses++;
                 stats.currentStreak = 0;
@@ -874,7 +1001,38 @@
             localStorage.setItem('totalGuesses', stats.totalGuesses);
             localStorage.setItem('currentStreak', stats.currentStreak);
             localStorage.setItem('highestStreak', stats.highestStreak);
+            localStorage.setItem('bestGame', stats.bestGame);
+            // Calculate and save average guesses
+            if (stats.wins > 0) {
+                localStorage.setItem('averageGuesses', (stats.totalGuesses / stats.wins).toFixed(2));
+            }
+
+            // Add to recent games
+            const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+            const now = new Date();
+            recentGames.unshift({
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString(),
+                result: isWin ? 'Win' : 'Loss',
+                guesses: isWin ? guessesTaken : 'X',
+                sharkName: targetShark.name,
+                mode: 'Daily'
+            });
+            // Only keep the 20 most recent games
+            localStorage.setItem('recentGames', JSON.stringify(recentGames.slice(0, 20)));
         }
     </script>
+    <!-- SVG for caustics effect -->
+    <svg width="0" height="0" style="position:absolute">
+      <filter id="caustics-filter">
+        <feTurbulence id="turb" type="turbulence" baseFrequency="0.02 0.04" numOctaves="2" seed="2" result="turb"/>
+        <feDisplacementMap in2="turb" in="SourceGraphic" scale="40" xChannelSelector="R" yChannelSelector="G"/>
+        <feColorMatrix type="matrix" values="0.2 0.3 0.7 0 0  0.1 0.5 0.8 0 0  0.1 0.2 0.6 0 0  0 0 0 1 0"/>
+        <feGaussianBlur stdDeviation="2"/>
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.7"/>
+        </feComponentTransfer>
+      </filter>
+    </svg>
 </body>
 </html>

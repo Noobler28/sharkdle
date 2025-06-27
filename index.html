@@ -1485,7 +1485,13 @@ function setProfilePic(picture) {
     // Save to Firestore if signed in
     const user = getCurrentUser && getCurrentUser();
     if (user && firebase && firebase.firestore) {
+        // Update userStats
         firebase.firestore().collection('userStats').doc(user.uid).set({ profilePic: picture }, { merge: true });
+        // Update leaderboard (by username)
+        const username = localStorage.getItem('sharkdle-username');
+        if (username) {
+            firebase.firestore().collection('leaderboard').doc(username).set({ profilePic: picture }, { merge: true });
+        }
     }
     // Update selection highlight
     document.querySelectorAll('.profile-pic-option').forEach(img => {

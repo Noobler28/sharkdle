@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkdle Leaderboards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <!-- Firebase Analytics (optional) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+    <!-- Firebase Firestore (for leaderboard database) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a2463 0%, #1b9aaa 100%);
+            color: #E2E8F0;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .leaderboard-container {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 16px;
+            margin-top: 40px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            width: 95%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 18px;
+            background: linear-gradient(90deg, #3e92cc, #2a9d8f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 12px 8px;
+            text-align: center;
+        }
+        .leaderboard-table th {
+            background: #1b9aaa;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .leaderboard-table tr:nth-child(even) {
+            background: rgba(62, 146, 204, 0.08);
+        }
+        .leaderboard-table tr:nth-child(odd) {
+            background: rgba(42, 157, 143, 0.08);
+        }
+        .leaderboard-table td {
+            color: #E2E8F0;
+            font-size: 1rem;
+        }
+        .back-btn {
+            margin-top: 24px;
+            background: linear-gradient(135deg, #3e92cc, #2a9d8f);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .back-btn:hover {
+            background: linear-gradient(135deg, #2a9d8f, #3e92cc);
+            transform: translateY(-2px);
+        }
+        .loading {
+            text-align: center;
+            color: #b3e5fc;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+        @media (max-width: 700px) {
+            .leaderboard-container {
+                padding: 16px 4px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <h1><i class="fas fa-trophy"></i> Sharkdle Global Leaderboards</h1>
+        <div id="leaderboard-loading" class="loading">Loading leaderboard...</div>
+        <table class="leaderboard-table" id="leaderboard-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Games Played</th>
+                    <th>Wins</th>
+                    <th>Best Game</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Leaderboard rows will be inserted here -->
+            </tbody>
+        </table>
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i> Back to Main Menu
+        </button>
+    </div>
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZB0",
+            authDomain: "sharkdle-leaderboard.firebaseapp.com",
+            projectId: "sharkdle-leaderboard",
+            storageBucket: "sharkdle-leaderboard.firebasestorage.app",
+            messagingSenderId: "429123174628",
+            appId: "1:429123174628:web:42ae9baed69c4b087c2cf1",
+            measurementId: "G-HV5FFNKM5C"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        if (firebase.analytics) {
+            firebase.analytics();
+        }
+        const db = firebase.firestore();
+
+        // Fetch leaderboard data from Firestore
+        async function loadLeaderboard() {
+            const loadingDiv = document.getElementById('leaderboard-loading');
+            const table = document.getElementById('leaderboard-table');
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            try {
+                // Get top 25 users by wins, then by bestGame (fewest guesses)
+                const snapshot = await db.collection('leaderboard')
+                    .orderBy('wins', 'desc')
+                    .orderBy('bestGame', 'asc')
+                    .limit(25)
+                    .get();
+                if (snapshot.empty) {
+                    loadingDiv.textContent = 'No leaderboard data yet.';
+                    return;
+                }
+                let rank = 1;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    let rankCell = '';
+                    if (rank === 1) {
+                        rankCell = `<span style="color:#FFD700;"><i class='fas fa-trophy'></i></span>`;
+                    } else if (rank === 2) {
+                        rankCell = `<span style="color:#C0C0C0;"><i class='fas fa-trophy'></i></span>`;
+                    } else if (rank === 3) {
+                        rankCell = `<span style="color:#CD7F32;"><i class='fas fa-trophy'></i></span>`;
+                    } else {
+                        rankCell = rank;
+                    }
+                    tr.innerHTML = `
+                        <td>${rankCell}</td>
+                        <td>${data.username ? data.username : 'Anonymous'}</td>
+                        <td>${data.gamesPlayed || 0}</td>
+                        <td>${data.wins || 0}</td>
+                        <td>${data.bestGame !== undefined && data.bestGame !== null && data.bestGame !== 'N/A' ? data.bestGame : 'N/A'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                    rank++;
+                });
+                loadingDiv.style.display = 'none';
+                table.style.display = '';
+            } catch (err) {
+                loadingDiv.textContent = 'Failed to load leaderboard.';
+                console.error(err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadLeaderboard);
+    </script>
+</body>
+</html>

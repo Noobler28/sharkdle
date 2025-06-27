@@ -3,307 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Of Sharks</title>
+    <title>Shark Library</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        /* General Styles */
         body {
             font-family: 'Roboto', sans-serif;
-            text-align: center;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
-            padding: 20px;
+            background: linear-gradient(120deg, #232526, #414345);
             margin: 0;
+            min-height: 100vh;
+            color: #fff;
         }
-
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 2.5em;
-            color: #00d4ff;
-            text-shadow: 0px 0px 10px #00d4ff, 0px 0px 20px #00d4ff;
-            margin-bottom: 20px;
-        }
-
-        .filters {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .custom-dropdown, .sort-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 250px;
-        }
-
-        .custom-dropdown label, .sort-container label {
-            font-weight: bold;
-            color: #00d4ff;
-            margin-bottom: 10px;
-        }
-
-        .dropdown-content {
-            display: block;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        .dropdown-option {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            color: white;
-        }
-
-        .dropdown-option input {
-            margin-right: 10px;
-        }
-
-        .modern-dropdown, #sort {
-            padding: 10px;
-            border: 1px solid #00d4ff;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            font-size: 1em;
-            width: 100%;
-            max-width: 250px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .modern-dropdown:hover, #sort:hover {
-            background-color: rgba(0, 0, 0, 0.9);
-            border-color: #00ffcc;
-        }
-
-        .modern-dropdown:focus, #sort:focus {
-            outline: none;
-            box-shadow: 0 0 5px #00ffcc;
-        }
-
-        .sort-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
             text-align: center;
+            color: #00d4ff;
+            margin: 40px 0 20px 0;
+            font-size: 2.8em;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 16px #00d4ff99;
         }
-
-        #results {
-            margin-top: 20px;
+        .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* smaller min width for more per row */
+            gap: 24px; /* reduced gap */
+            padding: 32px 3vw 60px 3vw;
+            max-width: 1600px;
+            margin: 0 auto;
         }
-
-        .shark {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
-            text-align: left;
-            font-size: 0.9em;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .shark:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 12px rgba(255, 255, 255, 0.3);
-        }
-
-        #sharkCount {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        #pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        #pagination button {
-            margin: 0 5px;
-            padding: 10px 20px;
+        .shark-card {
+            width: 220px;
+            height: 320px;
+            margin: 0 auto;
+            background: none;
             border: none;
-            border-radius: 8px;
-            background-color: #1e3a46;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
+            outline: none;
+            perspective: 1400px;
+            transition: box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+            box-shadow: 0 8px 32px #000a, 0 1.5px 8px #00d4ff33;
+            border-radius: 28px;
+            position: relative;
+            will-change: box-shadow;
+            z-index: 1;
         }
-
-        #pagination button:hover {
-            background-color: #2f5b6e;
-            transform: scale(1.05);
+        .shark-card:focus-visible {
+            outline: 3px solid #00d4ff;
         }
-
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            .filters {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-                padding: 15px;
-            }
-
-            .custom-dropdown, .sort-container {
-                max-width: 100%;
-            }
-
-            .modern-dropdown, #sort {
-                font-size: 0.9em;
-            }
-
-            #results {
-                grid-template-columns: 1fr;
-            }
-
-            .shark {
-                font-size: 0.8em;
-                padding: 15px;
-            }
-
-            #pagination button {
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
+        .shark-card:hover:not(.flipped) {
+            transform: scale(1.045) translateY(-6px);
+            box-shadow: 0 16px 48px #00d4ff44, 0 2px 12px #000a;
         }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .filters {
-                gap: 10px;
-            }
-
-            .filters button {
-                padding: 10px;
-                font-size: 0.9em;
-            }
-
-            .shark {
-                padding: 10px;
-            }
-
-            #pagination button {
-                padding: 6px 10px;
-                font-size: 0.8em;
-            }
+        .shark-card.flipped {
+            transform: none;
+            z-index: 10;
         }
-
-        .filters {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.7s cubic-bezier(.4,2,.6,1);
+            transform-style: preserve-3d;
+            will-change: transform;
+            border-radius: 28px;
+            box-shadow: 0 2px 24px #00d4ff22 inset;
+            background: none;
         }
-
-        .custom-dropdown {
+        .shark-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
-            max-width: 250px;
+            justify-content: center;
+            padding: 36px 22px 32px 22px;
+            border: 2.5px solid #00d4ff77;
+            box-shadow: 0 2px 24px #00d4ff33 inset, 0 8px 32px #0007;
         }
-
-        @media (max-width: 768px) {
-            .filters {
-                flex-wrap: nowrap;
-                overflow-x: auto;
+        .card-front {
+            z-index: 2;
+            background: linear-gradient(135deg, #22334a 70%, #00d4ff33 100%);
+        }
+        .card-front img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid #00d4ff;
+            margin-bottom: 26px;
+            background: #fff2;
+            box-shadow: 0 2px 16px #00d4ff44, 0 0 0 8px #00d4ff11;
+            transition: box-shadow 0.3s;
+        }
+        .card-front .shark-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00e0ff;
+            text-shadow: 0 2px 8px #00d4ff44, 0 1px 0 #0008;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        .card-back {
+            z-index: 1;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #1a2533 70%, #00d4ff22 100%);
+            color: #fff;
+            font-size: 1.13em;
+            justify-content: flex-start;
+            padding-top: 54px;
+        }
+        .card-back .stat {
+            margin: 18px 0 10px 0;
+            font-size: 1.13em;
+            letter-spacing: 0.5px;
+        }
+        .card-back .stat strong {
+            color: #00d4ff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .order-section {
+            margin-bottom: 36px;
+            background: linear-gradient(120deg, #1a2533 80%, #00d4ff11 100%);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #00d4ff22, 0 1px 8px #0005;
+            overflow: hidden;
+        }
+        .order-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 22px 36px 22px 28px;
+            font-size: 1.5em;
+            font-family: 'Pacifico', cursive;
+            color: #00e0ff;
+            background: linear-gradient(90deg, #22334a 80%, #00d4ff22 100%);
+            border: none;
+            outline: none;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .order-header:hover, .order-header:focus {
+            background: linear-gradient(90deg, #22334a 60%, #00d4ff44 100%);
+        }
+        .order-arrow {
+            font-size: 1.2em;
+            margin-left: 18px;
+            transition: transform 0.3s;
+        }
+        .order-section.collapsed .order-arrow {
+            transform: rotate(-90deg);
+        }
+        .order-content {
+            padding: 0 18px 18px 18px;
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+        .order-section.collapsed .order-content {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; margin: 24px 0 12px 0; }
+            .gallery {
+                padding: 10px 1vw 30px 1vw;
                 gap: 10px;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             }
-
-            .custom-dropdown {
-                flex: 0 0 auto;
-                max-width: 200px;
+            .shark-card, .card-inner {
+                width: 98vw;
+                max-width: 170px;
+                height: 180px;
+                min-height: 0;
+            }
+            .card-front img {
+                width: 44px;
+                height: 44px;
+                margin-bottom: 10px;
+                border-width: 3px;
+            }
+            .card-front .shark-name {
+                font-size: 1em;
+                margin-top: 4px;
+            }
+            .card-front, .card-back {
+                padding: 16px 6px 12px 6px;
+                font-size: 0.95em;
+            }
+            .card-back {
+                padding-top: 28px;
+            }
+            .order-section {
+                margin-bottom: 18px;
+                border-radius: 12px;
+            }
+            .order-header {
+                padding: 12px 16px 12px 12px;
+                font-size: 1.1em;
+                border-radius: 0;
+            }
+            .order-arrow {
+                font-size: 1em;
+                margin-left: 10px;
+            }
+            .order-content {
+                padding: 0 6px 8px 6px;
             }
         }
-
-        @media (max-width: 480px) {
-            .filters {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                gap: 5px;
+        @media (max-width: 400px) {
+            .shark-card, .card-inner {
+                max-width: 120px;
+                height: 120px;
             }
-
-            .custom-dropdown {
-                flex: 0 0 auto;
-                max-width: 150px;
+            .card-front img {
+                width: 28px;
+                height: 28px;
+            }
+            .card-front .shark-name {
+                font-size: 0.8em;
             }
         }
+        /* Touch-friendly tweaks */
+        .shark-card { touch-action: manipulation; }
+        .order-header { touch-action: manipulation; min-height: 44px; }
     </style>
 </head>
 <body>
-    <h1>List Of Sharks</h1>
-
-    <!-- Filters -->
-    <div class="filters">
-        <div id="orderDropdown" class="custom-dropdown">
-            <label>Blacklist Order:</label>
-            <div class="dropdown-content"></div>
-        </div>
-        <div id="familyDropdown" class="custom-dropdown">
-            <label>Blacklist Family:</label>
-            <div class="dropdown-content"></div>
-        </div>
-        <div id="genusDropdown" class="custom-dropdown">
-            <label>Blacklist Genera:</label>
-            <div class="dropdown-content"></div>
-        </div>
-    </div>
-
-    <!-- Move the search bar here -->
-    <div id="searchContainer" class="custom-dropdown" style="margin: 0 auto; text-align: center;">
-        <input type="text" id="searchBar" placeholder="Search sharks..." class="modern-dropdown">
-    </div>
-
-    <!-- Sort By -->
-    <div class="sort-container">
-        <select id="sort" class="modern-dropdown">
-            <option value="name">Name</option>
-            <option value="yod_earliest">YOD (Earliest)</option>
-            <option value="yod_latest">YOD (Latest)</option>
-        </select>
-    </div>
-
-    <!-- Results -->
-    <div id="results"></div>
-    <div id="sharkCount"></div>
-    
+    <h1>Sharkdle Library</h1>
+    <div id="orders-container"></div>
     <script>
+        // Shark data (same as before)
         const sharks = [
             // Cow and Frilled Sharks | Hexanchiformes | Completed
             { "name": "Frilled Shark", "family": "Chlamydoselachidae", "order": "Hexanchiformes", "genus": "Chlamydoselachus", "yod": 1884},
@@ -459,177 +396,73 @@
             { "name": "Smooth HammerHead Shark", "family": "Sphyrnidae", "order": "Carcharhiniformes", "genus": "Sphyrna", "yod": 1758},
         ];
 
-        const common_names = [
-            // Orders
-            {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
-            {"scientific": "Orectolobiformes", "Common": "Carpet Sharks"},
-            {"scientific": "Lamniformes", "Common": "Mackerel Sharks"},
-            {"scientific": "Heterodontiformes", "Common": "Bullhead Sharks"},
-            {"scientific": "Squantiniformes", "Common": "Angel Sharks"},
-            {"scientific": "Pristiophoriformes", "Common": "Saw Sharks"},
-            {"scientific": "Squaliformes", "Common": "Dog Fish"},
-            {"scientific": "Hexanchiformes", "Common": "Cow and Frilled Sharks"},
-            // Families
-            {"scientific": "Sphyrnidae", "Common": "Hammerhead Sharks"},
-            {"scientific": "Carcharhinidae", "Common": "Requiem Sharks"},
-            {"scientific": "Stegostinatidae", "Common": "Zebra Sharks"},
-            {"scientific": "Rhincodontidae", "Common": "Whale Sharks"},
-            {"scientific": "Orectolobidae", "Common": "Wobbegong Sharks"},
-            {"scientific": "Hemiscylliidae", "Common": "Bamboo Sharks"},
-            {"scientific": "Ginglymostomatidae", "Common": "Nurse Sharks"},
-            {"scientific": "Dalatiidae", "Common": "Kitefin Sharks"},
-            {"scientific": "Etmopteridae", "Common": "Lantern Sharks"},
-            {"scientific": "Echinorhinidae", "Common": "Bramble Sharks"},
-            {"scientific": "Odontaspididae", "Common": "Sand Tiger Sharks"},
-            {"scientific": "Megachasmidae", "Common": "Megamouth Sharks"},
-            {"scientific": "Lamnidae", "Common": "Mackerel Sharks"},
-            {"scientific": "Hexanchidae", "Common": "Cow Sharks"},
-            {"scientific": "Centrophoridae", "Common": "Gulper Sharks"},
-            {"scientific": "Pristiophoridae", "Common": "Saw Sharks"},
-            {"scientific": "Squatinidae", "Common": "Angel Sharks"},
-            {"scientific": "Heterodontidae", "Common": "Bullhead Sharks"},
-            {"scientific": "Alopiidae", "Common": "Thresher Sharks"},
-            {"scientific": "Cetorhinidae", "Common": "Basking Sharks"},
-            {"scientific": "Mitsukurinidae", "Common": "Goblin Sharks"},
-            {"scientific": "Brachaeluridae", "Common": "Blind Sharks"},
-            {"scientific": "Chlamydoselachidae", "Common": "Frilled Sharks"},
-            {"scientific": "Pseudocarchariidae", "Common": "Crocodile Sharks"},
-            {"scientific": "Somniosidae", "Common": "Sleeper Sharks"},
-            {"scientific": "Pentachidae", "Common": "Deep-Sea CatSharks"},
-            {"scientific": "Glyphis", "Common": "River Sharks"},
-            {"scientific": "Haploblepharus", "Common": "ShySharks"},
-        ];
+        function getSharkImg(sharkName) {
+            return `images/${sharkName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}.jpg`;
+        }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const resultsDiv = document.getElementById("results");
-            const sharkCountDiv = document.getElementById("sharkCount");
-            let filteredSharks = sharks;
+        const naImg = "https://th.bing.com/th/id/OIP.jiLpfGXaihtIQ7Hh4XstfgHaHa?w=177&h=180&c=7&r=0&o=7&pid=1.7&rm=3";
 
-            // Populate dropdowns with checkboxes
-            function populateDropdown(dropdownId, items, labelKey, valueKey) {
-                const dropdown = document.getElementById(dropdownId).querySelector('.dropdown-content');
-                dropdown.innerHTML = ''; // Clear existing options
-
-                items.forEach(item => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'dropdown-option';
-
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = item[valueKey];
-                    checkbox.id = `${dropdownId}-${item[valueKey]}`;
-
-                    const label = document.createElement('label');
-                    label.htmlFor = checkbox.id;
-                    label.textContent = item[labelKey];
-
-                    optionDiv.appendChild(checkbox);
-                    optionDiv.appendChild(label);
-                    dropdown.appendChild(optionDiv);
-                });
-            }
-
-            // Populate dropdowns
-            function populateOrderDropdown(filteredSharks) {
-                const orders = [...new Set(filteredSharks.map(shark => shark.order))].map(order => ({
-                    label: common_names.find(item => item.scientific === order)?.Common || order,
-                    value: order
-                }));
-                populateDropdown('orderDropdown', orders, 'label', 'value');
-            }
-
-            function populateFamilyDropdown(filteredSharks) {
-                const families = [...new Set(filteredSharks.map(shark => shark.family))].map(family => ({
-                    label: common_names.find(item => item.scientific === family)?.Common || family,
-                    value: family
-                }));
-                populateDropdown('familyDropdown', families, 'label', 'value');
-            }
-
-            function populateGenusDropdown(filteredSharks) {
-                const genera = [...new Set(filteredSharks.map(shark => shark.genus))].map(genus => ({
-                    label: genus,
-                    value: genus
-                }));
-                populateDropdown('genusDropdown', genera, 'label', 'value');
-            }
-
-            // Get selected values from a custom dropdown
-            function getSelectedValues(dropdownId) {
-                const checkboxes = document.getElementById(dropdownId).querySelectorAll('input[type="checkbox"]:checked');
-                return Array.from(checkboxes).map(checkbox => checkbox.value);
-            }
-
-            // Filter sharks based on blacklist and search
-            function filterSharks() {
-                const blacklistedOrders = getSelectedValues('orderDropdown');
-                const blacklistedFamilies = getSelectedValues('familyDropdown');
-                const blacklistedGenera = getSelectedValues('genusDropdown');
-                const searchQuery = document.getElementById('searchBar').value.toLowerCase();
-
-                // Filter sharks based on blacklist and search query
-                filteredSharks = sharks.filter(shark => {
-                    const matchesSearch = shark.name.toLowerCase().includes(searchQuery);
-                    const notBlacklisted = !blacklistedOrders.includes(shark.order) &&
-                                           !blacklistedFamilies.includes(shark.family) &&
-                                           !blacklistedGenera.includes(shark.genus);
-                    return matchesSearch && notBlacklisted;
-                });
-
-                displayResults(filteredSharks);
-            }
-
-            // Sort results
-            document.getElementById("sort").addEventListener("change", function () {
-                const sortBy = this.value;
-                if (sortBy === "name") {
-                    filteredSharks.sort((a, b) => a.name.localeCompare(b.name));
-                } else if (sortBy === "yod_earliest") {
-                    filteredSharks.sort((a, b) => a.yod - b.yod);
-                } else if (sortBy === "yod_latest") {
-                    filteredSharks.sort((a, b) => b.yod - a.yod);
-                }
-                displayResults(filteredSharks);
+        function renderSharkGalleryByOrder() {
+            const ordersContainer = document.getElementById('orders-container');
+            ordersContainer.innerHTML = '';
+            const orderGroups = {};
+            sharks.forEach(shark => {
+                if (!orderGroups[shark.order]) orderGroups[shark.order] = [];
+                orderGroups[shark.order].push(shark);
             });
-
-            // Display results
-            function displayResults(filteredSharks) {
-                resultsDiv.innerHTML = "";
-
-                if (filteredSharks.length === 0) {
-                    resultsDiv.textContent = "No sharks found matching the criteria.";
-                    sharkCountDiv.textContent = "";
-                    return;
-                }
-
-                filteredSharks.forEach(shark => {
-                    const sharkDiv = document.createElement("div");
-                    sharkDiv.className = "shark";
-                    sharkDiv.innerHTML = `
-                        <strong>Name:</strong> ${shark.name}<br>
-                        <strong>Family:</strong> ${shark.family}<br>
-                        <strong>Order:</strong> ${shark.order}<br>
-                        <strong>Genus:</strong> ${shark.genus}<br>
-                        <strong>Year of Discovery:</strong> ${shark.yod}
-                    `;
-                    resultsDiv.appendChild(sharkDiv);
+            const sortedOrders = Object.keys(orderGroups).sort();
+            sortedOrders.forEach(order => {
+                const section = document.createElement('section');
+                section.className = 'order-section';
+                const header = document.createElement('button');
+                header.className = 'order-header';
+                header.type = 'button';
+                header.innerHTML = `<span>${order}</span><span class="order-arrow">&#9660;</span>`;
+                header.addEventListener('click', () => {
+                    section.classList.toggle('collapsed');
                 });
-
-                sharkCountDiv.textContent = `Total Sharks: ${filteredSharks.length}`;
-            }
-
-            // Initial population of dropdowns and display all sharks
-            populateOrderDropdown(sharks);
-            populateFamilyDropdown(sharks);
-            populateGenusDropdown(sharks);
-            displayResults(sharks);
-
-            // Add event listeners for auto-filtering
-            document.getElementById('orderDropdown').addEventListener('change', filterSharks);
-            document.getElementById('familyDropdown').addEventListener('change', filterSharks);
-            document.getElementById('genusDropdown').addEventListener('change', filterSharks);
-            document.getElementById('searchBar').addEventListener('input', filterSharks);
-        });
+                section.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'order-content';
+                const gallery = document.createElement('div');
+                gallery.className = 'gallery';
+                orderGroups[order].forEach((shark) => {
+                    const card = document.createElement('div');
+                    card.className = 'shark-card';
+                    card.tabIndex = 0;
+                    card.setAttribute('aria-label', `Shark card for ${shark.name}`);
+                    const imgPath = getSharkImg(shark.name);
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <img src="${imgPath}" alt="Shark image" onerror="this.onerror=null;this.src='${naImg}';">
+                                <div class="shark-name">${shark.name}</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="stat"><strong>Name:</strong> ${shark.name}</div>
+                                <div class="stat"><strong>Family:</strong> ${shark.family}</div>
+                                <div class="stat"><strong>Order:</strong> ${shark.order}</div>
+                                <div class="stat"><strong>Genus:</strong> ${shark.genus}</div>
+                                <div class="stat"><strong>Year of Discovery:</strong> ${shark.yod}</div>
+                            </div>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('flipped');
+                    });
+                    card.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            card.classList.toggle('flipped');
+                        }
+                    });
+                    gallery.appendChild(card);
+                });
+                content.appendChild(gallery);
+                section.appendChild(content);
+                ordersContainer.appendChild(section);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', renderSharkGalleryByOrder);
     </script>
 </body>
 </html>

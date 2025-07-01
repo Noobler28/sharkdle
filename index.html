@@ -1079,6 +1079,64 @@ function updateStats(result, guesses) {
 // On sign in, load stats from Firestore
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+        const db = firebase.firestore();
+        const statsRef = db.collection('userStats').doc(user.uid);
+        statsRef.get().then(doc => {
+            // Get Firestore stats (if any)
+            const cloudStats = doc.exists ? doc.data() : {};
+            // Get local stats
+            const localStats = {
+                gamesPlayed: parseInt(localStorage.getItem('gamesPlayed') || 0),
+                wins: parseInt(localStorage.getItem('wins') || 0),
+                losses: parseInt(localStorage.getItem('losses') || 0),
+                currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
+                highestStreak: parseInt(localStorage.getItem('highestStreak') || 0),
+                averageGuesses: parseFloat(localStorage.getItem('averageGuesses') || 0),
+                bestGame: localStorage.getItem('bestGame') || 'N/A',
+                totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0)
+            };
+            // Merge logic
+            const merged = {
+                gamesPlayed: (cloudStats.gamesPlayed || 0) + (localStats.gamesPlayed || 0),
+                wins: (cloudStats.wins || 0) + (localStats.wins || 0),
+                losses: (cloudStats.losses || 0) + (localStats.losses || 0),
+                currentStreak: Math.max(cloudStats.currentStreak || 0, localStats.currentStreak || 0),
+                highestStreak: Math.max(cloudStats.highestStreak || 0, localStats.highestStreak || 0),
+                totalGuesses: (cloudStats.totalGuesses || 0) + (localStats.totalGuesses || 0),
+                averageGuesses: 0, // will recalc below
+                bestGame: (() => {
+                    const c = cloudStats.bestGame === 'N/A' ? Infinity : parseInt(cloudStats.bestGame || Infinity);
+                    const l = localStats.bestGame === 'N/A' ? Infinity : parseInt(localStats.bestGame || Infinity);
+                    const best = Math.min(c, l);
+                    return best === Infinity ? 'N/A' : best;
+                })()
+            };
+            merged.averageGuesses = merged.gamesPlayed > 0 ? (merged.totalGuesses / merged.gamesPlayed) : 0;
+            // Save merged stats to Firestore
+            statsRef.set(merged, { merge: true }).then(() => {
+                // Also update localStorage for consistency
+                // Clear local stats to prevent double-counting on next login
+                localStorage.setItem('gamesPlayed', 0);
+                localStorage.setItem('wins', 0);
+                localStorage.setItem('losses', 0);
+                localStorage.setItem('currentStreak', 0);
+                localStorage.setItem('highestStreak', 0);
+                localStorage.setItem('totalGuesses', 0);
+                localStorage.setItem('averageGuesses', 0);
+                localStorage.setItem('bestGame', 'N/A');
+                // After clearing, reload stats from Firestore and update UI
+                statsRef.get().then(doc => {
+                    let stats = {};
+                    if (doc.exists) {
+                        stats = doc.data();
+                    }
+                    updateStatsUI(stats);
+                });
+            });
+        }).catch(() => {
+            refreshStats();
+        });
+    } else {
         refreshStats();
     }
 });
@@ -1252,8 +1310,11 @@ firebase.auth().onAuthStateChanged(function(user) {
             const savedMusicVolume = localStorage.getItem('musicVolume') || 50;
             const savedSoundVolume = localStorage.getItem('soundVolume') || 50;
 
-            document.getElementById('music-slider').value = savedMusicVolume;
-            document.getElementById('sound-slider').value = savedSoundVolume;
+            const musicSlider = document.getElementById('music-slider');
+            if (musicSlider) musicSlider.value = savedMusicVolume;
+
+            const soundSlider = document.getElementById('sound-slider');
+            if (soundSlider) soundSlider.value = savedSoundVolume;
 
             // Set the event banner label to show the event's local time for the user
             const eventDateLondon = new Date(Date.UTC(2025, 6, 20, 12, 0, 0)); // 13:00 BST = 12:00 UTC

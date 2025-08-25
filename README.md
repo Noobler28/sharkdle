@@ -1,6 +1,8 @@
 # Welcome to Sharkdle! 🦈
 PLAY HERE: https://noobler28.github.io/sharkdle/index.html
+
 REPORT BUGS HERE: https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ5UKmsC05edZH3R7jRJ9QCGRZVOLw/viewform?usp=dialog
+
 JOIN THE DISCORD: https://discord.gg/FbnWZNsq
 
 ## How To Play:

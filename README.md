@@ -1,4 +1,7 @@
 # Welcome to Sharkdle! 🦈
+
+CREATED BY CONNOR EAGLE
+
 PLAY HERE: https://noobler28.github.io/sharkdle/index.html
 
 REPORT BUGS HERE: https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ5UKmsC05edZH3R7jRJ9QCGRZVOLw/viewform?usp=dialog
@@ -29,6 +32,4 @@ Version 1.0 - Releases 10 march 2026
 
 
 # Info
-Contact me on discord if you find any bugs or misinformation
-Made with javascript, html and css
-Thank you for playing
+Made with javascript, html and css. Thank you for playing!

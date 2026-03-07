@@ -63,6 +63,10 @@ let attempts = 12;
 
 // Developer console command to reveal the correct shark
 window.revealShark = function() {
+    if (!window.devUnlocked) {
+        console.log('Dev mode not unlocked.');
+        return;
+    }
     console.log("The correct shark is: " + targetShark.name);
 };
 
@@ -79,44 +83,33 @@ function normalizeInput(input) {
 }
 
 function updateStats(isWin, guessesTaken = 0) {
-    // Load current stats
-    const stats = {
-        gamesPlayed: parseInt(localStorage.getItem('games') || 0),
-        wins: parseInt(localStorage.getItem('wins') || 0),
-        losses: parseInt(localStorage.getItem('losses') || 0),
-        totalGuesses: parseInt(localStorage.getItem('totalGuesses') || 0),
-        currentStreak: parseInt(localStorage.getItem('currentStreak') || 0),
-        highestStreak: parseInt(localStorage.getItem('highestStreak') || 0),
-        bestGame: localStorage.getItem('bestGame') || 'N/A',
-    };
+    if (!window.currentUser) return;
 
-    stats.gamesPlayed++;
+    // Load current profileData
+    let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+
+    profileData.gamesPlayed = (profileData.gamesPlayed || 0) + 1;
     if (isWin) {
-        stats.wins++;
-        stats.totalGuesses += guessesTaken;
-        stats.currentStreak++;
-        stats.highestStreak = Math.max(stats.highestStreak, stats.currentStreak);
+        profileData.wins = (profileData.wins || 0) + 1;
+        profileData.totalGuesses = (profileData.totalGuesses || 0) + guessesTaken;
+        profileData.currentStreak = (profileData.currentStreak || 0) + 1;
+        profileData.highestStreak = Math.max(profileData.highestStreak || 0, profileData.currentStreak);
         // Update best game (fewest guesses)
-        if (stats.bestGame === 'N/A' || guessesTaken < parseInt(stats.bestGame)) {
-            stats.bestGame = guessesTaken;
+        if (!profileData.bestGame || profileData.bestGame === 'N/A' || guessesTaken < parseInt(profileData.bestGame)) {
+            profileData.bestGame = guessesTaken;
         }
     } else {
-        stats.losses++;
-        stats.currentStreak = 0;
+        profileData.losses = (profileData.losses || 0) + 1;
+        profileData.currentStreak = 0;
     }
 
-    // Save updated stats to localStorage
-    localStorage.setItem('games', stats.gamesPlayed);
-    localStorage.setItem('wins', stats.wins);
-    localStorage.setItem('losses', stats.losses);
-    localStorage.setItem('totalGuesses', stats.totalGuesses);
-    localStorage.setItem('currentStreak', stats.currentStreak);
-    localStorage.setItem('highestStreak', stats.highestStreak);
-    localStorage.setItem('bestGame', stats.bestGame);
     // Calculate and save average guesses
-    if (stats.gamesPlayed > 0) {
-        localStorage.setItem('averageGuesses', (stats.totalGuesses / stats.gamesPlayed).toFixed(2));
+    if (profileData.gamesPlayed > 0) {
+        profileData.averageGuesses = (profileData.totalGuesses / profileData.gamesPlayed).toFixed(2);
     }
+
+    // Save to localStorage
+    localStorage.setItem("userProfile", JSON.stringify(profileData));
 
     // Add to recent games
     const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
@@ -177,11 +170,12 @@ function makeGuess() {
     
     if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
         const guessesTaken = 12 - attempts;
-        // Gain XP and save to totalXP for Shark Pass
-        let totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
-        const xpGain = 40 + guessesTaken * 5;
-        totalXP += xpGain;
-        localStorage.setItem("totalXP", totalXP);
+        if (window.currentUser) {
+            let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+            const xpGain = 40 + guessesTaken * 5;
+            profileData.totalXP = (profileData.totalXP || 0) + xpGain;
+            localStorage.setItem("userProfile", JSON.stringify(profileData));
+        }
 
         updateStats(true, guessesTaken);
         submitStatsToLeaderboard(true, guessesTaken);

@@ -61,14 +61,7 @@ let attempts = 12;
 // practice mode removed; always count down and store stats
 
 
-// Developer console command to reveal the correct shark
-window.revealShark = function() {
-    if (!window.devUnlocked) {
-        console.log('Dev mode not unlocked.');
-        return;
-    }
-    console.log("The correct shark is: " + targetShark.name);
-};
+
 
 function getLessSpecificName(sharkName) {
     const words = sharkName.split(' ');

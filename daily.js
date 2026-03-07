@@ -8,8 +8,14 @@ let guesses = []
 let gameCompleted = false
 let gameWon = false
 
+const messageDiv = document.getElementById("message");
+
 // Developer console command to reveal the correct shark
 window.revealShark = function() {
+    if (!window.devUnlocked) {
+        console.log('Dev mode not unlocked.');
+        return;
+    }
     console.log("The correct shark is: " + targetShark.name);
 };
 
@@ -90,9 +96,21 @@ if (gameCompleted) return
 const input = document.getElementById("sharkGuess")
 const guess = input.value.toLowerCase()
 
+// Clear previous message
+if (messageDiv) messageDiv.textContent = "";
+
 const shark = sharks.find(s=>s.name.toLowerCase().startsWith(guess))
 
-if(!shark) return
+if(!shark) {
+    if (messageDiv) messageDiv.textContent = "Shark not found in the list.";
+    return;
+}
+
+// Check if already guessed
+if (guesses.some(g => g.shark.name === shark.name)) {
+    if (messageDiv) messageDiv.textContent = "You already guessed this shark.";
+    return;
+}
 
 attempts--
 
@@ -114,44 +132,39 @@ if(shark.name === targetShark.name){
     // Track total guesses for this game
     const guessesTaken = 13 - attempts;
 
-    // Track total guesses accumulated
-    let totalGuesses = parseInt(localStorage.getItem("totalGuesses")) || 0;
-    totalGuesses += guessesTaken;
-    localStorage.setItem("totalGuesses", totalGuesses);
+    if (window.currentUser) {
+        let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
-    // Update stats to match infinite.js format
-    let gamesPlayed = parseInt(localStorage.getItem("games")) || 0;
-    let wins = parseInt(localStorage.getItem("wins")) || 0;
-    let currentStreak = parseInt(localStorage.getItem("currentStreak")) || 0;
-    let highestStreak = parseInt(localStorage.getItem("highestStreak")) || 0;
-    let bestGame = localStorage.getItem("bestGame") || "N/A";
-    
-    gamesPlayed++;
-    wins++;
-    currentStreak++;
-    highestStreak = Math.max(highestStreak, currentStreak);
-    
-    // Update best game (fewest guesses)
-    if (bestGame === 'N/A' || guessesTaken < parseInt(bestGame)) {
-        bestGame = guessesTaken;
-    }
-    
-    localStorage.setItem("games", gamesPlayed);
-    localStorage.setItem("wins", wins);
-    localStorage.setItem("currentStreak", currentStreak);
-    localStorage.setItem("highestStreak", highestStreak);
-    localStorage.setItem("bestGame", bestGame);
-    
-    // Calculate and save average guesses
-    if (wins > 0) {
-        localStorage.setItem("averageGuesses", (totalGuesses / wins).toFixed(2));
-    }
+        // Track total guesses accumulated
+        profileData.totalGuesses = (profileData.totalGuesses || 0) + guessesTaken;
 
-    // Gain XP and save to totalXP for Shark Pass
-    let totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
-    const xpGain = 40 + attempts * 5;
-    totalXP += xpGain;
-    localStorage.setItem("totalXP", totalXP);
+        // Update stats
+        profileData.gamesPlayed = (profileData.gamesPlayed || 0) + 1;
+        profileData.wins = (profileData.wins || 0) + 1;
+        profileData.currentStreak = (profileData.currentStreak || 0) + 1;
+        profileData.highestStreak = Math.max(profileData.highestStreak || 0, profileData.currentStreak);
+        
+        // Update best game (fewest guesses)
+        if (!profileData.bestGame || profileData.bestGame === 'N/A' || guessesTaken < parseInt(profileData.bestGame)) {
+            profileData.bestGame = guessesTaken;
+        }
+        
+        // Calculate and save average guesses
+        if (profileData.gamesPlayed > 0) {
+            profileData.averageGuesses = (profileData.totalGuesses / profileData.gamesPlayed).toFixed(2);
+        }
+
+        // Gain XP and save to totalXP for Shark Pass
+        const xpGain = 40 + attempts * 5;
+        profileData.totalXP = (profileData.totalXP || 0) + xpGain;
+
+        localStorage.setItem("userProfile", JSON.stringify(profileData));
+
+        // Sync to Firebase
+        if (typeof syncStatsToFirebase !== 'undefined') {
+            syncStatsToFirebase();
+        }
+    }
 
     gameCompleted = true
     gameWon = true
@@ -162,35 +175,36 @@ if(shark.name === targetShark.name){
         window.updateIndexStats();
     }
 
-    // Sync stats to Firebase if user is logged in
-    if (typeof syncStatsToFirebase !== 'undefined') {
-        syncStatsToFirebase();
-    }
-
     showWin(xpGain);
 
 }
 
 if(attempts===0){
 
-    // Track total guesses for this game (all 12 attempts used)
-    const guessesTaken = 12;
-    let totalGuesses = parseInt(localStorage.getItem("totalGuesses")) || 0;
-    totalGuesses += guessesTaken;
-    localStorage.setItem("totalGuesses", totalGuesses);
+    if (window.currentUser) {
+        let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
-    // Update stats to match infinite.js format
-    let gamesPlayed = parseInt(localStorage.getItem("games")) || 0;
-    let losses = parseInt(localStorage.getItem("losses")) || 0;
-    let currentStreak = parseInt(localStorage.getItem("currentStreak")) || 0;
-    
-    gamesPlayed++;
-    losses++;
-    currentStreak = 0; // Reset streak on loss
-    
-    localStorage.setItem("games", gamesPlayed);
-    localStorage.setItem("losses", losses);
-    localStorage.setItem("currentStreak", currentStreak);
+        // Track total guesses for this game (all 12 attempts used)
+        const guessesTaken = 12;
+        profileData.totalGuesses = (profileData.totalGuesses || 0) + guessesTaken;
+
+        // Update stats
+        profileData.gamesPlayed = (profileData.gamesPlayed || 0) + 1;
+        profileData.losses = (profileData.losses || 0) + 1;
+        profileData.currentStreak = 0; // Reset streak on loss
+        
+        // Calculate and save average guesses
+        if (profileData.gamesPlayed > 0) {
+            profileData.averageGuesses = (profileData.totalGuesses / profileData.gamesPlayed).toFixed(2);
+        }
+
+        localStorage.setItem("userProfile", JSON.stringify(profileData));
+
+        // Sync to Firebase
+        if (typeof syncStatsToFirebase !== 'undefined') {
+            syncStatsToFirebase();
+        }
+    }
 
     gameCompleted = true
     gameWon = false
@@ -199,11 +213,6 @@ if(attempts===0){
     // Update display
     if (typeof window.updateIndexStats !== 'undefined') {
         window.updateIndexStats();
-    }
-
-    // Sync stats to Firebase if user is logged in
-    if (typeof syncStatsToFirebase !== 'undefined') {
-        syncStatsToFirebase();
     }
 
     showLose()

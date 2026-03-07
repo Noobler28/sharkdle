@@ -24,6 +24,8 @@ Version 1.0 - Releases 10 march 2026
 
 -Improved shark library with better search and filtering.
 
+-Removed Year of discovery
+
 
 
 # Info

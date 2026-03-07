@@ -10,14 +10,7 @@ let gameWon = false
 
 const messageDiv = document.getElementById("message");
 
-// Developer console command to reveal the correct shark
-window.revealShark = function() {
-    if (!window.devUnlocked) {
-        console.log('Dev mode not unlocked.');
-        return;
-    }
-    console.log("The correct shark is: " + targetShark.name);
-};
+
 
 // Load game state from localStorage
 function loadGameState() {

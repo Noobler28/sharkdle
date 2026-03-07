@@ -7,10 +7,17 @@ Contact me on discord if you find any bugs or misinformation: https://discord.gg
 
 # Updates and version
 
-Version: 
+Current Version:
+0.5
 
 Next Update:
-Version 1.0
+Version 1.0 - Releases 10 march 2026
+
+-Completely new UI design
+-Leaderboards fully working and up to date
+-Brand new Shark Pass to earn rewards such as profile pictures
+-Improved shark library with better search and filtering
+
 
 
 # Info

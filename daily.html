@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sharkdle Daily</title>
+
+<link rel="stylesheet" href="daily.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body>
+
+<div class="background"></div>
+
+<header class="topbar">
+
+<h1>🦈 Sharkdle - Daily</h1>
+
+</header>
+
+
+<div class="game-container">
+
+
+<!-- INPUT -->
+
+<div class="input-panel">
+
+<input id="sharkGuess" placeholder="Enter shark name..." autocomplete="off">
+
+<button id="guessBtn">Guess</button>
+
+<div id="attempts-left">Attempts left: 12</div>
+
+</div>
+
+
+<!-- CURRENT GUESSES -->
+
+<div id="guesses"></div>
+
+</div>
+
+
+<div id="win-screen"></div>
+
+<script src="sharks.js"></script>
+<script src="daily.js"></script>
+
+</body>
+
+</html>

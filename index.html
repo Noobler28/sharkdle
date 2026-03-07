@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sharkdle</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<div class="logo">
+🦈 Sharkdle
+</div>
+
+<div id="auth-container" class="auth-container">
+<button id="login-btn" onclick="openLoginModal()" class="auth-btn">Login</button>
+</div>
+
+</header>
+
+
+<section class="hero">
+
+<h1>Welcome to Sharkdle</h1>
+
+<p>Dive into the ultimate shark guessing game</p>
+
+<div id="login-warning" class="login-warning hidden" style="margin-top: 15px; padding: 12px; background: rgba(255, 152, 0, 0.15); border-left: 3px solid #ff9800; border-radius: 6px; color: #ffb74d; font-size: 14px; font-weight: 600;">
+⚠️ You are not logged in. Your stats and XP won't be saved. <button onclick="openLoginModal()" style="background: #ff9800; color: #fff; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Login</button>
+</div>
+
+<div id="daily-bonus-msg" style="margin-top: 15px; padding: 12px; background: rgba(0, 180, 216, 0.15); border-left: 3px solid #00b4d8; border-radius: 6px; color: #4dd0e1; font-size: 14px; font-weight: 600;"></div>
+
+</section>
+
+
+<section class="menu-grid">
+
+<div class="game-card" onclick="navigate('daily.html')">
+<i class="fa-solid fa-calendar-day"></i>
+<h2>Daily Challenge</h2>
+<p>One shark per day. Can you guess it?</p>
+</div>
+
+<div class="game-card" onclick="navigate('infinite.html')">
+<i class="fa-solid fa-infinity"></i>
+<h2>Infinite Mode</h2>
+<p>Unlimited sharks. Endless guessing.</p>
+</div>
+
+<div class="game-card" onclick="navigate('library.html')">
+<i class="fa-solid fa-fish"></i>
+<h2>Shark Library</h2>
+<p>Explore every shark in the game.</p>
+</div>
+
+<div class="game-card" onclick="navigate('sharkpass.html')">
+<i class="fa-solid fa-id-card"></i>
+<h2>Shark Pass</h2>
+<p>Earn XP, Collect cosmetics</p>
+</div>
+
+<div class="game-card" onclick="navigate('leaderboards.html')">
+<i class="fa-solid fa-trophy"></i>
+<h2>Leaderboards</h2>
+<p>See the top Sharkdle players.</p>
+</div>
+
+</section>
+
+
+<footer>
+
+<p>Made with ❤️ by the Sharkdle Team</p>
+
+<div class="links">
+<a href="https://github.com/Noobler28/sharkdle">GitHub</a>
+<a href="updates.html">Updates</a>
+<a href="https://discord.gg/V97Y8545Ve">Discord</a>
+</div>
+
+</footer>
+
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal hidden">
+<div class="modal-content" style="width: 90%; max-width: 400px;">
+<h2 style="margin-top: 0;">Login to Sharkdle</h2>
+<p style="color: #888; font-size: 14px;">Your stats and XP will be saved to your account.</p>
+
+<div class="login-form">
+<input type="email" id="login-email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+<input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+<button onclick="loginUser()" style="width: 100%; padding: 10px; margin: 10px 0; background: #00b4d8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Login</button>
+<p style="text-align: center; font-size: 14px; margin: 10px 0;">Don't have an account? <button onclick="switchToSignup()" style="background: none; border: none; color: #00b4d8; cursor: pointer; text-decoration: underline;">Sign up</button></p>
+</div>
+
+<div class="signup-form hidden">
+<input type="email" id="signup-email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+<input type="password" id="signup-password" placeholder="Password (min 6 characters)" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+<input type="text" id="signup-username" placeholder="Username" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+<button onclick="signupUser()" style="width: 100%; padding: 10px; margin: 10px 0; background: #00b4d8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Sign Up</button>
+<p style="text-align: center; font-size: 14px; margin: 10px 0;">Already have an account? <button onclick="switchToLogin()" style="background: none; border: none; color: #00b4d8; cursor: pointer; text-decoration: underline;">Login</button></p>
+</div>
+
+<p id="auth-error" style="color: #ff6b6b; font-size: 12px; margin: 10px 0; display: none;"></p>
+
+<button onclick="closeLoginModal()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
+</div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal hidden">
+<div class="modal-content" style="width: 90%; max-width: 500px;">
+<h2 style="margin-top: 0;">Profile</h2>
+
+<div class="profile-section" style="display: flex; align-items: center; gap: 20px; margin: 20px 0; padding: 20px; background: rgba(0, 180, 216, 0.1); border-radius: 8px;">
+<div style="position: relative;">
+<img id="profile-pic" src="https://ui-avatars.com/api/?name=User&background=00b4d8&color=fff" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; cursor: pointer;" onclick="openProfilePicModal()">
+<button onclick="openProfilePicModal()" style="position: absolute; bottom: 0; right: 0; background: #00b4d8; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;">✎</button>
+</div>
+<div style="position: relative; display: flex; align-items: center;">
+<p style="margin: 5px 0; font-weight: 600; font-size: 18px;" id="profile-username">Username</p>
+<button id="edit-profile-btn" onclick="enableUsernameEdit()" style="background: none; border: none; color: #00b4d8; cursor: pointer; font-size: 16px; margin-left: 8px;">✎</button>
+<div id="username-edit-container" class="hidden username-edit-container">
+<input type="text" id="username-input" placeholder="New username" class="username-input">
+<button onclick="saveUsername()" class="btn-save">Save</button>
+<button onclick="cancelUsernameEdit()" class="btn-cancel">Cancel</button>
+</div>
+</div>
+</div>
+
+<div class="stats-detail" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+<div style="padding: 15px; background: rgba(77, 208, 225, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Total Guesses</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #00b4d8;" id="profile-xp">0</p>
+</div>
+<div style="padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Games Played</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #ff6b6b;" id="profile-games">0</p>
+</div>
+<div style="padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Wins</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #4caf50;" id="profile-wins">0</p>
+</div>
+<div style="padding: 15px; background: rgba(244, 67, 54, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Losses</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #f44336;" id="profile-losses">0</p>
+</div>
+<div style="padding: 15px; background: rgba(156, 39, 176, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Average Guesses</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #9c27b0;" id="profile-avg-guesses">0</p>
+</div>
+<div style="padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Best Game</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #ffc107;" id="profile-best-game">0</p>
+</div>
+<div style="padding: 15px; background: rgba(0, 188, 212, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Current Streak</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #00bcd4;" id="profile-current-streak">0</p>
+</div>
+<div style="padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; text-align: center;">
+<p style="margin: 0; font-size: 12px; color: #888;">Highest Streak</p>
+<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #4caf50;" id="profile-highest-streak">0</p>
+</div>
+</div>
+
+<button onclick="logoutUser()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ff6b6b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Logout</button>
+<button onclick="closeProfileModal()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
+</div>
+</div>
+
+<!-- Profile Picture Modal -->
+<div id="profilePicModal" class="modal hidden">
+<div class="modal-content" style="width: 90%; max-width: 600px;">
+<h2 style="margin-top: 0;">Choose Profile Picture</h2>
+
+<div style="margin: 20px 0;">
+<h3 style="font-size: 16px; margin-bottom: 15px;">🎨 Available Profile Pictures</h3>
+<div class="avatar-selector" id="available-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin: 20px 0;">
+<!-- Populated by JavaScript -->
+</div>
+</div>
+
+<div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 20px;">
+<h3 style="font-size: 16px; margin-bottom: 15px;">🏆 Shark Pass Cosmetics</h3>
+<div class="avatar-selector" id="earned-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin: 20px 0;">
+<!-- Populated by JavaScript -->
+</div>
+<p id="no-earned" style="text-align: center; color: #888; font-size: 14px; margin: 20px 0;">No cosmetics earned yet. Check Shark Pass for rewards!</p>
+</div>
+
+<button onclick="closeProfilePicModal()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
+</div>
+</div>
+
+<!-- Daily Login Rewards Modal -->
+<div id="dailyLoginModal" class="modal hidden">
+<div class="modal-content" style="width: 90%; max-width: 600px;">
+<h2 style="margin-top: 0; text-align: center;">📅 Daily Login Rewards</h2>
+<p style="text-align: center; color: #888; font-size: 14px; margin-bottom: 25px;">Claim your daily reward!</p>
+
+<div id="daily-rewards-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+<!-- Populated by JavaScript -->
+</div>
+
+<div id="day-7-reward" style="display: flex; justify-content: center; margin-bottom: 20px;">
+<!-- Day 7 big reward populated by JavaScript -->
+</div>
+
+<button onclick="closeDailyLoginModal()" style="width: 100%; padding: 12px; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
+</div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

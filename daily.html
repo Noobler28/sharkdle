@@ -1,59 +1,311 @@
-<!DOCTYPE html>
-<html lang="en">
+const today = new Date().toISOString().split('T')[0]
 
-<head>
+const dailySharkIndex = hashDate(today) % sharks.length
+const targetShark = sharks[dailySharkIndex]
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+let attempts = 12
+let guesses = []
+let gameCompleted = false
+let gameWon = false
 
-<title>Sharkdle Daily</title>
+const messageDiv = document.getElementById("message");
 
-<link rel="stylesheet" href="daily.css">
+// Developer console command to reveal the correct shark
+window.revealShark = function() {
+    console.log("The correct shark is: " + targetShark.name);
+};
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+// Load game state from localStorage
+function loadGameState() {
+    const stored = localStorage.getItem(`daily_${today}`)
+    if (stored) {
+        const state = JSON.parse(stored)
+        guesses = state.guesses || []
+        attempts = state.attempts || 12
+        gameCompleted = state.completed || false
+        gameWon = state.won || false
+    }
+}
 
-</head>
+// Save game state to localStorage
+function saveGameState() {
+    const state = {
+        guesses: guesses,
+        attempts: attempts,
+        completed: gameCompleted,
+        won: gameWon
+    }
+    localStorage.setItem(`daily_${today}`, JSON.stringify(state))
+}
+
+// Initialize game
+loadGameState()
+
+// If game already completed, show the result
+if (gameCompleted) {
+    if (gameWon) {
+        showWin(0) // XP already gained
+    } else {
+        showLose()
+    }
+    // Disable input
+    document.getElementById("sharkGuess").disabled = true
+    document.getElementById("guessBtn").disabled = true
+    document.getElementById("attempts-left").textContent = "Game completed for today"
+}
+
+// Render existing guesses
+guesses.forEach(guess => {
+    renderGuess(guess.shark, guess.feedback)
+})
+
+function hashDate(date){
+
+let hash=0
+
+for(let i=0;i<date.length;i++){
+
+hash=(hash<<5)-hash+date.charCodeAt(i)
+hash|=0
+
+}
+
+return Math.abs(hash)
+
+}
 
 
-<body>
+document.getElementById("guessBtn").onclick = makeGuess
 
-<div class="background"></div>
-
-<header class="topbar">
-
-<h1>🦈 Sharkdle - Daily</h1>
-
-</header>
-
-
-<div class="game-container">
+// Allow Enter key to submit guess
+document.getElementById("sharkGuess").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        makeGuess();
+    }
+});
 
 
-<!-- INPUT -->
+function makeGuess(){
 
-<div class="input-panel">
+if (gameCompleted) return
 
-<input id="sharkGuess" placeholder="Enter shark name..." autocomplete="off">
+const input = document.getElementById("sharkGuess")
+const guess = input.value.toLowerCase()
 
-<button id="guessBtn">Guess</button>
+// Clear previous message
+if (messageDiv) messageDiv.textContent = "";
 
-<div id="attempts-left">Attempts left: 12</div>
+const shark = sharks.find(s=>s.name.toLowerCase().startsWith(guess))
 
+if(!shark) {
+    if (messageDiv) messageDiv.textContent = "Shark not found in the list.";
+    return;
+}
+
+// Check if already guessed
+if (guesses.some(g => g.shark.name === shark.name)) {
+    if (messageDiv) messageDiv.textContent = "You already guessed this shark.";
+    return;
+}
+
+attempts--
+
+document.getElementById("attempts-left").textContent="Attempts left: "+attempts
+
+const feedback = {
+    family: shark.family === targetShark.family,
+    order: shark.order === targetShark.order,
+    genus: shark.genus === targetShark.genus
+}
+
+guesses.push({ shark: shark, feedback: feedback })
+saveGameState()
+
+renderGuess(shark, feedback)
+
+if(shark.name === targetShark.name){
+
+    // Track total guesses for this game
+    const guessesTaken = 13 - attempts;
+
+    // Track total guesses accumulated
+    let totalGuesses = parseInt(localStorage.getItem("totalGuesses")) || 0;
+    totalGuesses += guessesTaken;
+    localStorage.setItem("totalGuesses", totalGuesses);
+
+    // Update stats to match infinite.js format
+    let gamesPlayed = parseInt(localStorage.getItem("games")) || 0;
+    let wins = parseInt(localStorage.getItem("wins")) || 0;
+    let currentStreak = parseInt(localStorage.getItem("currentStreak")) || 0;
+    let highestStreak = parseInt(localStorage.getItem("highestStreak")) || 0;
+    let bestGame = localStorage.getItem("bestGame") || "N/A";
+    
+    gamesPlayed++;
+    wins++;
+    currentStreak++;
+    highestStreak = Math.max(highestStreak, currentStreak);
+    
+    // Update best game (fewest guesses)
+    if (bestGame === 'N/A' || guessesTaken < parseInt(bestGame)) {
+        bestGame = guessesTaken;
+    }
+    
+    localStorage.setItem("games", gamesPlayed);
+    localStorage.setItem("wins", wins);
+    localStorage.setItem("currentStreak", currentStreak);
+    localStorage.setItem("highestStreak", highestStreak);
+    localStorage.setItem("bestGame", bestGame);
+    
+    // Calculate and save average guesses
+    if (wins > 0) {
+        localStorage.setItem("averageGuesses", (totalGuesses / wins).toFixed(2));
+    }
+
+    // Gain XP and save to totalXP for Shark Pass
+    let totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
+    const xpGain = 40 + attempts * 5;
+    totalXP += xpGain;
+    localStorage.setItem("totalXP", totalXP);
+
+    gameCompleted = true
+    gameWon = true
+    saveGameState()
+
+    // Update display
+    if (typeof window.updateIndexStats !== 'undefined') {
+        window.updateIndexStats();
+    }
+
+    // Sync stats to Firebase if user is logged in
+    if (typeof syncStatsToFirebase !== 'undefined') {
+        syncStatsToFirebase();
+    }
+
+    showWin(xpGain);
+
+}
+
+if(attempts===0){
+
+    // Track total guesses for this game (all 12 attempts used)
+    const guessesTaken = 12;
+    let totalGuesses = parseInt(localStorage.getItem("totalGuesses")) || 0;
+    totalGuesses += guessesTaken;
+    localStorage.setItem("totalGuesses", totalGuesses);
+
+    // Update stats to match infinite.js format
+    let gamesPlayed = parseInt(localStorage.getItem("games")) || 0;
+    let losses = parseInt(localStorage.getItem("losses")) || 0;
+    let currentStreak = parseInt(localStorage.getItem("currentStreak")) || 0;
+    
+    gamesPlayed++;
+    losses++;
+    currentStreak = 0; // Reset streak on loss
+    
+    localStorage.setItem("games", gamesPlayed);
+    localStorage.setItem("losses", losses);
+    localStorage.setItem("currentStreak", currentStreak);
+
+    gameCompleted = true
+    gameWon = false
+    saveGameState()
+
+    // Update display
+    if (typeof window.updateIndexStats !== 'undefined') {
+        window.updateIndexStats();
+    }
+
+    // Sync stats to Firebase if user is logged in
+    if (typeof syncStatsToFirebase !== 'undefined') {
+        syncStatsToFirebase();
+    }
+
+    showLose()
+
+}
+
+input.value=""
+
+}
+
+
+function renderGuess(shark, feedback){
+
+const card = document.createElement("div")
+card.className="guess-card"
+
+card.innerHTML = `<b>${shark.name}</b> (click)`
+
+
+const feedbackDiv = document.createElement("div")
+feedbackDiv.className="feedback"
+
+feedbackDiv.appendChild(createCategory("Family", shark.family, feedback.family))
+feedbackDiv.appendChild(createCategory("Order", shark.order, feedback.order))
+feedbackDiv.appendChild(createCategory("Genus", shark.genus, feedback.genus))
+
+
+card.appendChild(feedbackDiv)
+
+
+card.onclick = ()=>{
+
+feedbackDiv.style.display = feedbackDiv.style.display==="flex"?"none":"flex"
+
+}
+
+
+document.getElementById("guesses").prepend(card)
+
+}
+
+
+function createCategory(name, value, correct){
+
+const div = document.createElement("div")
+
+div.className="category"
+
+if(correct) div.classList.add("correct")
+
+div.textContent = `${name}: ${value}`
+
+return div
+
+}
+
+
+function showWin(xpGained){
+
+const win = document.getElementById("win-screen")
+
+win.style.display="block"
+
+win.innerHTML = `
+<h2>🎉 You Found It!</h2>
+<p>The shark was ${targetShark.name}</p>
+<p>XP gained: +${xpGained}</p>
+<div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
+    <button onclick="window.location.href='infinite.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Play Infinite</button>
+    <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
 </div>
+`
+
+}
 
 
-<!-- CURRENT GUESSES -->
+function showLose(){
 
-<div id="guesses"></div>
+const win = document.getElementById("win-screen")
 
+win.style.display="block"
+
+win.innerHTML = `
+<h2>😢 You Lost</h2>
+<p>The shark was ${targetShark.name}</p>
+<div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
+    <button onclick="window.location.href='infinite.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Play Infinite</button>
+    <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
 </div>
-
-
-<div id="win-screen"></div>
-
-<script src="sharks.js"></script>
-<script src="daily.js"></script>
-
-</body>
-
-</html>
+`
+}

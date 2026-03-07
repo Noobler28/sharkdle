@@ -12,9 +12,11 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
+    console.log("Firebase initialized");
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
+console.log("Firebase auth and db initialized");
 
 // ----- shark pass reward definitions -----
 // this list is shared by multiple helpers (signup, stats sync, cosmetics)
@@ -97,11 +99,18 @@ let currentUser = null;
 
 // Listen for auth state changes
 auth.onAuthStateChanged(user => {
+    console.log("onAuthStateChanged fired, user:", user);
     currentUser = user;
-    updateAuthUI();
+    // Ensure DOM is ready before updating UI
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => updateAuthUI());
+    } else {
+        updateAuthUI();
+    }
 });
 
 function updateAuthUI() {
+    console.log("updateAuthUI called, currentUser:", currentUser);
     const authContainer = document.getElementById("auth-container");
     const loginWarning = document.getElementById("login-warning");
     const loginBtn = document.getElementById("login-btn");
@@ -131,6 +140,8 @@ function updateAuthUI() {
         loadUserProfile();
         // Sync local stats to Firebase
         syncStatsToFirebase();
+        // Initialize daily login
+        initializeDailyLogin();
     } else {
         // User is logged out
         if (loginWarning) loginWarning.classList.remove("hidden");
@@ -146,6 +157,55 @@ function updateAuthUI() {
     // Always update index stats from localStorage (only if container exists)
     if (authContainer) {
         updateIndexStats();
+    }
+
+    // Update daily bonus message
+    const bonusMsg = document.getElementById("daily-bonus-msg");
+    console.log("bonusMsg element:", bonusMsg);
+    if (bonusMsg) {
+        if (currentUser) {
+            const currentLoginDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
+            const streak = parseInt(localStorage.getItem("loginStreak")) || 1;
+            console.log("Setting bonusMsg for logged in user, day:", currentLoginDay, "streak:", streak);
+            bonusMsg.style.display = "block";
+            bonusMsg.style.cursor = "pointer";
+            bonusMsg.style.transition = "all 0.3s ease";
+            bonusMsg.onmouseover = () => bonusMsg.style.transform = "scale(1.02)";
+            bonusMsg.onmouseout = () => bonusMsg.style.transform = "scale(1)";
+            bonusMsg.onclick = () => openDailyLoginModal();
+            bonusMsg.innerHTML = `🔥 Login Streak: <strong>${streak} days</strong> - Day ${currentLoginDay}/7 (Click to view rewards)`;
+        } else {
+            console.log("Hiding bonusMsg for logged out user");
+            bonusMsg.style.display = "none";
+        }
+    } else {
+        console.log("bonusMsg element not found - this might be expected on pages without the element");
+    }
+
+    // Update streak display
+    const existingStreak = document.getElementById("streak-display");
+    if (existingStreak) {
+        existingStreak.remove();
+    }
+    if (currentUser) {
+        const streak = parseInt(localStorage.getItem("loginStreak")) || 1;
+        if (streak > 0) {
+            const streakDisplay = document.createElement("div");
+            streakDisplay.id = "streak-display";
+            streakDisplay.style.cssText = `
+                text-align: center;
+                padding: 10px;
+                color: #4dd0e1;
+                font-weight: 600;
+                font-size: 16px;
+                margin-top: 10px;
+            `;
+            streakDisplay.innerHTML = `📊 Login Streak: <span style="color: #ff6b6b;">${streak} days 🔥</span>`;
+            const statsSection = document.querySelector(".stats");
+            if (statsSection) {
+                statsSection.parentElement.insertBefore(streakDisplay, statsSection);
+            }
+        }
     }
 }
 
@@ -881,9 +941,6 @@ function closeDailyLoginModal() {
 
 // Load stats and streaks
 document.addEventListener("DOMContentLoaded", function() {
-    // Initialize daily login
-    initializeDailyLogin();
-
     // Update displayed stats from localStorage
     if (document.getElementById("games")) {
         document.getElementById("games").textContent = localStorage.getItem("games") || 0;
@@ -893,42 +950,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     if (document.getElementById("losses")) {
         document.getElementById("losses").textContent = localStorage.getItem("losses") || 0;
-    }
-
-    // Show streak info on index page
-    const streak = localStorage.getItem("loginStreak") || 0;
-    const totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
-    
-    // Update daily bonus message in hero section
-    const bonusMsg = document.getElementById("daily-bonus-msg");
-    if (bonusMsg && currentUser) {
-        const currentLoginDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
-        const streak = parseInt(localStorage.getItem("loginStreak")) || 1;
-        bonusMsg.style.cursor = "pointer";
-        bonusMsg.style.transition = "all 0.3s ease";
-        bonusMsg.onmouseover = () => bonusMsg.style.transform = "scale(1.02)";
-        bonusMsg.onmouseout = () => bonusMsg.style.transform = "scale(1)";
-        bonusMsg.onclick = () => openDailyLoginModal();
-        bonusMsg.innerHTML = `🔥 Login Streak: <strong>${streak} days</strong> - Day ${currentLoginDay}/7 (Click to view rewards)`;
-    }
-
-    // Show streak display in stats
-    const streakDisplay = document.createElement("div");
-    streakDisplay.id = "streak-display";
-    streakDisplay.style.cssText = `
-        text-align: center;
-        padding: 10px;
-        color: #4dd0e1;
-        font-weight: 600;
-        font-size: 16px;
-        margin-top: 10px;
-    `;
-    if (streak > 0 && currentUser) {
-        streakDisplay.innerHTML = `📊 Login Streak: <span style="color: #ff6b6b;">${streak} days 🔥</span>`;
-        const statsSection = document.querySelector(".stats");
-        if (statsSection) {
-            statsSection.parentElement.insertBefore(streakDisplay, statsSection);
-        }
     }
 
     // Load available PFPs on page load

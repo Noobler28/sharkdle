@@ -457,7 +457,7 @@ function signupUser() {
                 wins: parseInt(localStorage.getItem("wins")) || 0,
                 losses: parseInt(localStorage.getItem("losses")) || 0,
                 currentLevel: _currentLevel,
-                currentXP: _currentXP,
+                currentXP: _xpInLevel,
                 xpToNextLevel: _xpToNext,
                 unlockedPfps: _unlockedPfps,
                 createdAt: new Date()

@@ -114,8 +114,8 @@ function updateStats(isWin, guessesTaken = 0) {
     localStorage.setItem('highestStreak', stats.highestStreak);
     localStorage.setItem('bestGame', stats.bestGame);
     // Calculate and save average guesses
-    if (stats.wins > 0) {
-        localStorage.setItem('averageGuesses', (stats.totalGuesses / stats.wins).toFixed(2));
+    if (stats.gamesPlayed > 0) {
+        localStorage.setItem('averageGuesses', (stats.totalGuesses / stats.gamesPlayed).toFixed(2));
     }
 
     // Add to recent games
@@ -140,6 +140,7 @@ function updateStats(isWin, guessesTaken = 0) {
     // Sync stats to Firebase if user is logged in
     if (typeof syncStatsToFirebase !== 'undefined') {
         syncStatsToFirebase();
+
     }
 }
 

@@ -715,6 +715,8 @@ const dailyRewards = [
 ];
 
 function initializeDailyLogin() {
+    if (!currentUser) return;
+
     const today = new Date().toDateString();
     const lastLoginDate = localStorage.getItem("lastLoginDate");
     const dailyLoginModalShownToday = localStorage.getItem("dailyLoginModalShownToday");
@@ -768,6 +770,7 @@ function initializeDailyLogin() {
 }
 
 function showDailyLoginModal(currentDay, xpGained) {
+    if (!currentUser) return;
     const modal = document.getElementById("dailyLoginModal");
     const grid = document.getElementById("daily-rewards-grid");
     const day7Container = document.getElementById("day-7-reward");
@@ -860,6 +863,7 @@ function claimDailyReward(day) {
 }
 
 function openDailyLoginModal() {
+    if (!currentUser) return;
     const currentDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
     showDailyLoginModal(currentDay, 0);
 }
@@ -893,7 +897,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Update daily bonus message in hero section
     const bonusMsg = document.getElementById("daily-bonus-msg");
-    if (bonusMsg) {
+    if (bonusMsg && currentUser) {
         const currentLoginDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
         if (streak > 0) {
             bonusMsg.style.cursor = "pointer";
@@ -916,7 +920,7 @@ document.addEventListener("DOMContentLoaded", function() {
         font-size: 16px;
         margin-top: 10px;
     `;
-    if (streak > 0) {
+    if (streak > 0 && currentUser) {
         streakDisplay.innerHTML = `📊 Login Streak: <span style="color: #ff6b6b;">${streak} days 🔥</span>`;
         const statsSection = document.querySelector(".stats");
         if (statsSection) {

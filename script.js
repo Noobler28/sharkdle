@@ -727,6 +727,7 @@ function initializeDailyLogin() {
     if (lastLoginDate !== today) {
         // Calculate next day in the 7-day cycle
         let nextDay = currentLoginDay;
+        let streak = 1;
         
         if (lastLoginDate) {
             const lastDate = new Date(lastLoginDate);
@@ -736,9 +737,11 @@ function initializeDailyLogin() {
             if (daysDiff === 1) {
                 // User logged in yesterday, advance the day
                 nextDay = currentLoginDay >= 7 ? 1 : currentLoginDay + 1;
+                streak = (parseInt(localStorage.getItem("loginStreak")) || 1) + 1;
             } else if (daysDiff > 1) {
                 // User missed days, reset to day 1
                 nextDay = 1;
+                streak = 1;
             }
         }
 
@@ -749,6 +752,7 @@ function initializeDailyLogin() {
         // Update localStorage
         localStorage.setItem("lastLoginDate", today);
         localStorage.setItem("currentLoginDay", nextDay);
+        localStorage.setItem("loginStreak", streak);
         localStorage.setItem("totalXP", totalXP + xpGain);
         localStorage.setItem("dailyLoginModalShownToday", "true");
 
@@ -899,14 +903,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const bonusMsg = document.getElementById("daily-bonus-msg");
     if (bonusMsg && currentUser) {
         const currentLoginDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
-        if (streak > 0) {
-            bonusMsg.style.cursor = "pointer";
-            bonusMsg.style.transition = "all 0.3s ease";
-            bonusMsg.onmouseover = () => bonusMsg.style.transform = "scale(1.02)";
-            bonusMsg.onmouseout = () => bonusMsg.style.transform = "scale(1)";
-            bonusMsg.onclick = () => openDailyLoginModal();
-            bonusMsg.innerHTML = `🔥 Login Streak: <strong>${currentLoginDay}/7 days</strong> (Click to view rewards)`;
-        }
+        const streak = parseInt(localStorage.getItem("loginStreak")) || 1;
+        bonusMsg.style.cursor = "pointer";
+        bonusMsg.style.transition = "all 0.3s ease";
+        bonusMsg.onmouseover = () => bonusMsg.style.transform = "scale(1.02)";
+        bonusMsg.onmouseout = () => bonusMsg.style.transform = "scale(1)";
+        bonusMsg.onclick = () => openDailyLoginModal();
+        bonusMsg.innerHTML = `🔥 Login Streak: <strong>${streak} days</strong> - Day ${currentLoginDay}/7 (Click to view rewards)`;
     }
 
     // Show streak display in stats

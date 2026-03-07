@@ -10,14 +10,7 @@ Contact me on discord if you find any bugs or misinformation: https://discord.gg
 
 ## Updates and version
 
-Current Version: 0.5
-
--small UI changes
-
--larger index of sharks
-
-Next Update:
-Version 1.0 - Releases 10 march 2026
+Current Version: 1.0
 
 -Completely new UI design.
 

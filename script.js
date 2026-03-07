@@ -961,8 +961,6 @@ document.addEventListener("DOMContentLoaded", function() {
             bonusMsg.onmouseout = () => bonusMsg.style.transform = "scale(1)";
             bonusMsg.onclick = () => openDailyLoginModal();
             bonusMsg.innerHTML = `🔥 Login Streak: <strong>${currentLoginDay}/7 days</strong> (Click to view rewards)`;
-        } else {
-            bonusMsg.innerHTML = `📅 Login daily to earn XP rewards and build your streak!`;
         }
     }
 

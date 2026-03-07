@@ -13,10 +13,13 @@ Current Version:
 Next Update:
 Version 1.0 - Releases 10 march 2026
 
--Completely new UI design
--Leaderboards fully working and up to date
--Brand new Shark Pass to earn rewards such as profile pictures
--Improved shark library with better search and filtering
+-Completely new UI design.
+
+-Leaderboards fully working and up to date.
+
+-Brand new Shark Pass to earn rewards such as profile pictures.
+
+-Improved shark library with better search and filtering.
 
 
 

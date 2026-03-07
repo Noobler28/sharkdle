@@ -29,6 +29,10 @@ Version 1.0 - Releases 10 march 2026
 
 -Removed year of discovery from shark entries
 
+# BUGS THAT NEED FIXING
+
+- logging out of an account and back in resets the pfp and the username (IDFK WHY IT DOES THIS)
+
 
 
 # Info

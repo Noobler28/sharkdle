@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sharkdle - Infinite</title>
+
+<link rel="stylesheet" href="infinite.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body>
+
+<header class="topbar">
+
+<h1>🦈 Sharkdle - Infinite</h1>
+
+</header>
+
+
+<div class="game-container">
+
+<!-- INPUT -->
+
+<div class="input-panel">
+
+<input id="sharkGuess" placeholder="Enter shark name..." autocomplete="off">
+
+<button id="guessBtn">Guess</button>
+
+<div id="attempts-left">Attempts left: 12</div>
+
+</div>
+
+
+<!-- CURRENT GUESSES -->
+
+<div id="guesses"></div>
+
+<div id="message"></div>
+
+</div>
+
+
+<div id="win-lose-screen"></div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="sharks.js"></script>
+<script src="infinite.js"></script>
+
+</body>
+
+</html>

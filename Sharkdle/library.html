@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkdle Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #061a40, #0b3c5d);
+            margin: 0;
+            min-height: 100vh;
+            color: #fff;
+        }
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #071c2c;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .navbar a:hover {
+            color: #4dd0e1;
+        }
+        h1 {
+            text-align: center;
+            color: #4dd0e1;
+            margin: 40px 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        /* SEARCH BAR */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0 40px 0;
+            padding: 0 20px;
+        }
+        .search-bar {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            background: #0b2233;
+            border: 2px solid #00b4d8;
+            border-radius: 8px;
+            padding: 12px 18px;
+            transition: 0.3s;
+        }
+        .search-bar:focus-within {
+            border-color: #4dd0e1;
+            box-shadow: 0 0 20px rgba(77, 208, 225, 0.3);
+        }
+        .search-bar i {
+            color: #4dd0e1;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        .search-bar input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .filter-btn {
+            margin-left: 20px;
+            padding: 12px 18px;
+            background: #0b2233;
+            border: 2px solid #00b4d8;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn:hover {
+            border-color: #4dd0e1;
+            box-shadow: 0 0 20px rgba(77, 208, 225, 0.3);
+        }
+        .filter-btn.active {
+            background: #4dd0e1;
+            color: #061a40;
+        }
+        /* SPECIES COUNT */
+        #species-count {
+            text-align: center;
+            font-size: 1.1em;
+            color: #4dd0e1;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            padding: 0 3vw 60px 3vw;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .shark-card {
+            width: 220px;
+            height: 320px;
+            margin: 0 auto;
+            background: none;
+            border: none;
+            outline: none;
+            perspective: 1400px;
+            transition: box-shadow 0.18s cubic-bezier(.4,2,.6,1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 1.5px 8px rgba(0, 180, 216, 0.2);
+            border-radius: 12px;
+            position: relative;
+            will-change: box-shadow;
+            z-index: 1;
+        }
+        .shark-card:focus-visible {
+            outline: 3px solid #4dd0e1;
+        }
+        .shark-card:hover:not(.flipped) {
+            transform: scale(1.045) translateY(-6px);
+            box-shadow: 0 16px 48px rgba(77, 208, 225, 0.3), 0 2px 12px rgba(0, 0, 0, 0.6);
+        }
+        .shark-card.flipped {
+            transform: none;
+            z-index: 10;
+        }
+        .heart-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            z-index: 2;
+        }
+        .heart-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        .heart-btn.hearted {
+            background: rgba(255, 0, 0, 0.7);
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.7s cubic-bezier(.4,2,.6,1);
+            transform-style: preserve-3d;
+            will-change: transform;
+            border-radius: 12px;
+            box-shadow: 0 2px 24px rgba(0, 180, 216, 0.15) inset;
+            background: none;
+        }
+        .shark-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 36px 22px 32px 22px;
+            border: 2px solid rgba(0, 180, 216, 0.5);
+            box-shadow: 0 2px 24px rgba(0, 180, 216, 0.2) inset, 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        .card-front {
+            z-index: 2;
+            background: linear-gradient(135deg, #0b2233 70%, rgba(0, 180, 216, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card-front .shark-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #4dd0e1;
+            text-shadow: 0 2px 8px rgba(0, 180, 216, 0.3), 0 1px 0 rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            line-height: 1.3;
+            letter-spacing: 1px;
+        }
+        .card-back {
+            z-index: 1;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #0f2d44 70%, #00b4d8 100%);
+            color: #fff;
+            font-size: 0.85em;
+            justify-content: flex-start;
+            padding-top: 32px;
+        }
+        .card-back .stat {
+            margin: 8px 0 6px 0;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        .card-back .stat strong {
+            color: #4dd0e1;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .order-section {
+            margin-bottom: 36px;
+            background: linear-gradient(120deg, #0b2233 80%, rgba(0, 180, 216, 0.05) 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 180, 216, 0.15), 0 1px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(0, 180, 216, 0.2);
+        }
+        .order-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 22px 36px 22px 28px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #4dd0e1;
+            background: linear-gradient(90deg, #0f2d44 80%, rgba(0, 180, 216, 0.1) 100%);
+            border: none;
+            outline: none;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .order-header:hover, .order-header:focus {
+            background: linear-gradient(90deg, #0f2d44 60%, rgba(0, 180, 216, 0.2) 100%);
+        }
+        .order-arrow {
+            font-size: 1.2em;
+            margin-left: 18px;
+            transition: transform 0.3s;
+        }
+        .order-section.collapsed .order-arrow {
+            transform: rotate(-90deg);
+        }
+        .order-content {
+            padding: 0 18px 18px 18px;
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+        .order-section.collapsed .order-content {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4dd0e1;
+            font-size: 1.2em;
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+            .navbar a {
+                margin-left: 15px;
+                font-size: 14px;
+            }
+            h1 { 
+                font-size: 1.8em; 
+                margin: 20px 0 10px 0; 
+            }
+            .search-bar {
+                max-width: 90%;
+            }
+            .gallery {
+                padding: 0 1vw 30px 1vw;
+                gap: 10px;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .shark-card, .card-inner {
+                width: 98vw;
+                max-width: 170px;
+                height: 180px;
+                min-height: 0;
+            }
+            .card-front .shark-name {
+                font-size: 1em;
+            }
+            .card-front, .card-back {
+                padding: 16px 6px 12px 6px;
+                font-size: 0.95em;
+            }
+            .card-back {
+                padding-top: 28px;
+            }
+            .order-section {
+                margin-bottom: 18px;
+                border-radius: 12px;
+            }
+            .order-header {
+                padding: 12px 16px 12px 12px;
+                font-size: 1.1em;
+                border-radius: 0;
+            }
+            .order-arrow {
+                font-size: 1em;
+                margin-left: 10px;
+            }
+            .order-content {
+                padding: 0 6px 8px 6px;
+            }
+        }
+        @media (max-width: 400px) {
+            .shark-card, .card-inner {
+                max-width: 120px;
+                height: 120px;
+            }
+            .card-front .shark-name {
+                font-size: 0.8em;
+            }
+        }
+        /* Touch-friendly tweaks */
+        .shark-card { touch-action: manipulation; }
+        .order-header { touch-action: manipulation; min-height: 44px; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-logo">🦈 Sharkdle</div>
+        <nav>
+            <a onclick="navigate('index.html')">Home</a>
+            <a onclick="navigate('daily.html')">Daily</a>
+            <a onclick="navigate('infinite.html')">Infinite</a>
+            <a onclick="navigate('leaderboards.html')">Leaderboard</a>
+        </nav>
+    </header>
+    
+    <h1>Shark Library</h1>
+    
+    <div class="search-container">
+        <div class="search-bar">
+            🔍
+            <input 
+                type="text" 
+                id="shark-search" 
+                placeholder="Search sharks by name, family, or order..."
+            >
+        </div>
+        <button id="heart-filter" class="filter-btn" title="Show only hearted sharks">❤️ Show Favorites</button>
+    </div>
+    
+    <div id="species-count"></div>
+    <div id="orders-container"></div>
+    <div id="no-results" class="no-results" style="display:none;">No sharks found matching your search.</div>
+    <!-- Shark list -->
+    <script src="sharks.js"></script>
+    <script>
+        function navigate(page) {
+            window.location.href = page;
+        }
+
+        let allSharks = [];
+        let filteredSharks = [];
+        let heartedSharks = new Set();
+        let showOnlyHearted = false;
+
+        function loadHeartedSharks() {
+            const stored = localStorage.getItem('heartedSharks');
+            if (stored) {
+                heartedSharks = new Set(JSON.parse(stored));
+            }
+        }
+
+        function saveHeartedSharks() {
+            localStorage.setItem('heartedSharks', JSON.stringify([...heartedSharks]));
+        }
+
+        function toggleHeart(sharkName) {
+            if (heartedSharks.has(sharkName)) {
+                heartedSharks.delete(sharkName);
+            } else {
+                heartedSharks.add(sharkName);
+            }
+            saveHeartedSharks();
+            renderSharkGalleryByOrder();
+        }
+
+        function toggleHeartFilter() {
+            showOnlyHearted = !showOnlyHearted;
+            const filterBtn = document.getElementById('heart-filter');
+            filterBtn.classList.toggle('active');
+            filterBtn.textContent = showOnlyHearted ? '🦈 Show All' : '❤️ Show Favorites';
+            const searchTerm = document.getElementById('shark-search').value;
+            filterSharks(searchTerm);
+        }
+
+        function filterSharks(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            
+            let baseSharks = [...allSharks];
+            if (showOnlyHearted) {
+                baseSharks = baseSharks.filter(shark => heartedSharks.has(shark.name));
+            }
+            
+            if (!term) {
+                filteredSharks = baseSharks;
+            } else {
+                filteredSharks = baseSharks.filter(shark => 
+                    shark.name.toLowerCase().includes(term) ||
+                    shark.family.toLowerCase().includes(term) ||
+                    shark.order.toLowerCase().includes(term) ||
+                    shark.genus.toLowerCase().includes(term)
+                );
+            }
+            
+            renderSharkGalleryByOrder();
+        }
+
+        function renderSharkGalleryByOrder() {
+            const noResults = document.getElementById('no-results');
+            const ordersContainer = document.getElementById('orders-container');
+            
+            if (filteredSharks.length === 0) {
+                noResults.style.display = 'block';
+                ordersContainer.innerHTML = '';
+                document.getElementById('species-count').textContent = '';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            
+            // Show species count
+            document.getElementById('species-count').textContent = `Showing ${filteredSharks.length} shark${filteredSharks.length !== 1 ? 's' : ''}`;
+            
+            ordersContainer.innerHTML = '';
+            const orderGroups = {};
+            
+            filteredSharks.forEach(shark => {
+                if (!orderGroups[shark.order]) orderGroups[shark.order] = [];
+                orderGroups[shark.order].push(shark);
+            });
+            
+            const sortedOrders = Object.keys(orderGroups).sort();
+            sortedOrders.forEach(order => {
+                const section = document.createElement('section');
+                section.className = 'order-section';
+                const header = document.createElement('button');
+                header.className = 'order-header';
+                header.type = 'button';
+                header.innerHTML = `<span>${order}</span><span class="order-arrow">&#9660;</span>`;
+                header.addEventListener('click', () => {
+                    section.classList.toggle('collapsed');
+                });
+                section.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'order-content';
+                const gallery = document.createElement('div');
+                gallery.className = 'gallery';
+                orderGroups[order].forEach((shark) => {
+                    const card = document.createElement('div');
+                    card.className = 'shark-card';
+                    card.tabIndex = 0;
+                    card.setAttribute('aria-label', `Shark card for ${shark.name}`);
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <button class="heart-btn ${heartedSharks.has(shark.name) ? 'hearted' : ''}" data-shark="${shark.name}" title="Add to favorites">${heartedSharks.has(shark.name) ? '❤️' : '🤍'}</button>
+                                <div class="shark-name">${shark.name}</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="stat"><strong>Name:</strong> ${shark.name}</div>
+                                <div class="stat"><strong>Family:</strong> ${shark.family}</div>
+                                <div class="stat"><strong>Order:</strong> ${shark.order}</div>
+                                <div class="stat"><strong>Genus:</strong> ${shark.genus}</div>
+                                <div class="stat"><strong>Year of Discovery:</strong> ${shark.yod}</div>
+                            </div>
+                        </div>
+                    `;
+                    // Add heart button event listener
+                    const heartBtn = card.querySelector('.heart-btn');
+                    heartBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleHeart(shark.name);
+                    });
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('flipped');
+                    });
+                    card.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            card.classList.toggle('flipped');
+                        }
+                    });
+                    gallery.appendChild(card);
+                });
+                content.appendChild(gallery);
+                section.appendChild(content);
+                ordersContainer.appendChild(section);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeartedSharks();
+            allSharks = Array.isArray(sharks) ? [...sharks] : [];
+            filteredSharks = [...allSharks];
+            renderSharkGalleryByOrder();
+            
+            // Setup search listener
+            const searchInput = document.getElementById('shark-search');
+            searchInput.addEventListener('input', (e) => {
+                filterSharks(e.target.value);
+            });
+            
+            // Setup heart filter listener
+            const filterBtn = document.getElementById('heart-filter');
+            filterBtn.addEventListener('click', toggleHeartFilter);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharkdle - Update Log</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #061a40, #0b3c5d);
+            color: #E2E8F0;
+            min-height: 100vh;
+        }
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #071c2c;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .navbar a:hover {
+            color: #4dd0e1;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: rgba(11, 34, 51, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 32px 24px;
+            border: 1px solid rgba(0, 180, 216, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #4dd0e1;
+            margin-bottom: 24px;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .update {
+            background: rgba(0, 180, 216, 0.08);
+            border-left: 5px solid #00b4d8;
+            margin-bottom: 24px;
+            padding: 18px 20px 12px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 180, 216, 0.15);
+        }
+        .update-date {
+            color: #ffb74d;
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .update-title {
+            color: #4dd0e1;
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .update-details {
+            color: #E2E8F0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .update-details ul {
+            margin-left: 20px;
+        }
+        .update-details li {
+            margin-bottom: 6px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #4dd0e1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .back-link:hover {
+            color: #00b4d8;
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+            .navbar a {
+                margin-left: 15px;
+                font-size: 14px;
+            }
+            .container {
+                margin: 20px 10px;
+                padding: 20px 16px;
+            }
+            h1 {
+                font-size: 1.6em;
+                margin-bottom: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-logo">🦈 Sharkdle</div>
+        <nav>
+            <a onclick="navigate('index.html')">Home</a>
+            <a onclick="navigate('daily.html')">Daily</a>
+            <a onclick="navigate('infinite.html')">Infinite</a>
+            <a onclick="navigate('library.html')">Library</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <a class="back-link" onclick="navigate('index.html')">&larr; Back to Main Menu</a>
+        <h1>Update Log</h1>
+        <div class="update">
+            <div class="update-date">October 3, 2026</div>
+            <div class="update-title">Mega Revamp</div>
+            <div class="update-details">
+                <ul>
+                    <li>Completely new UI design</li>
+                    <li>Leaderboards fully working and up to date</li>
+                    <li>Brand new Shark Pass to earn rewards such as profile pictures</li>
+                    <li>Improved shark library with better search and filtering</li>
+                    <li>Remove year of discovery from shark entries</li>
+                    <li style="list-style: none; height: 12px; margin: 0; padding: 0;"></li>
+                    <li style="list-style: none; padding: 0; margin: 0; color: #ffb74d; font-style: italic; font-size: 0.95em; background: none;">
+                        <span style="display: inline-block; padding: 2px 8px; background: rgba(255, 183, 77, 0.12); border-radius: 6px;">
+                            From the sharkdle team – We hope you enjoy the new update!
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="update">
+            <div class="update-date">July 20, 2025</div>
+            <div class="update-title">The Shark Week Big Update</div>
+            <div class="update-details">
+                <ul>
+                    <li>Many bug fixes</li>
+                    <li>Added every shark species with sufficient information</li>
+                    <li>Added some pictures to sharkdle library - More coming soon.</li>
+                    <li>The leaderboard will be back up and working properly shortly</li>
+                    <li style="list-style: none; height: 12px; margin: 0; padding: 0;"></li>
+                    <li style="list-style: none; padding: 0; margin: 0; color: #e9c46a; font-style: italic; font-size: 0.98em; background: none;">
+                        <span style="display: inline-block; padding: 2px 8px; background: rgba(233,196,106,0.12); border-radius: 6px;">
+                            From the sharkdle team – Have A Great Shark Week!
+                        </span>
+                </ul>
+            </div>
+        </div>
+        <div class="update">
+            <div class="update-date">July 1, 2025</div>
+            <div class="update-title">User stats and Leaderboard fixes</div>
+            <div class="update-details">
+                <ul>
+                    <li>Fixed user stats not saving/transffering with their account</li>
+                    <li>Fixed a bug with leaderboard not working</li>
+                    <li>Mobile UI for most pages looks nicer</li>
+                    <li style="list-style: none; height: 12px; margin: 0; padding: 0;"></li>
+                    <li style="list-style: none; padding: 0; margin: 0; color: #e9c46a; font-style: italic; font-size: 0.98em; background: none;">
+                        <span style="display: inline-block; padding: 2px 8px; background: rgba(233,196,106,0.12); border-radius: 6px;">
+                            From the sharkdle team – Are you excited for shark week?
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="update">
+            <div class="update-date">June 27, 2025</div>
+            <div class="update-title">Leaderboard Update</div>
+            <div class="update-details">
+                <ul>
+                    <li>Improved the stats tracker, now works for both daily and infinite</li>
+                    <li>Added global leaderboards.</li>
+                    <li>Added profile options. Sign In / Sign Up and Profile Pictures</li>
+                    <li>Bug fixes.</li>
+                    <li>Improved UI.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="update">
+            <div class="update-date">June 26, 2025</div>
+            <div class="update-title">Countdown & Update Log</div>
+            <div class="update-details">
+                <ul>
+                    <li>Added a countdown for the next big update</li>
+                    <li>Added this Update Log page for tracking recent changes.</li>
+                    <li>Improved clarity and user experience in the main menu and options.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="update">
+            <div class="update-date">April 15, 2025</div>
+            <div class="update-title">Bug Fixes & UI Tweaks</div>
+            <div class="update-details">
+                <ul>
+                    <li>Bug Fixes</li>
+                    <li>Improved UI slightly.</li>
+                    <li>Added more shark species.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        function navigate(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

@@ -93,70 +93,13 @@ function getXPInCurrentLevel(totalXP) {
 // Authentication State
 let currentUser = null;
 
-// Determine whether dev tools should be enabled
-const devUIDs = [
-    // add developer Firebase UIDs here
-    "ETPtQC0VA2NiSnX67rS2P2ma2tC2"
-];
-function isDev() {
-    // allow localhost for convenience as well
-    return (window.location.hostname === 'localhost' || devUIDs.includes(currentUser?.uid));
-}
 
-// expose dev utilities when needed
-function setupDevCommands() {
-    if (!isDev()) {
-        delete window.dev;
-        return;
-    }
-    window.dev = {
-        resetStats() {
-            console.log('dev: resetting local stats');
-            localStorage.removeItem('totalXP');
-            localStorage.removeItem('games');
-            localStorage.removeItem('wins');
-            localStorage.removeItem('losses');
-            localStorage.removeItem('currentStreak');
-            localStorage.removeItem('highestStreak');
-            localStorage.removeItem('bestGame');
-            localStorage.removeItem('averageGuesses');
-            localStorage.removeItem('recentGames');
-            localStorage.removeItem('totalGuesses');
-            alert('Local stats cleared');
-        },
-        addXP(amount) {
-            amount = parseInt(amount) || 0;
-            let xp = parseInt(localStorage.getItem('totalXP')) || 0;
-            xp += amount;
-            localStorage.setItem('totalXP', xp);
-            console.log('dev: added', amount, 'XP (total', xp + ')');
-        },
-        setLevel(level) {
-            level = parseInt(level) || 1;
-            const newXP = getXPForLevel(level);
-            localStorage.setItem('totalXP', newXP);
-            console.log('dev: level set to', level, '(xp', newXP, ')');
-        },
-        addGames(count) {
-            count = parseInt(count) || 0;
-            let g = parseInt(localStorage.getItem('games')) || 0;
-            g += count;
-            localStorage.setItem('games', g);
-            console.log('dev: added', count, 'games (total', g + ')');
-        },
-    };
-    console.log('Dev commands available via window.dev');
-}
 
 // Listen for auth state changes
 auth.onAuthStateChanged(user => {
     currentUser = user;
     updateAuthUI();
-    setupDevCommands();
 });
-
-// run once on load (hostname check or cached user)
-setupDevCommands();
 
 function updateAuthUI() {
     const authContainer = document.getElementById("auth-container");
@@ -250,15 +193,6 @@ async function loadUserProfile() {
         
         // Save to localStorage
         localStorage.setItem("userProfile", JSON.stringify(userData));
-        localStorage.setItem("games", userData.gamesPlayed || 0);
-        localStorage.setItem("wins", userData.wins || 0);
-        localStorage.setItem("losses", userData.losses || 0);
-        localStorage.setItem("totalXP", userData.totalXP || 0);
-        localStorage.setItem("totalGuesses", userData.totalGuesses || 0);
-        if (userData.averageGuesses) localStorage.setItem("averageGuesses", userData.averageGuesses);
-        if (userData.bestGame) localStorage.setItem("bestGame", userData.bestGame);
-        if (userData.currentStreak) localStorage.setItem("currentStreak", userData.currentStreak);
-        if (userData.highestStreak) localStorage.setItem("highestStreak", userData.highestStreak);
         
         updateProfileDisplay(userData);
         loadAvailablePFPs();
@@ -302,7 +236,7 @@ function updateIndexStats() {
     const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
     if (currentUser && profileData) {
-        // Logged-in → prioritize fresh localStorage values, fall back to profileData
+        // Logged-in → use profileData
         const gamesEl = document.getElementById("games");
         const winsEl = document.getElementById("wins");
         const lossesEl = document.getElementById("losses");
@@ -313,17 +247,17 @@ function updateIndexStats() {
         const currentStreakEl = document.getElementById("current-streak");
         const highestStreakEl = document.getElementById("highest-streak");
 
-        if (gamesEl) gamesEl.textContent = localStorage.getItem("games") || profileData.gamesPlayed || 0;
-        if (winsEl) winsEl.textContent = localStorage.getItem("wins") || profileData.wins || 0;
-        if (lossesEl) lossesEl.textContent = localStorage.getItem("losses") || profileData.losses || 0;
-        if (guessesEl) guessesEl.textContent = localStorage.getItem("totalGuesses") || profileData.totalGuesses || 0;
-        if (totalXpEl) totalXpEl.textContent = localStorage.getItem("totalXP") || profileData.totalXP || 0;
-        if (avgGuessesEl) avgGuessesEl.textContent = (parseFloat(localStorage.getItem("averageGuesses")) || profileData.averageGuesses || 0).toFixed(2);
-        if (bestGameEl) bestGameEl.textContent = localStorage.getItem("bestGame") || profileData.bestGame || 0;
-        if (currentStreakEl) currentStreakEl.textContent = localStorage.getItem("currentStreak") || profileData.currentStreak || 0;
-        if (highestStreakEl) highestStreakEl.textContent = localStorage.getItem("highestStreak") || profileData.highestStreak || 0;
+        if (gamesEl) gamesEl.textContent = profileData.gamesPlayed || 0;
+        if (winsEl) winsEl.textContent = profileData.wins || 0;
+        if (lossesEl) lossesEl.textContent = profileData.losses || 0;
+        if (guessesEl) guessesEl.textContent = profileData.totalGuesses || 0;
+        if (totalXpEl) totalXpEl.textContent = profileData.totalXP || 0;
+        if (avgGuessesEl) avgGuessesEl.textContent = (profileData.averageGuesses || 0).toFixed(2);
+        if (bestGameEl) bestGameEl.textContent = profileData.bestGame || 0;
+        if (currentStreakEl) currentStreakEl.textContent = profileData.currentStreak || 0;
+        if (highestStreakEl) highestStreakEl.textContent = profileData.highestStreak || 0;
     } else {
-        // Logged-out → use localStorage
+        // Logged-out → show 0
         const gamesEl = document.getElementById("games");
         const winsEl = document.getElementById("wins");
         const lossesEl = document.getElementById("losses");
@@ -334,15 +268,15 @@ function updateIndexStats() {
         const currentStreakEl = document.getElementById("current-streak");
         const highestStreakEl = document.getElementById("highest-streak");
 
-        if (gamesEl) gamesEl.textContent = localStorage.getItem("games") || 0;
-        if (winsEl) winsEl.textContent = localStorage.getItem("wins") || 0;
-        if (lossesEl) lossesEl.textContent = localStorage.getItem("losses") || 0;
-        if (guessesEl) guessesEl.textContent = localStorage.getItem("totalGuesses") || 0;
-        if (totalXpEl) totalXpEl.textContent = localStorage.getItem("totalXP") || 0;
-        if (avgGuessesEl) avgGuessesEl.textContent = (parseFloat(localStorage.getItem("averageGuesses")) || 0).toFixed(2);
-        if (bestGameEl) bestGameEl.textContent = localStorage.getItem("bestGame") || 0;
-        if (currentStreakEl) currentStreakEl.textContent = localStorage.getItem("currentStreak") || 0;
-        if (highestStreakEl) highestStreakEl.textContent = localStorage.getItem("highestStreak") || 0;
+        if (gamesEl) gamesEl.textContent = 0;
+        if (winsEl) winsEl.textContent = 0;
+        if (lossesEl) lossesEl.textContent = 0;
+        if (guessesEl) guessesEl.textContent = 0;
+        if (totalXpEl) totalXpEl.textContent = 0;
+        if (avgGuessesEl) avgGuessesEl.textContent = 0;
+        if (bestGameEl) bestGameEl.textContent = 0;
+        if (currentStreakEl) currentStreakEl.textContent = 0;
+        if (highestStreakEl) highestStreakEl.textContent = 0;
     }
 }
 // expose for game files
@@ -418,7 +352,7 @@ function loginUser() {
         });
 }
 
-function signupUser() {
+async function signupUser() {
     const email = document.getElementById("signup-email").value.trim();
     const password = document.getElementById("signup-password").value.trim();
     const username = document.getElementById("signup-username").value.trim();
@@ -436,43 +370,50 @@ function signupUser() {
         return;
     }
 
-    auth.createUserWithEmailAndPassword(email, password)
-        .then(result => {
-            const userRef = db.collection("userStats").doc(result.user.uid);
-            // compute default pass values based on current local XP
-            const _totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
-            const _currentLevel = getLevelFromXP(_totalXP);
-            const _xpInLevel = getXPInCurrentLevel(_totalXP);
-            const _xpToNext = getXPToNextLevel(_totalXP);
-            const _unlockedPfps = levelRewards
-                .filter(r => r.level <= _currentLevel)
-                .map(r => ({ level: r.level, name: r.name || r.imagePath }));
-
-            const newProfile = {
-                username: username,
-                email: email,
-                avatar: "🦈",
-                totalXP: _totalXP,
-                games: parseInt(localStorage.getItem("games")) || 0,
-                wins: parseInt(localStorage.getItem("wins")) || 0,
-                losses: parseInt(localStorage.getItem("losses")) || 0,
-                currentLevel: _currentLevel,
-                currentXP: _xpInLevel,
-                xpToNextLevel: _xpToNext,
-                unlockedPfps: _unlockedPfps,
-                createdAt: new Date()
-            };
-            return userRef.set(newProfile);
-        })
-        .then(() => {
-            errorEl.style.display = "none";
-            closeLoginModal();
-            loadUserProfile();
-        })
-        .catch(error => {
-            errorEl.textContent = error.message;
+    try {
+        // Check if email is already in use
+        const methods = await auth.fetchSignInMethodsForEmail(email);
+        if (methods.length > 0) {
+            errorEl.textContent = "This email is already registered. Please try logging in instead.";
             errorEl.style.display = "block";
-        });
+            return;
+        }
+
+        // Proceed with account creation
+        const result = await auth.createUserWithEmailAndPassword(email, password);
+        const userRef = db.collection("userStats").doc(result.user.uid);
+        // compute default pass values based on current local XP
+        const _totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
+        const _currentLevel = getLevelFromXP(_totalXP);
+        const _xpInLevel = getXPInCurrentLevel(_totalXP);
+        const _xpToNext = getXPToNextLevel(_totalXP);
+        const _unlockedPfps = levelRewards
+            .filter(r => r.level <= _currentLevel)
+            .map(r => ({ level: r.level, name: r.name || r.imagePath }));
+
+        const newProfile = {
+            username: username,
+            email: email,
+            avatar: "🦈",
+            totalXP: _totalXP,
+            games: parseInt(localStorage.getItem("games")) || 0,
+            wins: parseInt(localStorage.getItem("wins")) || 0,
+            losses: parseInt(localStorage.getItem("losses")) || 0,
+            currentLevel: _currentLevel,
+            currentXP: _xpInLevel,
+            xpToNextLevel: _xpToNext,
+            unlockedPfps: _unlockedPfps,
+            createdAt: new Date()
+        };
+        await userRef.set(newProfile);
+
+        errorEl.style.display = "none";
+        closeLoginModal();
+        loadUserProfile();
+    } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = "block";
+    }
 }
 
 function logoutUser() {
@@ -701,23 +642,23 @@ async function syncStatsToFirebase() {
         const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
         // base stats
         const stats = {
-            totalXP: parseInt(localStorage.getItem("totalXP")) || 0,
+            totalXP: profileData.totalXP || 0,
             // keep totalGuesses for backwards compatibility/analytics
-            totalGuesses: parseInt(localStorage.getItem("totalGuesses")) || 0,
-            gamesPlayed: parseInt(localStorage.getItem("games")) || 0,
-            wins: parseInt(localStorage.getItem("wins")) || 0,
-            losses: parseInt(localStorage.getItem("losses")) || 0,
-            averageGuesses: parseFloat(localStorage.getItem("averageGuesses")) || 0,
-            bestGame: parseInt(localStorage.getItem("bestGame")) || 0,
-            currentStreak: parseInt(localStorage.getItem("currentStreak")) || 0,
-            highestStreak: parseInt(localStorage.getItem("highestStreak")) || 0,
+            totalGuesses: profileData.totalGuesses || 0,
+            gamesPlayed: profileData.gamesPlayed || 0,
+            wins: profileData.wins || 0,
+            losses: profileData.losses || 0,
+            averageGuesses: profileData.averageGuesses || 0,
+            bestGame: profileData.bestGame || 0,
+            currentStreak: profileData.currentStreak || 0,
+            highestStreak: profileData.highestStreak || 0,
             profilePic: profileData.profilePicture || "images/pfp/shark1.png",
             profilePicture: profileData.profilePicture || "images/pfp/shark1.png",
             lastUpdated: new Date()
         };
         
         // shark pass related values
-        const totalXP = parseInt(localStorage.getItem("totalXP")) || 0;
+        const totalXP = profileData.totalXP || 0;
         const currentLevel = getLevelFromXP(totalXP);
         const currentXP = getXPInCurrentLevel(totalXP);
         const xpToNextLevel = getXPToNextLevel(totalXP);

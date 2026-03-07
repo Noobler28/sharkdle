@@ -5,6 +5,14 @@ REPORT BUGS HERE: https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ
 
 Contact me on discord if you find any bugs or misinformation: https://discord.gg/FbnWZNsq
 
+# Updates and version
+
+Version: 
+
+Next Update:
+Version 1.0
+
+
 # Info
 Contact me on discord if you find any bugs or misinformation
 Made with javascript, html and css

@@ -67,15 +67,27 @@ gap:10px;
 
 input{
 
-width:80%;
-max-width:350px;
+width:90%;
+max-width:500px;
 
-padding:12px;
+padding:16px;
 
 border-radius:10px;
-border:none;
+border:2px solid transparent;
 
 font-size:16px;
+
+transition: all 0.3s ease;
+
+}
+
+input:focus{
+
+outline:none;
+border-color:#00bcd4;
+box-shadow:0 0 12px rgba(0, 188, 212, 0.4);
+background:rgba(255,255,255,0.95);
+color:#000;
 
 }
 
@@ -232,4 +244,95 @@ text-align:center;
 
 z-index:1000;
 
+}
+
+#win-screen.win {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: #0a2342;
+}
+#win-screen.lose {
+    background: linear-gradient(135deg, #ff5858 0%, #f09819 100%);
+    color: #fff;
+}
+
+/* Bubble animation for win screen */
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+}
+
+/* AUTOCOMPLETE SUGGESTIONS */
+
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin-top: 5px;
+    background: rgba(10, 35, 66, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 188, 212, 0.4);
+    border-radius: 12px;
+    max-height: 280px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.suggestions-dropdown.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.suggestion-item {
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.15s ease;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.suggestion-item:hover {
+    background: rgba(0, 188, 212, 0.25);
+    padding-left: 20px;
+    color: #00bcd4;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item.highlighted {
+    background: rgba(0, 188, 212, 0.35);
+    color: #00bcd4;
 }

@@ -124,7 +124,7 @@
 
 <!-- Profile Modal -->
 <div id="profileModal" class="modal hidden">
-<div class="modal-content" style="width: 90%; max-width: 500px;">
+<div class="modal-content" style="width: 90%; max-width: 750px;">
 <h2 style="margin-top: 0;">Profile</h2>
 
 <div class="profile-section" style="display: flex; align-items: center; gap: 20px; margin: 20px 0; padding: 20px; background: rgba(0, 180, 216, 0.1); border-radius: 8px;">
@@ -226,6 +226,12 @@
 </div>
 
 <script src="script.js"></script>
+
+<script>
+if (window.location.search.includes('openModal=true')) {
+    openLoginModal();
+}
+</script>
 
 </body>
 </html>

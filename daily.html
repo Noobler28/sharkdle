@@ -33,7 +33,10 @@
 
 <div class="input-panel">
 
+<div style="position: relative;">
 <input id="sharkGuess" placeholder="Enter shark name..." autocomplete="off">
+<div id="suggestions" class="suggestions-dropdown"></div>
+</div>
 
 <button id="guessBtn">Guess</button>
 
@@ -53,7 +56,12 @@
 
 <div id="win-screen"></div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="sharks.js"></script>
+<script src="script.js"></script>
 <script src="daily.js"></script>
 
 </body>

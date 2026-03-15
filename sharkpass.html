@@ -125,18 +125,13 @@ XP: <span id="current-xp">0</span> / <span id="xp-to-next">0</span>
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
-
-const streak = localStorage.getItem("loginStreak") || 0;
-
-const loginInfo = document.getElementById('login-streak');
-
-if (streak > 0) {
-
-loginInfo.innerHTML =
-`🔥 Current Streak: <strong>${streak} days</strong><br>
-Daily XP: 50 + (${streak} × 10) = <strong>${50 + (streak * 10)}</strong> XP`;
-
-}
+	const streak = localStorage.getItem("loginStreak") || 0;
+	const loginInfo = document.getElementById('login-streak');
+	if (loginInfo && streak > 0) {
+		loginInfo.innerHTML =
+		`🔥 Current Streak: <strong>${streak} days</strong><br>
+		Daily XP: 50 + (${streak} × 10) = <strong>${50 + (streak * 10)}</strong> XP`;
+	}
 
 });
 

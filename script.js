@@ -12,11 +12,11 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-    console.log("Firebase initialized");
+    // ...existing code...
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
-console.log("Firebase auth and db initialized");
+// ...existing code...
 
 // ----- shark pass reward definitions -----
 // this list is shared by multiple helpers (signup, stats sync, cosmetics)
@@ -99,8 +99,9 @@ let currentUser = null;
 
 // Listen for auth state changes
 auth.onAuthStateChanged(user => {
-    console.log("onAuthStateChanged fired, user:", user);
+    // ...existing code...
     currentUser = user;
+    window.currentUser = user;
     // Ensure DOM is ready before updating UI
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => updateAuthUI());
@@ -109,8 +110,30 @@ auth.onAuthStateChanged(user => {
     }
 });
 
+// Cross-subdomain profile sync
+let profileSyncInterval = null;
+
+// Stop previous sync if it exists
+if (profileSyncInterval) {
+    clearInterval(profileSyncInterval);
+}
+
+// Sync profile from Firebase every 45 seconds to keep data fresh across subdomains
+profileSyncInterval = setInterval(() => {
+    if (currentUser && document.visibilityState === 'visible') {
+        loadUserProfile().catch(err => console.log("Background sync skipped:", err));
+    }
+}, 45000);
+
+// Refresh profile immediately when page becomes visible (user switches back to tab/window)
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && currentUser) {
+        loadUserProfile().catch(err => console.log("Visibility sync skipped:", err));
+    }
+});
+
 function updateAuthUI() {
-    console.log("updateAuthUI called, currentUser:", currentUser);
+    // ...existing code...
     const authContainer = document.getElementById("auth-container");
     const loginWarning = document.getElementById("login-warning");
     const loginBtn = document.getElementById("login-btn");
@@ -151,7 +174,7 @@ function updateAuthUI() {
         if (profileBtn) {
             profileBtn.remove();
         }
-        localStorage.removeItem("userProfile");
+        // DO NOT clear userProfile - keep the cached data so it persists across subdomains
     }
     
     // Always update index stats from localStorage (only if container exists)
@@ -161,12 +184,11 @@ function updateAuthUI() {
 
     // Update daily bonus message
     const bonusMsg = document.getElementById("daily-bonus-msg");
-    console.log("bonusMsg element:", bonusMsg);
+    // ...existing code...
     if (bonusMsg) {
         if (currentUser) {
             const currentLoginDay = parseInt(localStorage.getItem("currentLoginDay")) || 1;
             const streak = parseInt(localStorage.getItem("loginStreak")) || 1;
-            console.log("Setting bonusMsg for logged in user, day:", currentLoginDay, "streak:", streak);
             bonusMsg.style.display = "block";
             bonusMsg.style.cursor = "pointer";
             bonusMsg.style.transition = "all 0.3s ease";
@@ -175,11 +197,11 @@ function updateAuthUI() {
             bonusMsg.onclick = () => openDailyLoginModal();
             bonusMsg.innerHTML = `🔥 Login Streak: <strong>${streak} days</strong> - Day ${currentLoginDay}/7 (Click to view rewards)`;
         } else {
-            console.log("Hiding bonusMsg for logged out user");
+            // ...existing code...
             bonusMsg.style.display = "none";
         }
     } else {
-        console.log("bonusMsg element not found - this might be expected on pages without the element");
+        // ...existing code...
     }
 
     // Update streak display
@@ -253,6 +275,8 @@ async function loadUserProfile() {
         
         // Save to localStorage
         localStorage.setItem("userProfile", JSON.stringify(userData));
+        // Sync totalXP from Firestore to localStorage for UI
+        localStorage.setItem("totalXP", userData.totalXP || 0);
         
         updateProfileDisplay(userData);
         loadAvailablePFPs();
@@ -281,7 +305,12 @@ function updateProfileDisplay(userData) {
     if (profileGames) profileGames.textContent = userData.gamesPlayed ?? userData.games ?? 0;
     if (profileWins) profileWins.textContent = userData.wins ?? 0;
     if (profileLosses) profileLosses.textContent = userData.losses ?? 0;
-    if (profileAvgGuesses) profileAvgGuesses.textContent = (userData.averageGuesses ?? 0).toFixed(2);
+    if (profileAvgGuesses) {
+        let avg = userData.averageGuesses;
+        if (typeof avg !== "number") avg = Number(avg);
+        if (isNaN(avg)) avg = 0;
+        profileAvgGuesses.textContent = avg.toFixed(2);
+    }
     if (profileBestGame) profileBestGame.textContent = userData.bestGame ?? 0;
     if (profileCurrentStreak) profileCurrentStreak.textContent = userData.currentStreak ?? 0;
     if (profileHighestStreak) profileHighestStreak.textContent = userData.highestStreak ?? 0;
@@ -300,7 +329,7 @@ function updateIndexStats() {
         const gamesEl = document.getElementById("games");
         const winsEl = document.getElementById("wins");
         const lossesEl = document.getElementById("losses");
-        const guessesEl = document.getElementById("guesses");
+        const guessesEl = document.getElementById("profile-guesses");
         const totalXpEl = document.getElementById("total-xp");
         const avgGuessesEl = document.getElementById("avg-guesses");
         const bestGameEl = document.getElementById("best-game");
@@ -321,7 +350,7 @@ function updateIndexStats() {
         const gamesEl = document.getElementById("games");
         const winsEl = document.getElementById("wins");
         const lossesEl = document.getElementById("losses");
-        const guessesEl = document.getElementById("guesses");
+        const guessesEl = document.getElementById("profile-guesses");
         const totalXpEl = document.getElementById("total-xp");
         const avgGuessesEl = document.getElementById("avg-guesses");
         const bestGameEl = document.getElementById("best-game");
@@ -479,7 +508,12 @@ async function signupUser() {
 function logoutUser() {
     auth.signOut().then(() => {
         currentUser = null;
-        localStorage.removeItem("userProfile");
+        // DO NOT clear userProfile - the data should persist in Firebase
+        // Only remove session-specific data
+        localStorage.removeItem("dailyLoginModalShownToday");
+        localStorage.removeItem("currentLoginDay");
+        localStorage.removeItem("loginStreak");
+        localStorage.removeItem("lastLoginDate");
         closeProfileModal();
         updateAuthUI();
     });
@@ -696,7 +730,7 @@ async function syncEarnedCosmetics() {
 
 // Save stats to Firebase when they update
 async function syncStatsToFirebase() {
-    if (!currentUser) return;
+    if (!firebase.auth().currentUser) return;
 
     try {
         const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
@@ -733,7 +767,7 @@ async function syncStatsToFirebase() {
         stats.unlockedPfps = unlockedPfps;
 
         // Save stats to userStats collection
-        const statsRef = db.collection("userStats").doc(currentUser.uid);
+        const statsRef = db.collection("userStats").doc(firebase.auth().currentUser.uid);
         await statsRef.set(stats, { merge: true });
         
         Object.assign(profileData, stats);
@@ -955,5 +989,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Load available PFPs on page load
     if (document.getElementById("available-pfps")) {
         loadAvailablePFPs();
+    }
+
+    // If user is already logged in, refresh profile from Firebase immediately
+    // This ensures cross-subdomain sync works correctly
+    if (currentUser) {
+        loadUserProfile().catch(err => console.log("Initial profile load skipped:", err));
     }
 });

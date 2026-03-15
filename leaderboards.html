@@ -328,9 +328,32 @@ font-size:0.85rem;
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // Check for user profile in localStorage first (for immediate cross-domain detection)
+        let currentUserUID = null;
+        let currentUsername = null;
+        let currentUserEmail = null;
+        const profileData = localStorage.getItem("userProfile");
+        if (profileData) {
+            try {
+                const profile = JSON.parse(profileData);
+                currentUsername = profile.username;
+                currentUserEmail = profile.email;
+            } catch (e) {
+                console.log("", e);
+            }
+        }
+        
         // Wait for auth state before loading leaderboard
         auth.onAuthStateChanged(user => {
-            loadLeaderboard();
+            if (user) {
+                currentUserUID = user.uid;
+                currentUserEmail = user.email;
+                console.log("Auth state loaded. Current user UID:", user.uid, "Email:", user.email);
+            }
+            // Small delay to ensure Firebase auth state is fully ready
+            setTimeout(() => {
+                loadLeaderboard();
+            }, 300);
         });
 
         // Fetch leaderboard data from Firestore
@@ -356,20 +379,22 @@ font-size:0.85rem;
                     loadingDiv.textContent = 'No leaderboard data yet.';
                     return;
                 }
+                
                 let rank = 1;
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const tr = document.createElement('tr');
-                    let rankCell = '';
-                    if (rank === 1) {
-                        rankCell = `<span style="color:#FFD700;">🏆</span>`;
-                    } else if (rank === 2) {
-                        rankCell = `<span style="color:#C0C0C0;">🥈</span>`;
-                    } else if (rank === 3) {
-                        rankCell = `<span style="color:#CD7F32;">🥉</span>`;
-                    } else {
-                        rankCell = rank;
-                    }
+                    
+                    // Check if this is the current user - use multiple methods including cached profile
+                    const isCurrentUser = (currentUserUID && doc.id === currentUserUID) || 
+                                         (currentUserEmail && data.email && data.email === currentUserEmail) ||
+                                         (currentUsername && data.username && data.username.toLowerCase() === currentUsername.toLowerCase()) ||
+                                         (auth.currentUser && (
+                                            doc.id === auth.currentUser.uid || 
+                                            data.uid === auth.currentUser.uid ||
+                                            data.email === auth.currentUser.email
+                                         ));
+                    
                     // Profile picture logic
                     let profilePicPath = 'images/pfp/shark1.png';
                     if (data.profilePic) {
@@ -383,15 +408,38 @@ font-size:0.85rem;
                     }
                     const profilePicImg = `<img src="${profilePicPath}" alt="Profile" style="width:38px;height:38px;border-radius:50%;border:2px solid #3e92cc;background:#18304a;object-fit:cover;box-shadow:0 1px 4px rgba(30,41,59,0.12);">`;
                     const username = data.username ? data.username : 'Anonymous';
-                    const isCurrentUser = auth.currentUser && (
-                        doc.id === auth.currentUser.uid || 
-                        data.uid === auth.currentUser.uid
-                        );
+                    
+                    let rankCell = '';
+                    if (rank === 1) {
+                        rankCell = `<span style="color:#FFD700;">🏆</span>`;
+                    } else if (rank === 2) {
+                        rankCell = `<span style="color:#C0C0C0;">🥈</span>`;
+                    } else if (rank === 3) {
+                        rankCell = `<span style="color:#CD7F32;">🥉</span>`;
+                    } else {
+                        rankCell = rank;
+                    }
+                    
                     let titleLine = '';
                     if (data.selectedTitle) {
                         titleLine = `<div style="font-size:0.85em;color:#fdd835;">${data.selectedTitle}</div>`;
                     }
-                    const usernameDisplay = isCurrentUser ? `${username} <span style="color:#00b4d8; font-weight: bold;">(You)</span>${titleLine}` : `${username}${titleLine}`;
+                    
+                    // Add arrow after username if current user
+                    let usernameDisplay = `${username}`;
+                    if (isCurrentUser) {
+                        usernameDisplay = `${username} <span style="color:#00bcd4; font-size: 1.2em;">←</span>`;
+                    }
+                    usernameDisplay = `${usernameDisplay}${titleLine}`;
+                    if (isCurrentUser) {
+                        usernameDisplay = `${usernameDisplay} <span style="color:#00b4d8; font-weight: bold;">(You)</span>`;
+                    }
+                    
+                    // Highlight row for current user
+                    if (isCurrentUser) {
+                        tr.style.backgroundColor = 'rgba(0, 188, 212, 0.15)';
+                    }
+                    
                     tr.innerHTML = `
                         <td>${rankCell}</td>
                         <td>${profilePicImg}</td>

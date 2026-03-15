@@ -1,20 +1,6 @@
 // Firebase SDKs
 // Note: Firebase scripts are included in HTML
 
-// Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZ0",
-    authDomain: "sharkdle-leaderboard.firebaseapp.com",
-    databaseURL: "https://sharkdle-leaderboard-default-rtdb.firebaseio.com",
-    projectId: "sharkdle-leaderboard",
-    storageBucket: "sharkdle-leaderboard.firebasestorage.app",
-    messagingSenderId: "429123174628",
-    appId: "1:429123174628:web:42ae9baed69c4b087c2cf1",
-    measurementId: "G-HV5FFNKM5C"
-};
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 const common_names = [
     // Orders
     {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
@@ -76,7 +62,7 @@ function normalizeInput(input) {
 }
 
 function updateStats(isWin, guessesTaken = 0) {
-    if (!window.currentUser) return;
+    if (!firebase.auth().currentUser) return;
 
     // Load current profileData
     let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
@@ -131,7 +117,8 @@ function updateStats(isWin, guessesTaken = 0) {
 }
 
 function makeGuess() {
-    const guessInput = normalizeInput(document.getElementById("sharkGuess").value.trim());
+    const rawInput = document.getElementById("sharkGuess").value.trim();
+    const guessInput = normalizeInput(rawInput);
     const messageDiv = document.getElementById("message");
     const attemptsLeftDiv = document.getElementById("attempts-left");
     const winLoseScreen = document.getElementById("win-lose-screen");
@@ -156,22 +143,38 @@ function makeGuess() {
     const feedback = [
         { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
         { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
-        { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus }
+        { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
+        { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod }
     ];
     
     renderGuess(guessedShark, feedback);
     
+    // Close guesses with no correct information, then open the newest
+    const cards = document.querySelectorAll('#guesses .guess-card');
+    cards.forEach(card => {
+        const feedbackDiv = card.querySelector('.feedback');
+        const correctCount = feedbackDiv.querySelectorAll('.correct').length;
+        if (correctCount === 0) {
+            feedbackDiv.style.display = 'none';
+        }
+    });
+    // Open the newest (first) guess
+    if (cards.length > 0) {
+        const newestFeedback = cards[0].querySelector('.feedback');
+        newestFeedback.style.display = 'flex';
+    }
+    
     if (normalizeInput(guessedShark.name) === normalizeInput(targetShark.name)) {
         const guessesTaken = 12 - attempts;
-        if (window.currentUser) {
+        const xpGain = Math.max(50, 170 - guessesTaken * 10);
+        
+        if (firebase.auth().currentUser) {
             let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
-            const xpGain = 40 + guessesTaken * 5;
             profileData.totalXP = (profileData.totalXP || 0) + xpGain;
             localStorage.setItem("userProfile", JSON.stringify(profileData));
         }
 
         updateStats(true, guessesTaken);
-        submitStatsToLeaderboard(true, guessesTaken);
         
         // Disable input
         document.getElementById("sharkGuess").disabled = true;
@@ -181,6 +184,7 @@ function makeGuess() {
         winLoseScreen.innerHTML = `
             <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">🎉 You Found It!</h2>
             <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
+            <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
             <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">You took ${guessesTaken} guess${guessesTaken !== 1 ? 'es' : ''}.</p>
             <div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;">
                 <p style="font-size: 28px; font-weight: bold; margin: 0; color: inherit;">+${xpGain} XP</p>
@@ -197,7 +201,6 @@ function makeGuess() {
         
     } else if (attempts === 0) {
         updateStats(false);
-        submitStatsToLeaderboard(false, 0); // Submit stats on loss
         
         // Disable input
         document.getElementById("sharkGuess").disabled = true;
@@ -207,6 +210,7 @@ function makeGuess() {
         winLoseScreen.innerHTML = `
             <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">😢 You Lost</h2>
             <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
+            <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
             <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
                 <button onclick="location.reload()" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Try Again</button>
                 <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
@@ -247,10 +251,16 @@ feedback.forEach(item => {
         commonName = common_names.find(cn => cn.scientific === shark.genus);
     }
 
+    // Calculate arrow for year of discovery
+    let arrow = "";
+    if (item.category === "Year of Discovery" && !item.correct) {
+        arrow = item.value < targetShark.yod ? " ⬆️" : " ⬇️";
+    }
+
     if (commonName) {
         const tooltip = document.createElement("div");
         tooltip.className = "tooltip";
-        tooltip.textContent = `${item.category}: ${item.value}`;
+        tooltip.textContent = `${item.category}: ${item.value}${arrow}`;
 
         const tooltipText = document.createElement("span");
         tooltipText.className = "tooltiptext";
@@ -259,7 +269,7 @@ feedback.forEach(item => {
         tooltip.appendChild(tooltipText);
         div.appendChild(tooltip);
     } else {
-        div.textContent = `${item.category}: ${item.value}`;
+        div.textContent = `${item.category}: ${item.value}${arrow}`;
     }
 
     feedbackDiv.appendChild(div);
@@ -299,26 +309,54 @@ document.getElementById("sharkGuess").addEventListener("keydown", function(event
 
 document.getElementById("guessBtn").addEventListener("click", makeGuess);
 
-async function submitStatsToLeaderboard(won, guesses) {
-    try {
-        // Only submit if user is authenticated
-        if (!firebase.auth().currentUser) {
-            console.log("User not authenticated, skipping leaderboard submission");
-            return;
-        }
+// Autocomplete functionality
+const sharkGuessInput = document.getElementById("sharkGuess");
+const suggestionsDiv = document.getElementById("suggestions");
 
-        const username = firebase.auth().currentUser.displayName || firebase.auth().currentUser.email || "Anonymous";
-        const docRef = db.collection("leaderboard").doc();
-        await docRef.set({
-            username: username,
-            won: won,
-            guesses: guesses,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            mode: "infinite",
-            userId: firebase.auth().currentUser.uid  // optional: track user ID
-        });
-        console.log("Stats submitted successfully");
-    } catch (error) {
-        console.error("Error submitting stats:", error);
+sharkGuessInput.addEventListener("input", function() {
+    const input = this.value.toLowerCase().trim();
+    
+    if (input.length === 0) {
+        suggestionsDiv.classList.remove("active");
+        return;
     }
+    
+    // Filter sharks that match the input
+    const matches = sharks.filter(shark => 
+        shark.name.toLowerCase().includes(input)
+    ).slice(0, 10); // Limit to 10 suggestions
+    
+    if (matches.length === 0) {
+        suggestionsDiv.classList.remove("active");
+        return;
+    }
+    
+    // Build suggestions HTML
+    suggestionsDiv.innerHTML = matches.map(shark => 
+        `<div class="suggestion-item" onclick="selectShark('${shark.name}')">${shark.name}</div>`
+    ).join("");
+    
+    suggestionsDiv.classList.add("active");
+});
+
+// Close suggestions when clicking outside
+document.addEventListener("click", function(event) {
+    if (event.target !== sharkGuessInput && !event.target.closest(".suggestions-dropdown")) {
+        suggestionsDiv.classList.remove("active");
+    }
+});
+
+function selectShark(sharkName) {
+    document.getElementById("sharkGuess").value = sharkName;
+    document.getElementById("suggestions").classList.remove("active");
 }
+
+// Console command for testing: revealShark() - Dev only
+window.revealShark = function() {
+    const DEV_UID = 'ETPtQC0VA2NiSnX67rS2P2ma2tC2';
+    if (!firebase.auth().currentUser || firebase.auth().currentUser.uid !== DEV_UID) {
+        console.log("Access denied. This command is for developers only.");
+        return;
+    }
+    console.log("TESTING ONLY: The target shark is: " + targetShark.name);
+};

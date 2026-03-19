@@ -22,11 +22,8 @@ Current Version: 1.0
 
 -Removed year of discovery from shark entries
 
-# BUGS THAT NEED FIXING
-
-- logging out of an account and back in resets the pfp and the username (IDFK WHY IT DOES THIS)
-
-
-
 # Info
 Made with javascript, html and css. Thank you for playing!
+
+All rights reserved.
+

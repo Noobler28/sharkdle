@@ -31,6 +31,58 @@ flex-direction:column;
 align-items:center;
 }
 
+/* NAVBAR */
+
+.navbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:20px 40px;
+
+background:#071c2c;
+box-shadow:0 5px 20px rgba(0,0,0,0.5);
+
+width:100%;
+
+}
+
+.logo{
+
+font-size:28px;
+font-weight:800;
+background:linear-gradient(135deg,#4dd0e1,#00b4d8);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, #00b4d8, #0088a0);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+    margin-left: 10px;
+}
+
+.nav-btn:hover {
+    background: linear-gradient(135deg, #0088a0, #006080);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 180, 216, 0.5);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
+}
+
 /* CONTAINER */
 
 .leaderboard-container{
@@ -275,6 +327,15 @@ font-size:0.85rem;
     </style>
 </head>
 <body>
+    <header class="navbar">
+        <div class="logo">🦈 Sharkdle</div>
+        <div>
+            <button onclick="navigate('index.html')" class="nav-btn">Home</button>
+            <button onclick="navigate('library.html')" class="nav-btn">Library</button>
+            <button onclick="navigate('sharkpass.html')" class="nav-btn">Shark Pass</button>
+            <button onclick="navigate('achievements.html')" class="nav-btn">Achievements</button>
+        </div>
+    </header>
     <div class="leaderboard-container">
         <h1>🏆 Sharkdle Global Leaderboards</h1>
         <div id="leaderboard-loading" class="loading">Loading leaderboard...</div>
@@ -308,6 +369,11 @@ font-size:0.85rem;
         </div>
     </div>
     <script>
+        // Navigation helper function
+        function navigate(page) {
+            window.location.href = page;
+        }
+
         // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZB0",

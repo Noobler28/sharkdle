@@ -13,6 +13,7 @@ Contact me on discord if you find any bugs or misinformation: https://discord.gg
 Current Version: 1.2
 
 Fixes & Changes:
+
 BUG: The library now keeps closed sections closed after searching for species (this was always supposed to happen)
 
 BUG: Fixed logging in on a new device resetting all data AND creating an account disregarding your offline stats

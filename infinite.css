@@ -370,3 +370,15 @@ text-align:center;
     background: rgba(0, 188, 212, 0.35);
     color: #00bcd4;
 }
+
+.suggestion-item.guessed {
+    opacity: 0.5;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+}
+
+.suggestion-item.guessed:hover {
+    background: none;
+    padding-left: 16px;
+    color: rgba(255, 255, 255, 0.4);
+}

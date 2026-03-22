@@ -26,6 +26,8 @@
 </div>
 
 <div id="auth-container" class="auth-container">
+<button onclick="navigate('practice.html')" class="nav-btn">Practice Mode</button>
+<button onclick="navigate('achievements.html')" class="nav-btn">Achievements</button>
 <button id="login-btn" onclick="openLoginModal()" class="auth-btn">Login</button>
 </div>
 
@@ -58,7 +60,7 @@
 <div class="game-card" onclick="navigate('infinite.html')">
 <i class="fa-solid fa-infinity"></i>
 <h2>Infinite Mode</h2>
-<p>Unlimited sharks. Endless guessing.</p>
+<p>Infinite Games, Endless Fun!</p>
 </div>
 
 <div class="game-card" onclick="navigate('library.html')">
@@ -91,6 +93,8 @@
 <a href="updates.html">Updates</a>
 <a href="https://discord.gg/V97Y8545Ve">Discord</a>
 </div>
+
+<p style="font-size: 12px; color: #888; margin-top: 15px;">© 2026 Sharkdle. All rights reserved.</p>
 
 </footer>
 
@@ -178,6 +182,16 @@
 </div>
 </div>
 
+<div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 20px;">
+<h3 style="font-size: 16px; margin-bottom: 15px;">🎁 Redeem Code</h3>
+<p style="color: #888; font-size: 14px; margin-bottom: 15px;">Enter a redemption code to claim exclusive rewards!</p>
+<div style="display: flex; gap: 10px; margin-bottom: 15px;">
+<input type="text" id="redeem-code-input" placeholder="Enter code here" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; text-transform: uppercase;">
+<button onclick="redeemCode()" style="padding: 10px 20px; background: #00b4d8; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">Redeem</button>
+</div>
+<div id="redeem-message" style="display: none; padding: 12px; background: rgba(0, 180, 216, 0.1); border-radius: 6px; text-align: center; font-weight: 600;"></div>
+</div>
+
 <button onclick="logoutUser()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ff6b6b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Logout</button>
 <button onclick="closeProfileModal()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
 </div>
@@ -185,25 +199,23 @@
 
 <!-- Profile Picture Modal -->
 <div id="profilePicModal" class="modal hidden">
-<div class="modal-content" style="width: 90%; max-width: 600px;">
-<h2 style="margin-top: 0;">Choose Profile Picture</h2>
+<div class="modal-content" style="width: 95%; max-width: 800px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column;">
+<h2 style="margin-top: 0; margin-bottom: 20px;">Choose Profile Picture</h2>
 
-<div style="margin: 20px 0;">
-<h3 style="font-size: 16px; margin-bottom: 15px;">🎨 Available Profile Pictures</h3>
-<div class="avatar-selector" id="available-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin: 20px 0;">
-<!-- Populated by JavaScript -->
+<div style="margin: 10px 0; flex: 1; min-height: 0;">
+<h3 style="font-size: 16px; margin-bottom: 12px;">🎨 Available Profile Pictures</h3>
+<div class="avatar-selector" id="available-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 12px; margin: 10px 0; padding: 8px;">
 </div>
-</div>
-
-<div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 20px;">
-<h3 style="font-size: 16px; margin-bottom: 15px;">🏆 Shark Pass Cosmetics</h3>
-<div class="avatar-selector" id="earned-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin: 20px 0;">
-<!-- Populated by JavaScript -->
-</div>
-<p id="no-earned" style="text-align: center; color: #888; font-size: 14px; margin: 20px 0;">No cosmetics earned yet. Check Shark Pass for rewards!</p>
 </div>
 
-<button onclick="closeProfilePicModal()" style="width: 100%; padding: 10px; margin: 10px 0; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>
+<div style="margin: 15px 0; border-top: 1px solid #444; padding-top: 15px; flex: 1; min-height: 0;">
+<h3 style="font-size: 16px; margin-bottom: 12px;">🏆 Shark Pass Cosmetics</h3>
+<div class="avatar-selector" id="earned-pfps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 12px; margin: 10px 0; padding: 8px;">
+</div>
+<p id="no-earned" style="text-align: center; color: #888; font-size: 14px; margin: 15px 0;">No cosmetics earned yet. Check Shark Pass for rewards!</p>
+</div>
+
+<button onclick="closeProfilePicModal()" style="width: 100%; padding: 10px; margin-top: 12px; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; flex-shrink: 0;">Close</button>
 </div>
 </div>
 
@@ -218,7 +230,6 @@
 </div>
 
 <div id="day-7-reward" style="display: flex; justify-content: center; margin-bottom: 20px;">
-<!-- Day 7 big reward populated by JavaScript -->
 </div>
 
 <button onclick="closeDailyLoginModal()" style="width: 100%; padding: 12px; background: #ccc; color: #333; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button>

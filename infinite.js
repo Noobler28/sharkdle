@@ -1,6 +1,3 @@
-// Firebase SDKs
-// Note: Firebase scripts are included in HTML
-
 const common_names = [
     // Orders
     {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
@@ -45,6 +42,19 @@ const common_names = [
 let targetShark = sharks[Math.floor(Math.random() * sharks.length)];
 let attempts = 12;
 // practice mode removed; always count down and store stats
+
+const sizeThresholds = {
+    "Tiny": "0-3ft",
+    "Small": "3-6ft",
+    "Medium": "6-10ft",
+    "Large": "10-20ft",
+    "Giant": "20ft+"
+};
+
+function getSizeWithThreshold(size) {
+    const threshold = sizeThresholds[size];
+    return threshold ? `${size} (${threshold})` : size;
+}
 
 
 
@@ -144,6 +154,8 @@ function makeGuess() {
         { category: "Family", value: guessedShark.family, correct: guessedShark.family === targetShark.family },
         { category: "Order", value: guessedShark.order, correct: guessedShark.order === targetShark.order },
         { category: "Genus", value: guessedShark.genus, correct: guessedShark.genus === targetShark.genus },
+        { category: "Size", value: guessedShark.size, correct: guessedShark.size === targetShark.size },
+        { category: "Habitat", value: guessedShark.habitat, correct: guessedShark.habitat === targetShark.habitat },
         { category: "Year of Discovery", value: guessedShark.yod, correct: guessedShark.yod === targetShark.yod }
     ];
     
@@ -176,12 +188,18 @@ function makeGuess() {
 
         updateStats(true, guessesTaken);
         
+        // Check achievements for win conditions
+        if (window.checkAchievements) {
+            window.checkAchievements(true, guessesTaken, true);
+        }
+        
         // Disable input
         document.getElementById("sharkGuess").disabled = true;
         document.getElementById("guessBtn").disabled = true;
         
         // Display win screen
         winLoseScreen.innerHTML = `
+            <button onclick="document.getElementById('win-lose-screen').style.display='none'; document.getElementById('show-results-btn').style.display='block';" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
             <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">🎉 You Found It!</h2>
             <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
             <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
@@ -197,10 +215,16 @@ function makeGuess() {
         winLoseScreen.classList.add("win");
         winLoseScreen.classList.remove("lose");
         winLoseScreen.style.display = "block";
+        document.getElementById('show-results-btn').style.display = 'none';
         createBubbles();
         
     } else if (attempts === 0) {
         updateStats(false);
+        
+        // Check achievements for loss conditions
+        if (window.checkAchievements) {
+            window.checkAchievements(false, 12, false);
+        }
         
         // Disable input
         document.getElementById("sharkGuess").disabled = true;
@@ -208,6 +232,7 @@ function makeGuess() {
         
         // Display lose screen
         winLoseScreen.innerHTML = `
+            <button onclick="document.getElementById('win-lose-screen').style.display='none'; document.getElementById('show-results-btn').style.display='block';" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
             <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">😢 You Lost</h2>
             <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
             <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
@@ -219,12 +244,14 @@ function makeGuess() {
         winLoseScreen.classList.add("lose");
         winLoseScreen.classList.remove("win");
         winLoseScreen.style.display = "block";
+        document.getElementById('show-results-btn').style.display = 'none';
 
     } else {
         messageDiv.textContent = "";
     }
 
     document.getElementById("sharkGuess").value = "";
+    document.getElementById("suggestions").classList.remove("active");
 }
 
 function renderGuess(shark, feedback){
@@ -232,7 +259,8 @@ function renderGuess(shark, feedback){
 const card = document.createElement("div")
 card.className="guess-card"
 
-card.innerHTML = `<b>${shark.name}</b> (click)`
+const nameColor = normalizeInput(shark.name) === normalizeInput(targetShark.name) ? "#00ff00" : "#ff0000"
+card.innerHTML = `<b style="color: ${nameColor};">${shark.name}</b> (click)`
 
 const feedbackDiv = document.createElement("div")
 feedbackDiv.className="feedback"
@@ -257,10 +285,17 @@ feedback.forEach(item => {
         arrow = item.value < targetShark.yod ? " ⬆️" : " ⬇️";
     }
 
+    // Add size threshold info for Size category
+    let displayValue = item.value;
+    if (item.category === "Size") {
+        const threshold = sizeThresholds[item.value];
+        displayValue = threshold ? `${item.value} (${threshold})` : item.value;
+    }
+
     if (commonName) {
         const tooltip = document.createElement("div");
         tooltip.className = "tooltip";
-        tooltip.textContent = `${item.category}: ${item.value}${arrow}`;
+        tooltip.textContent = `${item.category}: ${displayValue}${arrow}`;
 
         const tooltipText = document.createElement("span");
         tooltipText.className = "tooltiptext";
@@ -269,7 +304,7 @@ feedback.forEach(item => {
         tooltip.appendChild(tooltipText);
         div.appendChild(tooltip);
     } else {
-        div.textContent = `${item.category}: ${item.value}${arrow}`;
+        div.textContent = `${item.category}: ${displayValue}${arrow}`;
     }
 
     feedbackDiv.appendChild(div);
@@ -309,7 +344,6 @@ document.getElementById("sharkGuess").addEventListener("keydown", function(event
 
 document.getElementById("guessBtn").addEventListener("click", makeGuess);
 
-// Autocomplete functionality
 const sharkGuessInput = document.getElementById("sharkGuess");
 const suggestionsDiv = document.getElementById("suggestions");
 
@@ -332,9 +366,11 @@ sharkGuessInput.addEventListener("input", function() {
     }
     
     // Build suggestions HTML
-    suggestionsDiv.innerHTML = matches.map(shark => 
-        `<div class="suggestion-item" onclick="selectShark('${shark.name}')">${shark.name}</div>`
-    ).join("");
+    suggestionsDiv.innerHTML = matches.map(shark => {
+        const isGuessed = shark.guessed === true;
+        const guessedClass = isGuessed ? 'guessed' : '';
+        return `<div class="suggestion-item ${guessedClass}" onclick="${isGuessed ? '' : `selectShark('${shark.name}')`}">${shark.name}</div>`;
+    }).join("");
     
     suggestionsDiv.classList.add("active");
 });

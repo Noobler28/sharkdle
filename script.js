@@ -180,7 +180,7 @@ function setupProfileSync() {
     });
 }
 
-function updateAuthUI() {
+async function updateAuthUI() {
     const authContainer = document.getElementById("auth-container");
     const loginWarning = document.getElementById("login-warning");
     const loginBtn = document.getElementById("login-btn");
@@ -206,12 +206,12 @@ function updateAuthUI() {
             authContainer.insertBefore(profileBtn, loginBtn);
         }
         
-        // Load user profile
-        loadUserProfile();
+        // Load user profile - need to await so redeemed codes and login streak load first
+        await loadUserProfile();
         // Sync local stats to Firebase
         syncStatsToFirebase();
-        // Initialize daily login
-        initializeDailyLogin();
+        // Initialize daily login - this will use the loaded streak data
+        await initializeDailyLogin();
     } else {
         // User is logged out
         if (loginWarning) loginWarning.classList.remove("hidden");
@@ -292,23 +292,25 @@ async function loadUserProfile() {
         const localProfile = JSON.parse(localStorage.getItem("userProfile") || "{}");
         
         let userData = {};
+        let firebaseData = null;
+        
         if (statsSnap.exists) {
             // Use Firebase data if it exists
-            const data = statsSnap.data();
+            firebaseData = statsSnap.data();
             userData = {
-                username: data.username || currentUser.email.split("@")[0],
+                username: firebaseData.username || currentUser.email.split("@")[0],
                 email: currentUser.email,
-                profilePicture: data.profilePicture || "images/pfp/shark1.png",
-                totalGuesses: data.totalGuesses || 0,
-                gamesPlayed: data.gamesPlayed || 0,
-                wins: data.wins || 0,
-                losses: data.losses || 0,
-                averageGuesses: data.averageGuesses || 0,
-                bestGame: data.bestGame || 0,
-                currentStreak: data.currentStreak || 0,
-                highestStreak: data.highestStreak || 0,
-                totalXP: data.totalXP || data.totalGuesses || 0,
-                earnedCosmetics: data.earnedCosmetics || []
+                profilePicture: firebaseData.profilePicture || "images/pfp/shark1.png",
+                totalGuesses: firebaseData.totalGuesses || 0,
+                gamesPlayed: firebaseData.gamesPlayed || 0,
+                wins: firebaseData.wins || 0,
+                losses: firebaseData.losses || 0,
+                averageGuesses: firebaseData.averageGuesses || 0,
+                bestGame: firebaseData.bestGame || 0,
+                currentStreak: firebaseData.currentStreak || 0,
+                highestStreak: firebaseData.highestStreak || 0,
+                totalXP: firebaseData.totalXP || firebaseData.totalGuesses || 0,
+                earnedCosmetics: firebaseData.earnedCosmetics || []
             };
             
             // Merge with local data if local data is newer or more complete
@@ -352,6 +354,22 @@ async function loadUserProfile() {
         localStorage.setItem("userProfile", JSON.stringify(userData));
         // Sync totalXP from Firestore to localStorage for UI
         localStorage.setItem("totalXP", userData.totalXP || 0);
+        
+        // Load redeemed codes from Firebase
+        if (firebaseData && firebaseData.redeemedCodes) {
+            localStorage.setItem("redeemedCodes", JSON.stringify(firebaseData.redeemedCodes));
+        }
+        
+        // Load login streak data from Firebase
+        if (firebaseData && firebaseData.loginStreak !== undefined) {
+            localStorage.setItem("loginStreak", firebaseData.loginStreak);
+        }
+        if (firebaseData && firebaseData.lastLoginDate) {
+            localStorage.setItem("lastLoginDate", firebaseData.lastLoginDate);
+        }
+        if (firebaseData && firebaseData.currentLoginDay !== undefined) {
+            localStorage.setItem("currentLoginDay", firebaseData.currentLoginDay);
+        }
         
         updateProfileDisplay(userData);
         loadAvailablePFPs();
@@ -951,7 +969,7 @@ const dailyRewards = [
     { day: 7, xp: 500, emoji: '🏆', isBig: true }
 ];
 
-function initializeDailyLogin() {
+async function initializeDailyLogin() {
     if (!currentUser) return;
 
     const today = new Date().toDateString();
@@ -993,6 +1011,16 @@ function initializeDailyLogin() {
         localStorage.setItem("loginStreak", streak);
         localStorage.setItem("totalXP", totalXP + xpGain);
         localStorage.setItem("dailyLoginModalShownToday", "true");
+
+        // Sync login streak data to Firebase
+        if (currentUser) {
+            const statsRef = db.collection("userStats").doc(currentUser.uid);
+            await statsRef.set({
+                lastLoginDate: today,
+                currentLoginDay: nextDay,
+                loginStreak: streak
+            }, { merge: true });
+        }
 
         // Show daily login modal only on first load of the day
         showDailyLoginModal(nextDay, xpGain);

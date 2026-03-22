@@ -30,8 +30,12 @@ box-shadow:0 5px 20px rgba(0,0,0,0.5);
 
 .logo{
 
-font-size:24px;
-font-weight:700;
+font-size:28px;
+font-weight:800;
+background:linear-gradient(135deg,#4dd0e1,#00b4d8);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
 
 }
 
@@ -802,6 +806,29 @@ border:1px dashed #4dd0e1;
 
 .auth-btn:hover {
     background: #0088a0;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, #00b4d8, #0088a0);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+.nav-btn:hover {
+    background: linear-gradient(135deg, #0088a0, #006080);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 180, 216, 0.5);
+}
+
+.nav-btn:active {
+    transform: translateY(0);
 }
 
 .profile-btn {

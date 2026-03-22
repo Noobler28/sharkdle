@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements - Sharkdle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #061a40, #0b3c5d, #0a1f2e);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(77, 208, 225, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 180, 216, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(7, 28, 44, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(77, 208, 225, 0.1);
+        }
+        
+        .navbar-logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4dd0e1, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #00b4d8, #0088a0);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+            margin-left: 10px;
+        }
+        
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #0088a0, #006080);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 180, 216, 0.5);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+        
+        .navbar a {
+            color: #aaa;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .navbar a:hover {
+            color: #4dd0e1;
+            text-shadow: 0 0 10px rgba(77, 208, 225, 0.5);
+        }
+        
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #4dd0e1, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 50px 0 10px 0;
+            font-size: 3em;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #4dd0e1;
+            font-size: 1.05em;
+            margin-bottom: 50px;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+        
+        .achievements-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 80px 20px;
+        }
+        
+        .stats-summary {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.15), rgba(77, 208, 225, 0.1));
+            border-radius: 16px;
+            border: 2px solid rgba(77, 208, 225, 0.3);
+            margin-bottom: 60px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stats-summary h2 {
+            margin-bottom: 30px;
+            color: #4dd0e1;
+            font-size: 1.6em;
+            letter-spacing: 1px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 20px 30px;
+            background: rgba(11, 34, 51, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(77, 208, 225, 0.2);
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat:hover {
+            border-color: #4dd0e1;
+            background: rgba(11, 34, 51, 0.9);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(77, 208, 225, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4dd0e1, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        .achievement-category {
+            margin-bottom: 70px;
+        }
+        
+        .category-title {
+            font-size: 1.8em;
+            color: #4dd0e1;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 3px solid rgba(77, 208, 225, 0.4);
+            padding-bottom: 15px;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .category-title::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4dd0e1, #00b4d8, transparent);
+            width: 100%;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .achievement-card {
+            background: linear-gradient(135deg, rgba(11, 34, 51, 0.8), rgba(20, 50, 70, 0.6));
+            border: 2px solid rgba(77, 208, 225, 0.3);
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(77, 208, 225, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .achievement-card:hover::before {
+            left: 100%;
+        }
+        
+        .achievement-card:hover {
+            border-color: #4dd0e1;
+            box-shadow: 0 0 30px rgba(77, 208, 225, 0.3), inset 0 0 20px rgba(77, 208, 225, 0.1);
+            transform: translateY(-8px);
+        }
+        
+        .achievement-card.locked {
+            border-color: rgba(255, 255, 255, 0.1);
+            opacity: 0.5;
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.6), rgba(40, 40, 40, 0.5));
+        }
+        
+        .achievement-card.locked:hover {
+            opacity: 0.6;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .achievement-card.unlocked {
+            border: 2px solid #4caf50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(100, 200, 100, 0.1));
+        }
+        
+        .achievement-card.unlocked:hover {
+            border-color: #66bb6a;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3), inset 0 0 20px rgba(76, 175, 80, 0.1);
+        }
+        
+        .achievement-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            filter: grayscale(100%);
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+        
+        .achievement-card.unlocked .achievement-icon {
+            filter: grayscale(0%) drop-shadow(0 0 8px rgba(76, 175, 80, 0.6));
+            opacity: 1;
+            font-size: 60px;
+        }
+        
+        .achievement-name {
+            font-size: 1.2em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+        
+        .achievement-description {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 16px;
+            min-height: 40px;
+            line-height: 1.5;
+        }
+        
+        .achievement-card.unlocked .achievement-description {
+            color: #4dd0e1;
+        }
+        
+        .achievement-points {
+            font-size: 0.95em;
+            color: #4dd0e1;
+            font-weight: 700;
+            margin-bottom: 14px;
+            background: rgba(77, 208, 225, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .achievement-status {
+            font-size: 0.85em;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .achievement-card.unlocked .achievement-status {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+        
+        .achievement-card.locked .achievement-status {
+            background: rgba(200, 200, 200, 0.15);
+            color: #666;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(77, 208, 225, 0.2);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b4d8, #4dd0e1);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px rgba(77, 208, 225, 0.5);
+        }
+        
+        button[style*="background: linear-gradient(135deg, #00b4d8"]  {
+            box-shadow: 0 4px 15px rgba(77, 208, 225, 0.2);
+        }
+        
+        @media (max-width: 1024px) {
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 20px;
+            }
+            
+            .stats-row {
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .navbar-logo {
+                font-size: 24px;
+                flex: 1;
+            }
+            
+            .navbar a {
+                margin-left: 0;
+                margin-right: 15px;
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+                margin: 30px 0 5px 0;
+            }
+            
+            .subtitle {
+                font-size: 0.95em;
+                margin-bottom: 30px;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 16px;
+            }
+            
+            .achievement-card {
+                padding: 20px;
+            }
+            
+            .achievement-icon {
+                font-size: 44px;
+            }
+            
+            .achievement-card.unlocked .achievement-icon {
+                font-size: 48px;
+            }
+            
+            .stat {
+                min-width: 150px;
+                padding: 16px 20px;
+            }
+            
+            .stats-row {
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .navbar a {
+                margin-left: 0;
+                margin-right: 10px;
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .achievement-card {
+                padding: 16px;
+            }
+            
+            .category-title {
+                font-size: 1.4em;
+                margin-bottom: 20px;
+            }
+            
+            .stats-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stat {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <header class="navbar">
+            <div class="navbar-logo">🦈 Sharkdle</div>
+            <nav>
+                <button onclick="navigate('index.html')" class="nav-btn">Home</button>
+                <button onclick="navigate('library.html')" class="nav-btn">Library</button>
+                <button onclick="navigate('sharkpass.html')" class="nav-btn">Shark Pass</button>
+                <button onclick="navigate('leaderboards.html')" class="nav-btn">Leaderboards</button>
+            </nav>
+        </header>
+        
+        <h1>🏆 Achievements</h1>
+        <p class="subtitle">Earn achievements and claim XP rewards</p>
+        
+        <div class="achievements-container">
+            <div class="stats-summary">
+                <h2>✨ Your Progress</h2>
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-value" id="achievement-count">0</div>
+                        <div class="stat-label">Achievements Unlocked</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="achievement-points">0</div>
+                        <div class="stat-label">XP Earned</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="achievement-percentage">0%</div>
+                        <div class="stat-label">Completion</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="achievements-content"></div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="sharks.js"></script>
+    <script src="script.js"></script>
+    <script src="achievements.js"></script>
+    
+    <script>
+        function navigate(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

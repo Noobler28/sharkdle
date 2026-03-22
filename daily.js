@@ -10,6 +10,19 @@ let gameWon = false
 
 const messageDiv = document.getElementById("message");
 
+const sizeThresholds = {
+    "Tiny": "0-3ft",
+    "Small": "3-6ft",
+    "Medium": "6-10ft",
+    "Large": "10-20ft",
+    "Giant": "20ft+"
+};
+
+function getSizeWithThreshold(size) {
+    const threshold = sizeThresholds[size];
+    return threshold ? `${size} (${threshold})` : size;
+}
+
 
 
 // Load game state from localStorage
@@ -96,7 +109,6 @@ document.getElementById("sharkGuess").addEventListener("keydown", function(event
     }
 });
 
-// Autocomplete functionality
 const sharkGuessInput = document.getElementById("sharkGuess");
 const suggestionsDiv = document.getElementById("suggestions");
 
@@ -119,9 +131,11 @@ sharkGuessInput.addEventListener("input", function() {
     }
     
     // Build suggestions HTML
-    suggestionsDiv.innerHTML = matches.map(shark => 
-        `<div class="suggestion-item" onclick="selectShark('${shark.name}')">${shark.name}</div>`
-    ).join("");
+    suggestionsDiv.innerHTML = matches.map(shark => {
+        const isGuessed = guesses.some(g => g.shark.name === shark.name);
+        const guessedClass = isGuessed ? 'guessed' : '';
+        return `<div class="suggestion-item ${guessedClass}" onclick="${isGuessed ? '' : `selectShark('${shark.name}')`}">${shark.name}</div>`;
+    }).join("");
     
     suggestionsDiv.classList.add("active");
 });
@@ -170,6 +184,8 @@ const feedback = {
     family: shark.family === targetShark.family,
     order: shark.order === targetShark.order,
     genus: shark.genus === targetShark.genus,
+    size: shark.size === targetShark.size,
+    habitat: shark.habitat === targetShark.habitat,
     yod: shark.yod === targetShark.yod
 }
 
@@ -287,6 +303,7 @@ if(attempts===0){
 }
 
 input.value=""
+document.getElementById("suggestions").classList.remove("active")
 
 }
 
@@ -296,7 +313,8 @@ function renderGuess(shark, feedback){
 const card = document.createElement("div")
 card.className="guess-card"
 
-card.innerHTML = `<b>${shark.name}</b> (click)`
+const nameColor = shark.name === targetShark.name ? "#00ff00" : "#ff0000"
+card.innerHTML = `<b style="color: ${nameColor};">${shark.name}</b> (click)`
 
 
 const feedbackDiv = document.createElement("div")
@@ -305,6 +323,8 @@ feedbackDiv.className="feedback"
 feedbackDiv.appendChild(createCategory("Family", shark.family, feedback.family))
 feedbackDiv.appendChild(createCategory("Order", shark.order, feedback.order))
 feedbackDiv.appendChild(createCategory("Genus", shark.genus, feedback.genus))
+feedbackDiv.appendChild(createCategory("Size", getSizeWithThreshold(shark.size), feedback.size))
+feedbackDiv.appendChild(createCategory("Habitat", shark.habitat, feedback.habitat))
 
 // Calculate arrow for year of discovery
 let yodArrow = ""
@@ -363,6 +383,11 @@ function createBubbles(container) {
 
 function showWin(xpGained, guessesTaken){
 
+// Check achievements for win conditions
+if (window.checkAchievements) {
+    window.checkAchievements(true, guessesTaken, true);
+}
+
 const win = document.getElementById("win-screen")
 
 win.style.display="block"
@@ -370,6 +395,7 @@ win.classList.add("win")
 win.classList.remove("lose")
 
 win.innerHTML = `
+<button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
 <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">🎉 You Found It!</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
@@ -390,6 +416,11 @@ createBubbles(win);
 
 function showLose(){
 
+// Check achievements for loss conditions
+if (window.checkAchievements) {
+    window.checkAchievements(false, 12, false);
+}
+
 const win = document.getElementById("win-screen")
 
 win.style.display="block"
@@ -397,6 +428,7 @@ win.classList.add("lose")
 win.classList.remove("win")
 
 win.innerHTML = `
+<button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
 <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">😢 You Lost</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
@@ -441,6 +473,42 @@ async function submitStatsToLeaderboard(won, guesses) {
     }
 }
 
+// Hint functionality
+const common_names = [
+    {"scientific": "Carcharhiniformes", "Common": "Ground Sharks"},
+    {"scientific": "Orectolobiformes", "Common": "Carpet Sharks"},
+    {"scientific": "Lamniformes", "Common": "Mackerel Sharks"},
+    {"scientific": "Heterodontiformes", "Common": "Bullhead Sharks"},
+    {"scientific": "Squatiniformes", "Common": "Angel Sharks"},
+    {"scientific": "Pristiophoriformes", "Common": "Saw Sharks"},
+    {"scientific": "Squaliformes", "Common": "Dog Sharks"},
+    {"scientific": "Hexanchiformes", "Common": "Cow and Frilled Sharks"},
+    {"scientific": "Sphyrnidae", "Common": "Hammerhead Sharks"},
+    {"scientific": "Carcharhinidae", "Common": "Requiem Sharks"},
+    {"scientific": "Rhincodontidae", "Common": "Whale Sharks"},
+    {"scientific": "Orectolobidae", "Common": "Wobbegong Sharks"},
+    {"scientific": "Hemiscylliidae", "Common": "Bamboo Sharks"},
+    {"scientific": "Ginglymostomatidae", "Common": "Nurse Sharks"},
+    {"scientific": "Dalatiidae", "Common": "Kitefin Sharks"},
+    {"scientific": "Etmopteridae", "Common": "Lantern Sharks"},
+    {"scientific": "Echinorhinidae", "Common": "Bramble Sharks"},
+    {"scientific": "Odontaspididae", "Common": "Sand Tiger Sharks"},
+    {"scientific": "Megachasmidae", "Common": "Megamouth Sharks"},
+    {"scientific": "Lamnidae", "Common": "Mackerel Sharks"},
+    {"scientific": "Hexanchidae", "Common": "Cow Sharks"},
+    {"scientific": "Centrophoridae", "Common": "Gulper Sharks"},
+    {"scientific": "Pristiophoridae", "Common": "Saw Sharks"},
+    {"scientific": "Squatinidae", "Common": "Angel Sharks"},
+    {"scientific": "Heterodontidae", "Common": "Bullhead Sharks"},
+    {"scientific": "Alopiidae", "Common": "Thresher Sharks"},
+    {"scientific": "Cetorhinidae", "Common": "Basking Sharks"},
+    {"scientific": "Mitsukurinidae", "Common": "Goblin Sharks"},
+    {"scientific": "Brachaeluridae", "Common": "Blind Sharks"},
+    {"scientific": "Chlamydoselachidae", "Common": "Frilled Sharks"},
+    {"scientific": "Pseudocarchariidae", "Common": "Crocodile Sharks"},
+    {"scientific": "Somniosidae", "Common": "Sleeper Sharks"},
+];
+
 async function submitStatsToLeaderboard(won, guesses) {
     try {
         // Only submit if user is authenticated
@@ -457,7 +525,7 @@ async function submitStatsToLeaderboard(won, guesses) {
             guesses: guesses,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             mode: "daily",
-            userId: firebase.auth().currentUser.uid  // optional: track user ID
+            userId: firebase.auth().currentUser.uid
         });
         console.log("Stats submitted successfully");
     } catch (error) {

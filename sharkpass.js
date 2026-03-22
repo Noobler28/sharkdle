@@ -19,7 +19,7 @@ async function renderPassUI() {
 
     const levelPfps = [
 
-{ level: 2, img: 'images/levelPfp/Shark6.png', name: 'Wobbegong Shark' },
+{ level: 2, img: 'images/levelPfp/Shark6.png', name: 'Angel Shark' },
 { level: 3, img: 'images/levelPfp/Shark7.png', name: 'Blue Shark' },
 { level: 4, img: 'images/levelPfp/Shark8.png', name: 'Blacktip Reef Shark' },
 { level: 5, img: 'images/levelPfp/Shark9.png', name: 'Tiger Shark' },

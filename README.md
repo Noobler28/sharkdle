@@ -16,6 +16,7 @@ https://discord.gg/FbnWZNsq
 Current Version: 1.2
 
 🔧 Fixes & Improvements
+
 Fixed an issue where the library did not preserve collapsed sections after searching
 
 Resolved a bug where logging in on a new device reset player data and created a new account incorrectly
@@ -25,6 +26,7 @@ Corrected cosmetic display errors (e.g., Angel Shark appearing as Wobbegong Shar
 Updated placeholder names for original cosmetics
 
 ✨ New Features
+
 Achievements System - Earn XP by completing in-game milestones
 
 Practice Mode - Enjoy unlimited guesses with no restrictions (Note: Practice mode does not award XP or track stats)
@@ -34,6 +36,7 @@ Enhanced Shark Information - Added details such as size and depth zone to assist
 Redeemable Codes - Use code **Sharkdle** to claim free rewards
 
 🎯 Quality of Life Updates
+
 Improved visual feedback - Correct guesses now display in green | Incorrect guesses display in red
 
 Previously guessed sharks now appear grayed out in suggestions

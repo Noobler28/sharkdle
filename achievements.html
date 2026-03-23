@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Achievements - Sharkdle</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -64,7 +65,7 @@
             background: linear-gradient(135deg, #00b4d8, #0088a0);
             color: white;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -72,6 +73,19 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
             margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-btn i {
+            font-size: 14px;
+            display: inline;
+        }
+        
+        .nav-btn span {
+            font-size: 14px;
+            display: inline;
         }
         
         .nav-btn:hover {
@@ -128,60 +142,111 @@
         
         .stats-summary {
             text-align: center;
-            padding: 40px;
-            background: linear-gradient(135deg, rgba(0, 180, 216, 0.15), rgba(77, 208, 225, 0.1));
-            border-radius: 16px;
-            border: 2px solid rgba(77, 208, 225, 0.3);
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(77, 208, 225, 0.15));
+            border-radius: 20px;
+            border: 2px solid rgba(77, 208, 225, 0.4);
             margin-bottom: 60px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(77, 208, 225, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(77, 208, 225, 0.03));
+            pointer-events: none;
         }
         
         .stats-summary h2 {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             color: #4dd0e1;
-            font-size: 1.6em;
-            letter-spacing: 1px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
         }
         
         .stats-row {
             display: flex;
             justify-content: center;
-            gap: 60px;
+            gap: 40px;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
         }
         
         .stat {
             text-align: center;
-            padding: 20px 30px;
-            background: rgba(11, 34, 51, 0.6);
-            border-radius: 12px;
-            border: 1px solid rgba(77, 208, 225, 0.2);
-            min-width: 200px;
-            transition: all 0.3s ease;
+            padding: 30px 35px;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(77, 208, 225, 0.05));
+            border-radius: 16px;
+            border: 2px solid rgba(77, 208, 225, 0.3);
+            min-width: 210px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(77, 208, 225, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
         
         .stat:hover {
             border-color: #4dd0e1;
-            background: rgba(11, 34, 51, 0.9);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(77, 208, 225, 0.2);
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.2), rgba(77, 208, 225, 0.1));
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(77, 208, 225, 0.25), 0 0 30px rgba(77, 208, 225, 0.15);
+        }
+        
+        .stat:hover::before {
+            opacity: 1;
         }
         
         .stat-value {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: 800;
             background: linear-gradient(135deg, #4dd0e1, #00b4d8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 8px;
+            display: block;
         }
         
         .stat-label {
-            font-size: 0.9em;
-            color: #888;
-            margin-top: 10px;
-            font-weight: 600;
+            font-size: 0.95em;
+            color: #a0a0a0;
+            margin-top: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .achievement-category {
@@ -359,109 +424,248 @@
             box-shadow: 0 4px 15px rgba(77, 208, 225, 0.2);
         }
         
-        @media (max-width: 1024px) {
-            .achievements-grid {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 20px;
-            }
-            
-            .stats-row {
-                gap: 40px;
-            }
-        }
-        
         @media (max-width: 768px) {
             .navbar {
-                padding: 15px 20px;
-                flex-wrap: wrap;
-                gap: 20px;
+                padding: 12px 15px;
+                gap: 8px;
             }
-            
+
             .navbar-logo {
-                font-size: 24px;
-                flex: 1;
+                font-size: 22px;
+                flex: 0 0 auto;
             }
-            
-            .navbar a {
+
+            .navbar nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .nav-btn {
+                flex: 1;
+                min-width: 45px;
+                padding: 6px 4px;
+                font-size: 9px;
                 margin-left: 0;
-                margin-right: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                line-height: 1;
+            }
+            .nav-btn i {
                 font-size: 14px;
             }
-            
+            .nav-btn span {
+                font-size: 8px;
+            }
+
             h1 {
                 font-size: 2.2em;
                 margin: 30px 0 5px 0;
             }
-            
+
             .subtitle {
                 font-size: 0.95em;
                 margin-bottom: 30px;
             }
-            
+
             .achievements-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 16px;
             }
-            
+
             .achievement-card {
                 padding: 20px;
             }
-            
+
             .achievement-icon {
                 font-size: 44px;
             }
-            
+
             .achievement-card.unlocked .achievement-icon {
                 font-size: 48px;
             }
-            
-            .stat {
-                min-width: 150px;
-                padding: 16px 20px;
+
+            .stats-summary {
+                padding: 40px 30px;
+                margin-bottom: 50px;
             }
-            
+
+            .stats-summary h2 {
+                font-size: 1.5em;
+                margin-bottom: 25px;
+            }
+
+            .stat {
+                min-width: 160px;
+                padding: 24px 25px;
+            }
+
+            .stat-value {
+                font-size: 2.3em;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+            }
+
             .stats-row {
-                gap: 20px;
+                gap: 25px;
             }
         }
         
         @media (max-width: 480px) {
             .navbar {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
+                padding: 10px 12px;
+                gap: 8px;
+                justify-content: space-between;
             }
-            
-            .navbar a {
+
+            .navbar-logo {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .navbar nav {
+                display: flex;
+                flex-direction: row;
+                gap: 3px;
+                flex-wrap: nowrap;
+                min-width: 0;
+            }
+
+            .nav-btn {
+                padding: 4px 6px;
+                min-height: 32px;
+                font-size: 8px;
                 margin-left: 0;
-                margin-right: 10px;
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                line-height: 1;
+            }
+            .nav-btn i {
                 font-size: 12px;
             }
-            
+            .nav-btn span {
+                font-size: 8px;
+            }
+
             h1 {
                 font-size: 1.8em;
+                margin: 20px 0;
             }
-            
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
             .achievements-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 15px;
             }
-            
+
             .achievement-card {
                 padding: 16px;
+            }
+
+            .achievement-icon {
+                font-size: 40px;
+            }
+
+            .achievement-title {
+                font-size: 14px;
+            }
+
+            .achievement-desc {
+                font-size: 12px;
+            }
+
+            .stats-summary {
+                padding: 35px 20px;
+                margin: 20px 12px 45px 12px;
+                border-radius: 16px;
+                margin-bottom: 45px;
+            }
+
+            .stats-summary h2 {
+                font-size: 1.45em;
+                margin-bottom: 28px;
+                letter-spacing: 1.2px;
+                font-weight: 800;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .stat {
+                padding: 28px 22px;
+                min-width: auto;
+                width: 100%;
+                border-radius: 15px;
+                min-height: 100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .stat:active {
+                transform: scale(0.98);
+            }
+
+            .stat-value {
+                font-size: 2.4em;
+                margin-bottom: 8px;
+            }
+
+            .stat-label {
+                font-size: 0.88em;
+                margin-top: 10px;
             }
             
             .category-title {
                 font-size: 1.4em;
                 margin-bottom: 20px;
             }
-            
-            .stats-row {
-                flex-direction: column;
-                gap: 15px;
+        }
+
+        @media (max-width: 360px) {
+            .stats-summary {
+                padding: 28px 16px;
+                margin: 16px 8px 40px 8px;
             }
-            
+
+            .stats-summary h2 {
+                font-size: 1.3em;
+                margin-bottom: 24px;
+            }
+
+            .stats-row {
+                gap: 16px;
+            }
+
             .stat {
-                width: 100%;
-                min-width: unset;
+                padding: 26px 18px;
+                min-height: 95px;
+            }
+
+            .stat-value {
+                font-size: 2.2em;
+            }
+
+            .stat-label {
+                font-size: 0.82em;
+                letter-spacing: 0px;
             }
         }
     </style>
@@ -471,10 +675,10 @@
         <header class="navbar">
             <div class="navbar-logo">🦈 Sharkdle</div>
             <nav>
-                <button onclick="navigate('index.html')" class="nav-btn">Home</button>
-                <button onclick="navigate('library.html')" class="nav-btn">Library</button>
-                <button onclick="navigate('sharkpass.html')" class="nav-btn">Shark Pass</button>
-                <button onclick="navigate('leaderboards.html')" class="nav-btn">Leaderboards</button>
+                <button onclick="navigate('index.html')" class="nav-btn" title="Home"><i class="fas fa-home"></i><span>Home</span></button>
+                <button onclick="navigate('library.html')" class="nav-btn" title="Library"><i class="fas fa-fish"></i><span>Library</span></button>
+                <button onclick="navigate('sharkpass.html')" class="nav-btn" title="Shark Pass"><i class="fas fa-id-card"></i><span>Pass</span></button>
+                <button onclick="navigate('leaderboards.html')" class="nav-btn" title="Leaderboards"><i class="fas fa-ranking-star"></i><span>Board</span></button>
             </nav>
         </header>
         

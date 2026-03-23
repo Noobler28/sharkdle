@@ -1,4 +1,4 @@
-##🦈 Sharkdle
+# 🦈 Sharkdle
 
 Created by Connor Eagle
 

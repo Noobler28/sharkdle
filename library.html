@@ -353,13 +353,15 @@
             align-items: flex-start;
         }
         .card-back .stat {
-            margin: 6px 0;
+            margin: 8px 0;
             font-size: 0.9em;
             letter-spacing: 0.3px;
-            line-height: 1.4;
+            line-height: 1.5;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .card-back .stat strong {
             color: #4dd0e1;
@@ -1052,10 +1054,7 @@
                     }
                     saveCollapsedSections();
                     // Update species count display when collapsing/expanding
-                    const visibleSharks = filteredSharks.filter(shark => {
-                        return !collapsedSections.has(shark.order);
-                    });
-                    document.getElementById('species-count').textContent = `Showing ${visibleSharks.length} shark${visibleSharks.length !== 1 ? 's' : ''}`;
+                    updateSpeciesCount();
                 });
                 section.appendChild(header);
                 const content = document.createElement('div');
@@ -1106,6 +1105,13 @@
             });
         }
 
+        function updateSpeciesCount() {
+            const visibleSharks = filteredSharks.filter(shark => {
+                return !collapsedSections.has(shark.order);
+            });
+            document.getElementById('species-count').textContent = `Showing ${visibleSharks.length} shark${visibleSharks.length !== 1 ? 's' : ''}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             loadHeartedSharks();
             loadCollapsedSections();
@@ -1117,6 +1123,7 @@
             const searchInput = document.getElementById('shark-search');
             searchInput.addEventListener('input', (e) => {
                 filterSharks(e.target.value);
+                updateSpeciesCount();
             });
             
             // Setup heart filter listener
@@ -1146,6 +1153,7 @@
                     // Re-filter based on search input
                     const searchInput = document.getElementById('shark-search');
                     filterSharks(searchInput.value);
+                    updateSpeciesCount();
                 });
             });
         });

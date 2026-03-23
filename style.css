@@ -255,6 +255,10 @@ border-radius:10px;
 
 text-align:center;
 
+max-height:90vh;
+
+overflow-y:auto;
+
 }
 
 .modal-content button{
@@ -271,6 +275,29 @@ color:white;
 
 cursor:pointer;
 
+}
+
+/* Avatar/PFP Selector Scrolling */
+.avatar-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 12px;
+    padding: 8px;
+    overflow-y: auto;
+    max-height: 250px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Profile Picture Modal Section Containment */
+#profilePicModal > .modal-content > div {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#profilePicModal > .modal-content > div .avatar-selector {
+    flex: 1;
+    overflow-y: auto;
 }
 
 /* Username Edit Styles */
@@ -812,13 +839,26 @@ border:1px dashed #4dd0e1;
     background: linear-gradient(135deg, #00b4d8, #0088a0);
     color: white;
     border: none;
-    padding: 8px 18px;
+    padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
     font-size: 14px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-btn i {
+    font-size: 14px;
+    display: inline;
+}
+
+.nav-btn span {
+    font-size: 14px;
+    display: inline;
 }
 
 .nav-btn:hover {
@@ -889,4 +929,712 @@ border:1px dashed #4dd0e1;
 #profile-pic:hover {
     opacity: 0.8;
     transition: opacity 0.3s;
+}
+
+/* MOBILE MEDIA QUERIES */
+
+@media (max-width: 768px) {
+    /* NAVBAR */
+    .navbar {
+        padding: 15px 20px;
+        gap: 10px;
+    }
+
+    .logo {
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    nav {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    nav button {
+        margin-left: 0;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    /* HERO */
+    .hero {
+        padding: 80px 20px;
+    }
+
+    .hero h1 {
+        font-size: 40px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .play-btn {
+        padding: 12px 32px;
+        font-size: 16px;
+    }
+
+    /* GAME GRID */
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 20px;
+        padding: 40px 20px;
+    }
+
+    .game-card {
+        padding: 24px 16px;
+    }
+
+    .game-card i {
+        font-size: 28px;
+    }
+
+    /* STATS */
+    .stats {
+        padding: 30px 20px;
+    }
+
+    .stat {
+        flex-direction: column;
+        padding: 12px 8px;
+        font-size: 14px;
+    }
+
+    /* FOOTER */
+    footer {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    footer a {
+        margin: 0 5px;
+    }
+
+    /* MODAL */
+    .modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+        width: 92%;
+        max-width: 95vw;
+        max-height: 85vh;
+    }
+
+    .modal-content button {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .avatar-selector {
+        max-height: 250px;
+    }
+
+    /* PROFILE PIC MODAL */
+    .avatar-selector {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) !important;
+        gap: 12px !important;
+        padding: 8px !important;
+        margin: 10px 0 !important;
+    }
+
+    /* PFP Modal Section Containment */
+    #profilePicModal > .modal-content > div {
+        max-height: calc(50vh - 80px);
+    }
+
+    /* PROFILE MODAL - STATS GRID */
+    .stats-detail {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .profile-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .profile-section img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .profile-section > div:first-child {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .profile-section > div:first-child button {
+        position: absolute;
+        bottom: 0;
+        right: -8px;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0;
+        visibility: visible !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #00b4d8, #0088a0);
+        border: 2px solid rgba(7, 28, 44, 0.9);
+        border-radius: 50%;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    #edit-profile-btn {
+        margin-left: 0;
+    }
+
+    #username-edit-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .username-input {
+        width: 100%;
+    }
+
+    /* USERNAME EDIT */
+    .username-edit-container {
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .username-input {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .btn-save, .btn-cancel {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1;
+    }
+
+    /* REDEEM CODE SECTION */
+    #redeem-code-input {
+        font-size: 14px !important;
+    }
+
+    /* END PAGE */
+    .end-container {
+        padding: 30px 20px;
+        margin: 20px;
+        max-width: 100%;
+    }
+
+    .end-container h1 {
+        font-size: 32px;
+    }
+
+    .end-container p {
+        font-size: 16px;
+    }
+
+    .end-buttons button {
+        padding: 10px 20px;
+        margin: 5px 2px;
+        font-size: 14px;
+    }
+
+    /* SHARK PASS */
+    .sharkpass-container {
+        max-width: 100%;
+        margin: 20px;
+        padding: 30px 20px;
+        border-radius: 16px;
+    }
+
+    .sharkpass-container h1 {
+        font-size: 1.8rem;
+    }
+
+    .sharkpass-desc {
+        font-size: 1em;
+    }
+
+    /* XP BAR */
+    .xp-bar-container {
+        height: 30px;
+        margin: 15px 0;
+    }
+
+    /* REWARD GRID */
+    .reward-row {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 14px;
+    }
+
+    .reward-card {
+        padding: 12px;
+    }
+
+    .reward-card img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .reward-card.next img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .reward-name {
+        font-size: 12px;
+    }
+
+    /* AUTH CONTAINER */
+    .auth-container {
+        gap: 8px;
+    }
+
+    .auth-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .nav-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .nav-btn i {
+        font-size: 14px;
+    }
+
+    .nav-btn span {
+        font-size: 10px;
+    }
+
+    .profile-btn {
+        font-size: 20px;
+    }
+
+    #profile-pic {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* NAVBAR */
+    .navbar {
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 12px;
+        gap: 6px;
+        justify-content: space-between;
+    }
+
+    .logo {
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
+        flex-wrap: nowrap;
+        min-width: 0;
+    }
+
+    nav button {
+        margin-left: 0;
+        margin-right: 0;
+        font-size: 8px;
+        padding: 4px 6px;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        line-height: 1;
+    }
+
+    nav button i {
+        font-size: 12px;
+    }
+
+    nav button span {
+        font-size: 8px;
+    }
+
+    /* HERO */
+    .hero {
+        padding: 60px 15px;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .play-btn {
+        padding: 10px 24px;
+        font-size: 14px;
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* GAME GRID */
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .game-card {
+        padding: 12px;
+    }
+
+    .game-card h2 {
+        font-size: 14px;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    .game-card p {
+        font-size: 11px;
+        line-height: 1.3;
+    }
+
+    .game-card i {
+        font-size: 18px;
+    }
+
+    /* STATS */
+    .stats {
+        padding: 20px 15px;
+    }
+
+    .stats h2 {
+        font-size: 18px;
+    }
+
+    .stat {
+        font-size: 13px;
+        padding: 10px 5px;
+    }
+
+    /* FOOTER */
+    footer {
+        padding: 15px 10px;
+        font-size: 12px;
+    }
+
+    footer a {
+        margin: 0 3px;
+        display: block;
+        margin-top: 5px;
+    }
+
+    /* MODAL */
+    .modal-content {
+        padding: 25px 15px;
+        margin: 15px;
+        max-width: calc(100% - 30px);
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-content button {
+        padding: 8px 14px;
+        font-size: 12px;
+        min-height: 44px;
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .modal-content h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .avatar-selector {
+        max-height: 280px;
+    }
+
+    /* PROFILE MODAL - STATS GRID */
+    .stats-detail {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stats-detail > div {
+        padding: 12px !important;
+    }
+
+    .stats-detail > div p:last-child {
+        font-size: 18px !important;
+    }
+
+    .stats-detail > div p:first-child {
+        font-size: 11px !important;
+    }
+
+    .profile-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+        padding: 15px !important;
+        position: relative;
+    }
+
+    .profile-section img {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+    }
+
+    .profile-section > div:first-child {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        width: 100%;
+    }
+
+    .profile-section > div:first-child button {
+        position: absolute;
+        bottom: 0;
+        right: -8px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0;
+        font-size: 14px;
+        visibility: visible !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #00b4d8, #0088a0);
+        border: 2px solid rgba(7, 28, 44, 0.9);
+        border-radius: 50%;
+    }
+
+    /* USERNAME EDIT */
+    .username-edit-container {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .username-input {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .btn-save, .btn-cancel {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 12px;
+        min-height: 44px;
+    }
+
+    /* REDEEM CODE SECTION */
+    #redeem-code-input {
+        padding: 10px 12px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+    }
+
+    /* PROFILE PIC MODAL */
+    #profilePicModal .modal-content {
+        max-width: 100%;
+        max-height: 85vh;
+        padding: 15px 12px;
+        margin: 10px 5px;
+        width: 100%;
+    }
+
+    #profilePicModal .modal-content h2 {
+        font-size: 16px;
+    }
+
+    #profilePicModal .modal-content h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* PFP Modal Section Containment */
+    #profilePicModal > .modal-content > div {
+        max-height: calc(50vh - 80px);
+    }
+
+    .avatar-selector {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)) !important;
+        gap: 8px !important;
+        padding: 6px !important;
+        margin: 8px 0 !important;
+        max-height: 200px !important;
+    }
+
+    .avatar-selector > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar-selector > div > div {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    /* END PAGE */
+    .end-page {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .end-container {
+        padding: 25px 15px;
+        margin: 15px;
+        max-width: 100%;
+    }
+
+    .end-container h1 {
+        font-size: 24px;
+    }
+
+    .end-container p {
+        font-size: 14px;
+    }
+
+    .end-buttons button {
+        padding: 10px 18px;
+        margin: 4px 2px;
+        font-size: 12px;
+        min-height: 44px;
+    }
+
+    /* SHARK PASS */
+    .sharkpass-container {
+        margin: 15px;
+        padding: 20px 15px;
+    }
+
+    .sharkpass-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .sharkpass-desc {
+        font-size: 0.95em;
+    }
+
+    .level-info {
+        font-size: 14px;
+    }
+
+    /* XP BAR */
+    .xp-bar-container {
+        height: 28px;
+    }
+
+    .xp-text {
+        font-size: 12px;
+    }
+
+    /* REWARD GRID */
+    .reward-row {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 12px;
+    }
+
+    .reward-card {
+        padding: 10px;
+    }
+
+    .reward-card img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .reward-card.next img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .reward-name {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .xp-needed {
+        font-size: 12px;
+    }
+
+    .cosmetic-badge {
+        font-size: 11px;
+        margin-top: 20px;
+    }
+
+    /* AUTH CONTAINER */
+    .auth-container {
+        gap: 3px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        min-width: 0;
+    }
+
+    .auth-btn {
+        padding: 6px 8px;
+        font-size: 9px;
+        flex: 1;
+        min-width: 0;
+        min-height: 36px;
+        white-space: nowrap;
+    }
+
+    .nav-btn {
+        padding: 4px 6px;
+        font-size: 8px;
+        flex: 1;
+        min-width: 0;
+        min-height: 32px;
+        margin-left: 0;
+        margin-bottom: 0;
+        line-height: 1.2;
+    }
+
+    .profile-btn {
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    #profile-pic {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+
+    .login-warning {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .login-warning button {
+        width: 100%;
+        min-height: 40px;
+    }
 }

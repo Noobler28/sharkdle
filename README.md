@@ -1,41 +1,47 @@
-# Welcome to Sharkdle! 🦈
+🦈 Sharkdle
 
-CREATED BY CONNOR EAGLE
+Created by Connor Eagle
 
-PLAY HERE: [https://noobler28.github.io/sharkdle/index.html](https://noobler28.github.io/sharkdle/)
+🎮 Play the game:
+https://noobler28.github.io/sharkdle/index.html
 
-REPORT BUGS HERE: https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ5UKmsC05edZH3R7jRJ9QCGRZVOLw/viewform?usp=dialog
+🐞 Report bugs:
+https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ5UKmsC05edZH3R7jRJ9QCGRZVOLw/viewform?usp=dialog
 
-Contact me on discord if you find any bugs or misinformation: https://discord.gg/FbnWZNsq
+💬 Community & Support (Discord):
+https://discord.gg/FbnWZNsq
 
-## Updates and version
+📦 Version Information
 
 Current Version: 1.2
 
-Fixes & Changes:
+🔧 Fixes & Improvements
+Fixed an issue where the library did not preserve collapsed sections after searching
+Resolved a bug where logging in on a new device reset player data and created a new account incorrectly
+Corrected cosmetic display errors (e.g., Angel Shark appearing as Wobbegong Shark)
+Updated placeholder names for original cosmetics
 
-BUG: The library now keeps closed sections closed after searching for species (this was always supposed to happen)
+✨ New Features
+Achievements System
+Earn XP by completing in-game milestones
+Practice Mode
+Enjoy unlimited guesses with no restrictions
+(Note: Practice mode does not award XP or track stats)
+Enhanced Shark Information
+Added details such as size and depth zone to assist with more accurate guessing
+(This feature is still being refined — feedback is appreciated)
+Redeemable Codes
+Use code **Sharkdle** to claim free rewards
 
-BUG: Fixed logging in on a new device resetting all data AND creating an account disregarding your offline stats
+🎯 Quality of Life Updates
+Improved visual feedback:
+Correct guesses now display in green
+Incorrect guesses display in red
+Previously guessed sharks now appear grayed out in suggestions
+General UI and usability improvements, including enhanced mobile support
 
-BUG: Fixed the angel shark cosmetic being displayed as a wobbegong shark, fixed the original 5 cosmetics to not have placeholder names
+ℹ️ Additional Notes
+Built using JavaScript, HTML, and CSS
+Ongoing updates and improvements are planned
 
-ADD: New achievements menu - earn XP for milestones in game
-
-ADD: Keep guessing without limits in practice mode, you wont earn XP or stats but you will earn knowledge!
-
-ADD: New information for sharks to help narrow down guesses (size + depth zone) still a work in progress so let me know if there are mistakes
-
-ADD: Added redeemable codes! - use code "Sharkdle" for free rewards
-
-QOL: Shark species names when guessing now display as red or green to make it more obvious if you have the right species
-
-QOL: Already guessed sharks display grayed out in the input suggestions 
-
-Some other small changes 
-
-# Info
-Made with javascript, html and css. Thank you for playing!
-
-All rights reserved.
-
+Thank you for playing Sharkdle! 🦈

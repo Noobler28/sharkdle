@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sharkdle Library</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -455,20 +456,129 @@
             color: #4dd0e1;
             font-size: 1.2em;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .navbar {
-                padding: 15px 20px;
-                flex-wrap: wrap;
+                padding: 12px 15px;
+                gap: 8px;
             }
-            .navbar a {
-                margin-left: 15px;
+            .navbar-logo {
+                font-size: 22px;
+                flex: 0 0 auto;
+            }
+            .navbar > div:last-child {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .nav-btn {
+                flex: 1;
+                min-width: 45px;
+                padding: 6px 4px;
+                font-size: 9px;
+                margin-left: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                line-height: 1;
+            }
+            .nav-btn i {
                 font-size: 14px;
+            }
+            .nav-btn span {
+                font-size: 8px;
+            }
+            h1 { 
+                font-size: 2.2em; 
+                margin: 30px 0 10px 0;
+            }
+            .search-bar {
+                max-width: 95%;
+                min-width: 200px;
             }
             .filters-container {
                 flex-direction: column;
                 gap: 15px;
+                padding: 20px;
+                margin: 20px 15px;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                width: 100%;
+            }
+            .filter-buttons {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .filter-option {
+                flex: 1;
+                min-width: 70px;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            .gallery {
+                padding: 0 1vw 30px 1vw;
+                gap: 12px;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+            .shark-card, .card-inner {
+                height: 210px;
+            }
+            .card-front, .card-back {
+                padding: 14px 8px 10px 8px;
+                font-size: 0.9em;
+            }
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 10px 12px;
+                gap: 6px;
+                flex-direction: row;
+                align-items: center;
+            }
+            .navbar-logo {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+            .navbar > div:last-child {
+                display: flex;
+                flex-direction: row;
+                gap: 3px;
+                flex-wrap: nowrap;
+                min-width: 0;
+            }
+            .navbar a {
+                margin-left: 0;
+                font-size: 13px;
+            }
+            .nav-btn {
+                min-height: 36px;
+                font-size: 8px;
+                padding: 4px 6px;
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                line-height: 1;
+            }
+            .nav-btn i {
+                font-size: 12px;
+            }
+            .nav-btn span {
+                font-size: 8px;
+            }
+            .filters-container {
+                flex-direction: column;
+                gap: 12px;
                 padding: 15px;
-                margin: 15px 15px;
+                margin: 15px;
             }
             .filter-group {
                 flex-direction: column;
@@ -481,7 +591,7 @@
             }
             .filter-option {
                 flex: 1;
-                min-width: 70px;
+                min-width: 65px;
             }
             h1 { 
                 font-size: 1.8em; 
@@ -496,6 +606,7 @@
             }
             .search-container {
                 flex-direction: column;
+                gap: 12px;
             }
             .gallery {
                 padding: 0 1vw 30px 1vw;
@@ -540,13 +651,128 @@
                 padding: 0 6px 8px 6px;
             }
         }
-        @media (max-width: 400px) {
+        @media (max-width: 480px) {
+            .navbar {
+                flex-direction: row;
+                align-items: center;
+                padding: 10px 12px;
+                gap: 8px;
+                justify-content: space-between;
+            }
+            .navbar-logo {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+            .navbar > div:last-child {
+                display: flex;
+                flex-direction: row;
+                gap: 3px;
+                flex-wrap: nowrap;
+                min-width: 0;
+            }
+            .nav-btn {
+                padding: 4px 6px;
+                min-height: 32px;
+                font-size: 8px;
+                margin-left: 0;
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                line-height: 1;
+            }
+            .nav-btn i {
+                font-size: 12px;
+            }
+            .nav-btn span {
+                font-size: 8px;
+            }
+            h1 { 
+                font-size: 1.5em; 
+                margin: 15px 0 8px 0;
+            }
+            .search-bar {
+                max-width: 95%;
+                min-width: 150px;
+                padding: 8px 12px;
+            }
+            .search-bar input {
+                font-size: 14px;
+            }
+            .filter-btn {
+                width: 100%;
+                margin-left: 0;
+                min-height: 40px;
+            }
+            .filters-container {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px;
+                margin: 12px;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .filter-buttons {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .filter-option {
+                flex: 1;
+                min-width: 60px;
+                padding: 6px 8px;
+                font-size: 11px;
+                min-height: 36px;
+            }
+            .search-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .gallery {
+                padding: 0 8px 30px 8px;
+                gap: 8px;
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            }
             .shark-card, .card-inner {
                 max-width: 140px;
                 height: 150px;
             }
             .card-front .shark-name {
                 font-size: 0.95em;
+            }
+            .card-front, .card-back {
+                font-size: 0.85em;
+            }
+            .card-back .stat {
+                font-size: 0.8em;
+                margin: 3px 0;
+            }
+            .order-section {
+                margin: 10px 0;
+                border-radius: 8px;
+            }
+            .order-header {
+                padding: 10px 12px;
+                font-size: 1em;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+            }
+            .order-content {
+                padding: 0 8px 6px 8px;
+            }
+        }
+        @media (max-width: 400px) {
+            .shark-card, .card-inner {
+                max-width: 125px;
+                height: 140px;
+            }
+            .card-front .shark-name {
+                font-size: 0.9em;
             }
             .card-back .stat {
                 font-size: 0.8em;
@@ -562,10 +788,10 @@
     <header class="navbar">
         <div class="navbar-logo">🦈 Sharkdle</div>
         <div>
-            <button onclick="navigate('index.html')" class="nav-btn">Home</button>
-            <button onclick="navigate('sharkpass.html')" class="nav-btn">Shark Pass</button>
-            <button onclick="navigate('leaderboards.html')" class="nav-btn">Leaderboards</button>
-            <button onclick="navigate('achievements.html')" class="nav-btn">Achievements</button>
+            <button onclick="navigate('index.html')" class="nav-btn" title="Home"><i class="fas fa-home"></i><span> Home</span></button>
+            <button onclick="navigate('sharkpass.html')" class="nav-btn" title="Shark Pass"><i class="fas fa-id-card"></i><span> Pass</span></button>
+            <button onclick="navigate('leaderboards.html')" class="nav-btn" title="Leaderboards"><i class="fas fa-ranking-star"></i><span> Board</span></button>
+            <button onclick="navigate('achievements.html')" class="nav-btn" title="Achievements"><i class="fas fa-trophy"></i><span> Achieve</span></button>
         </div>
     </header>
     

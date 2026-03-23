@@ -17,7 +17,7 @@ Current Version: 1.2
 
 ### 🔧 Fixes & Improvements
 
-Fixed an issue where the library did not preserve collapsed sections after searching
+Fixed an issue where the library did not preserve collapsed sections after searching, and added more tweaks
 
 Resolved a bug where logging in on a new device reset player data and created a new account incorrectly
 

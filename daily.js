@@ -199,6 +199,41 @@ if (document.readyState === 'loading') {
     initializeGame();
 }
 
+// Countdown timer for next puzzle
+function updateCountdown() {
+    const countdownDiv = document.getElementById("countdown-timer");
+    const winCountdown = document.getElementById("win-countdown");
+
+    const now = new Date();
+    // Calculate next UTC midnight
+    const nextMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0));
+    
+    const timeUntil = nextMidnight - now;
+    
+    let timeStr;
+    if (timeUntil <= 0) {
+        timeStr = "00:00:00";
+    } else {
+        const hours = Math.floor(timeUntil / (1000 * 60 * 60));
+        const minutes = Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeUntil % (1000 * 60)) / 1000);
+        
+        timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    
+    if (countdownDiv) {
+        countdownDiv.textContent = `Next puzzle: ${timeStr}`;
+    }
+    
+    if (winCountdown) {
+        winCountdown.textContent = timeStr;
+    }
+}
+
+// Update countdown every second
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
 function hashDate(date){
 
 let hash=0
@@ -506,24 +541,25 @@ if (!alreadyCompleted && window.checkAchievements) {
 
 const win = document.getElementById("win-screen")
 
-win.style.display="block"
-win.classList.add("win")
-win.classList.remove("lose")
-
 let headerText = alreadyCompleted ? "✓ Already Discovered" : "🎉 You Guessed It!";
 
 win.innerHTML = `
-<button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
+<button onclick="document.getElementById('win-screen').style.display='none'; document.getElementById('show-results-btn').style.display='block';" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
 <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">${headerText}</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">You took ${guessesTaken} guess${guessesTaken !== 1 ? 'es' : ''}.</p>
 ${!alreadyCompleted ? `<div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;"><p style="font-size: 28px; font-weight: bold; margin: 0; color: inherit;">+${xpGained} XP</p></div>` : ''}
+<div style="margin: 20px 0; padding: 12px; background: rgba(255,0,0,0.1); border-radius: 6px; font-size: 14px; text-align: center; color: #ff4444; font-weight: 600;">Next puzzle: <span id="win-countdown">--:--:--</span></div>
 <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
     <button onclick="window.location.href='infinite.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Play Infinite</button>
     <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
 </div>
 `
+
+win.style.display="block"
+win.classList.add("win")
+win.classList.remove("lose")
 
 createBubbles(win);
 
@@ -539,22 +575,23 @@ if (!alreadyCompleted && window.checkAchievements) {
 
 const win = document.getElementById("win-screen")
 
-win.style.display="block"
-win.classList.add("lose")
-win.classList.remove("win")
-
 let headerText = alreadyCompleted ? "✗ You could not discover today's Daily Shark" : "😢 You Lost";
 
 win.innerHTML = `
-<button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
+<button onclick="document.getElementById('win-screen').style.display='none'; document.getElementById('show-results-btn').style.display='block';" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
 <h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">${headerText}</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
+<div style="margin: 20px 0; padding: 12px; background: rgba(255,0,0,0.1); border-radius: 6px; font-size: 14px; text-align: center; color: #ff4444; font-weight: 600;">Next puzzle: <span id="win-countdown">--:--:--</span></div>
 <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
     <button onclick="window.location.href='infinite.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Play Infinite</button>
     <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
 </div>
 `
+
+win.style.display="block"
+win.classList.add("lose")
+win.classList.remove("win")
 }
 
 // Console command for testing: revealShark() - Dev only

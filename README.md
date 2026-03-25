@@ -33,7 +33,7 @@ Practice Mode - Enjoy unlimited guesses with no restrictions (Note: Practice mod
 
 Enhanced Shark Information - Added details such as size and depth zone to assist with more accurate guessing (This feature is still being refined — feedback is appreciated)
 
-Redeemable Codes - Use code **Sharkdle** to claim free rewards
+Redeemable Codes - Use code **Sharkdle** AND **Update1** to claim free rewards
 
 ### 🎯 Quality of Life Updates
 

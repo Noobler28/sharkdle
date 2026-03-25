@@ -3,7 +3,7 @@
 Created by Connor Eagle
 
 🎮 Play the game:
-https://noobler28.github.io/sharkdle/index.html
+[Sharkdle](https://noobler28.github.io/sharkdle/)
 
 🐞 Report bugs:
 https://docs.google.com/forms/d/e/1FAIpQLSelQY3rofKg_QVNsVV6VJ5UKmsC05edZH3R7jRJ9QCGRZVOLw/viewform?usp=dialog

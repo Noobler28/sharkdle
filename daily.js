@@ -1,4 +1,20 @@
-const today = new Date().toISOString().split('T')[0]
+// Get today's date in UTC (same puzzle for all users globally)
+function getTodayInLocalTimezone() {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Get the next midnight in the user's local timezone
+function getNextMidnightTime() {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+    return tomorrow.getTime();
+}
+
+const today = getTodayInLocalTimezone()
 
 const dailySharkIndex = hashDate(today) % sharks.length
 const targetShark = sharks[dailySharkIndex]
@@ -7,6 +23,7 @@ let attempts = 12
 let guesses = []
 let gameCompleted = false
 let gameWon = false
+let lastLoadedDate = today
 
 const messageDiv = document.getElementById("message");
 
@@ -25,64 +42,162 @@ function getSizeWithThreshold(size) {
 
 
 
-// Load game state from localStorage
-function loadGameState() {
+// Load game state from localStorage and Firestore
+async function loadGameState() {
+    // First, check localStorage for today's game
     const stored = localStorage.getItem(`daily_${today}`)
     if (stored) {
         const state = JSON.parse(stored)
-        guesses = state.guesses || []
-        attempts = state.attempts || 12
-        gameCompleted = state.completed || false
-        gameWon = state.won || false
+        // Validate that stored state is actually for today (not from device date manipulation)
+        if (state.date === today) {
+            guesses = state.guesses || []
+            attempts = state.attempts || 12
+            gameCompleted = state.completed || false
+            gameWon = state.won || false
+            lastLoadedDate = today
+        } else {
+            // Date mismatch in localStorage - device date was likely changed. Start fresh.
+            console.warn("localStorage date mismatch. Resetting game.");
+            localStorage.removeItem(`daily_${today}`);
+        }
+    }
+
+    // If user is logged in, also load from Firestore for cross-device persistence
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser && typeof db !== 'undefined') {
+        try {
+            const dailyRef = db.collection("userDaily").doc(currentUser.uid);
+            const doc = await dailyRef.get();
+            
+            if (doc.exists) {
+                const firebaseData = doc.data();
+                
+                // Check server timestamp to prevent device date manipulation
+                if (firebaseData.lastUpdated) {
+                    const lastPlayDate = firebaseData.lastUpdated.toDate();
+                    const lastPlayUTC = lastPlayDate.getUTCFullYear() + '-' + 
+                                       String(lastPlayDate.getUTCMonth() + 1).padStart(2, '0') + '-' +
+                                       String(lastPlayDate.getUTCDate()).padStart(2, '0');
+                    
+                    // If they played today (according to server time), load their game
+                    // regardless of what their client date says
+                    if (lastPlayUTC === today) {
+                        guesses = firebaseData.guesses || []
+                        attempts = firebaseData.attempts || 12
+                        gameCompleted = firebaseData.completed || false
+                        gameWon = firebaseData.won || false
+                        lastLoadedDate = today
+                        return; // Don't allow resetting if already played today
+                    } else if (lastPlayUTC !== today && firebaseData.date === today) {
+                        // Server says they played a different day, but stored date says today
+                        // This means device date was manipulated. Use server truth.
+                        console.warn("Device date manipulation detected. Resetting game.");
+                        guesses = []
+                        attempts = 12
+                        gameCompleted = false
+                        gameWon = false
+                        lastLoadedDate = today
+                        return;
+                    }
+                }
+                
+                // Fallback: validate the saved date against stored date field
+                if (firebaseData.date === today) {
+                    guesses = firebaseData.guesses || []
+                    attempts = firebaseData.attempts || 12
+                    gameCompleted = firebaseData.completed || false
+                    gameWon = firebaseData.won || false
+                    lastLoadedDate = today
+                } else if (firebaseData.date && firebaseData.date !== today) {
+                    // Date mismatch: likely device date was changed. Reset the game
+                    console.warn("Date mismatch detected. Device date may have been manipulated.");
+                    guesses = []
+                    attempts = 12
+                    gameCompleted = false
+                    gameWon = false
+                    lastLoadedDate = today
+                }
+            }
+        } catch (error) {
+            console.warn("Error loading daily game from Firestore:", error);
+        }
     }
 }
 
-// Save game state to localStorage
-function saveGameState() {
+// Save game state to localStorage and Firestore
+async function saveGameState() {
     const state = {
         guesses: guesses,
         attempts: attempts,
         completed: gameCompleted,
-        won: gameWon
+        won: gameWon,
+        date: today
     }
+    
+    // Save to localStorage
     localStorage.setItem(`daily_${today}`, JSON.stringify(state))
+    
+    // Save to Firestore if user is logged in
+    // Use firebase.auth().currentUser for more reliable auth check
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser && typeof db !== 'undefined') {
+        try {
+            const dailyRef = db.collection("userDaily").doc(currentUser.uid);
+            await dailyRef.set({
+                ...state,
+                // Use server timestamp so device time manipulation can't affect recorded state
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        } catch (error) {
+            console.warn("Error saving daily game to Firestore:", error);
+        }
+    }
 }
 
 // Initialize game
-loadGameState()
+async function initializeGame() {
+    await loadGameState()
+    
+    // Set attempts display if game not completed
+    if (!gameCompleted) {
+        document.getElementById("attempts-left").textContent = "Attempts left: " + attempts;
+    }
 
-// Set attempts display if game not completed
-if (!gameCompleted) {
-    document.getElementById("attempts-left").textContent = "Attempts left: " + attempts;
+    // If game already completed, show the result
+    if (gameCompleted) {
+        if (gameWon) {
+            showWin(0, guesses.length, true) // XP already gained, alreadyCompleted = true
+        } else {
+            showLose(true) // alreadyCompleted = true
+        }
+        // Disable input
+        document.getElementById("sharkGuess").disabled = true
+        document.getElementById("guessBtn").disabled = true
+        document.getElementById("attempts-left").textContent = "Game completed for today"
+    }
+
+    // Render existing guesses
+    guesses.forEach(guess => {
+        renderGuess(guess.shark, guess.feedback)
+    })
+
+    // Close guesses with no correct information
+    const cards = document.querySelectorAll('#guesses .guess-card');
+    cards.forEach(card => {
+        const feedbackDiv = card.querySelector('.feedback');
+        const correctCount = feedbackDiv.querySelectorAll('.correct').length;
+        if (correctCount === 0) {
+            feedbackDiv.style.display = 'none';
+        }
+    });
 }
 
-// If game already completed, show the result
-if (gameCompleted) {
-    if (gameWon) {
-        showWin(0, guesses.length) // XP already gained
-    } else {
-        showLose()
-    }
-    // Disable input
-    document.getElementById("sharkGuess").disabled = true
-    document.getElementById("guessBtn").disabled = true
-    document.getElementById("attempts-left").textContent = "Game completed for today"
+// Start the initialization when the page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeGame);
+} else {
+    initializeGame();
 }
-
-// Render existing guesses
-guesses.forEach(guess => {
-    renderGuess(guess.shark, guess.feedback)
-})
-
-// Close guesses with no correct information
-const cards = document.querySelectorAll('#guesses .guess-card');
-cards.forEach(card => {
-    const feedbackDiv = card.querySelector('.feedback');
-    const correctCount = feedbackDiv.querySelectorAll('.correct').length;
-    if (correctCount === 0) {
-        feedbackDiv.style.display = 'none';
-    }
-});
 
 function hashDate(date){
 
@@ -190,6 +305,7 @@ const feedback = {
 }
 
 guesses.push({ shark: shark, feedback: feedback })
+// Save game state to both localStorage and Firestore (fire and forget for better UX)
 saveGameState()
 
 renderGuess(shark, feedback)
@@ -381,10 +497,10 @@ function createBubbles(container) {
     }
 }
 
-function showWin(xpGained, guessesTaken){
+function showWin(xpGained, guessesTaken, alreadyCompleted = false){
 
-// Check achievements for win conditions
-if (window.checkAchievements) {
+// Check achievements for win conditions (only on first completion)
+if (!alreadyCompleted && window.checkAchievements) {
     window.checkAchievements(true, guessesTaken, true);
 }
 
@@ -394,15 +510,15 @@ win.style.display="block"
 win.classList.add("win")
 win.classList.remove("lose")
 
+let headerText = alreadyCompleted ? "✓ Already Discovered" : "🎉 You Guessed It!";
+
 win.innerHTML = `
 <button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
-<h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">🎉 You Found It!</h2>
+<h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">${headerText}</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">You took ${guessesTaken} guess${guessesTaken !== 1 ? 'es' : ''}.</p>
-<div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;">
-    <p style="font-size: 28px; font-weight: bold; margin: 0; color: inherit;">+${xpGained} XP</p>
-</div>
+${!alreadyCompleted ? `<div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 8px;"><p style="font-size: 28px; font-weight: bold; margin: 0; color: inherit;">+${xpGained} XP</p></div>` : ''}
 <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">
     <button onclick="window.location.href='infinite.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(255,255,255,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Play Infinite</button>
     <button onclick="window.location.href='index.html'" style="padding: 12px 25px; font-size: 15px; cursor: pointer; background: rgba(0,0,0,0.3); border: none; border-radius: 6px; color: inherit; font-weight: bold; transition: background 0.3s;">Back to Home</button>
@@ -414,10 +530,10 @@ createBubbles(win);
 }
 
 
-function showLose(){
+function showLose(alreadyCompleted = false){
 
-// Check achievements for loss conditions
-if (window.checkAchievements) {
+// Check achievements for loss conditions (only on first completion)
+if (!alreadyCompleted && window.checkAchievements) {
     window.checkAchievements(false, 12, false);
 }
 
@@ -427,9 +543,11 @@ win.style.display="block"
 win.classList.add("lose")
 win.classList.remove("win")
 
+let headerText = alreadyCompleted ? "✗ You could not discover today's Daily Shark" : "😢 You Lost";
+
 win.innerHTML = `
 <button onclick="document.getElementById('win-screen').style.display='none'" style="position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; background: rgba(0,0,0,0.3); border: none; border-radius: 50%; color: inherit; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; font-weight: bold;">×</button>
-<h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">😢 You Lost</h2>
+<h2 style="margin-top: 0; font-size: 32px; margin-bottom: 20px;">${headerText}</h2>
 <p style="font-size: 18px; margin: 10px 0; color: inherit;">The shark was <b>${targetShark.name}</b></p>
 <p style="font-size: 16px; margin: 10px 0; opacity: 0.9;">Discovered in ${targetShark.yod}</p>
 <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: center;">

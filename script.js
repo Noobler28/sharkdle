@@ -54,7 +54,8 @@ const levelRewards = [
 
 // ----- REDEEM CODE SYSTEM -----
 const redeemCodes = {
-    'SHARKDLE': { xp: 2500, cosmetics: [{ imagePath: 'images/codePfp/Shark17.png', name: 'Wobbegong Shark' }], description: '2.5k XP + Wobbegong Shark Profile Icon' }
+    'SHARKDLE': { xp: 2500, cosmetics: [{ imagePath: 'images/codePfp/Shark17.png', name: 'Wobbegong Shark' }], description: '2.5k XP + Wobbegong Shark Profile Icon' },
+    'UPDATE1': { xp: 1500, cosmetics: [{ imagePath: 'images/codePfp/Shark18.png', name: 'Greenland Shark' }], description: '1.5k XP + Greenland Shark Profile Icon' }
 };
 
 // Keep track of redeemed codes in localStorage
@@ -769,6 +770,32 @@ function loadAvailablePFPs() {
         `;
         availablePFPsContainer.appendChild(div);
     }
+
+    // Add Greenland Shark from redeem codes if unlocked
+    if (hasRedeemedCode('UPDATE1')) {
+        const div = document.createElement("div");
+        div.style.cssText = "text-align: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; border-radius: 8px;";
+        div.title = "Redeem code reward";
+        div.onmouseover = () => {
+            div.style.transform = "scale(1.08)";
+            div.style.background = "rgba(255, 107, 107, 0.15)";
+        };
+        div.onmouseout = () => {
+            div.style.transform = "scale(1)";
+            div.style.background = "transparent";
+        };
+        div.addEventListener("click", (e) => {
+            e.preventDefault();
+            setProfilePicture("images/codePfp/Shark18.png");
+        });
+        div.innerHTML = `
+            <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: rgba(255, 107, 107, 0.1); margin: 0 auto 7px; border: 2px solid #ff6b6b;">
+                <img src="images/codePfp/Shark18.png" alt="PFP Greenland Shark" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 600; color: #ff6b6b;">🎁 Greenland Shark</p>
+        `;
+        availablePFPsContainer.appendChild(div);
+    }
 }
 
 async function loadEarnedCosmetics() {
@@ -828,9 +855,31 @@ async function loadEarnedCosmetics() {
         unlocked.forEach(cosmetic => {
             const div = document.createElement("div");
             div.style.cssText = "text-align: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; border-radius: 8px;";
+            
+            // Check rarity tiers: Mako (Shark16) is yellow, Epaulette-Oceanic Whitetip (Shark12-15) are pink
+            const isMako = /Shark16\.png/.test(cosmetic.imagePath);
+            const isRare = /Shark1[2-5]\.png/.test(cosmetic.imagePath);
+            
+            let borderColor = "#4caf50";
+            let hoverBgColor = "rgba(76, 175, 80, 0.15)";
+            let textColor = "#4caf50";
+            let bgColor = "rgba(76, 175, 80, 0.1)";
+            
+            if (isMako) {
+                borderColor = "#ffc107";
+                hoverBgColor = "rgba(255, 193, 7, 0.15)";
+                textColor = "#ffc107";
+                bgColor = "rgba(255, 193, 7, 0.1)";
+            } else if (isRare) {
+                borderColor = "#e91e63";
+                hoverBgColor = "rgba(233, 30, 99, 0.15)";
+                textColor = "#e91e63";
+                bgColor = "rgba(233, 30, 99, 0.1)";
+            }
+            
             div.onmouseover = () => {
                 div.style.transform = "scale(1.08)";
-                div.style.background = "rgba(76, 175, 80, 0.15)";
+                div.style.background = hoverBgColor;
             };
             div.onmouseout = () => {
                 div.style.transform = "scale(1)";
@@ -841,13 +890,14 @@ async function loadEarnedCosmetics() {
                 setProfilePicture(cosmetic.imagePath);
             });
             div.innerHTML = `
-                <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: rgba(76, 175, 80, 0.1); margin: 0 auto 7px; border: 2px solid #4caf50;">
+                <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: ${bgColor}; margin: 0 auto 7px; border: 2px solid ${borderColor};">
                     <img src="${cosmetic.imagePath}" alt="${cosmetic.name}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 600; color: #4caf50;">${cosmetic.name}</p>
+                <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 600; color: ${textColor};">${cosmetic.name}</p>
             `;
             earnedPFPsContainer.appendChild(div);
         });;
+
 
     } catch (error) {
         console.error("Error loading earned cosmetics:", error);

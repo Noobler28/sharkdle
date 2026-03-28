@@ -1,3 +1,183 @@
+
+/* Stats Grid and Stat Card */
+.stats-detail {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+.stat-card {
+    background: linear-gradient(135deg, rgba(11,34,51,0.95) 80%, #00b4d8 120%);
+    border-radius: 12px;
+    padding: 18px 20px 14px 20px;
+    box-shadow: 0 2px 8px rgba(0,180,216,0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 70px;
+    border: 2px solid #00b4d8;
+    transition: box-shadow 0.2s, border 0.2s;
+}
+.stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0,180,216,0.18);
+    border: 2.5px solid #4dd0e1;
+}
+.stat-label {
+    font-size: 13px;
+    color: #b3e5fc;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.2px;
+}
+.stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #00b4d8;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0,180,216,0.10);
+}
+/* Profile Tabs and Scrollable Stats */
+.profile-tabs-container {
+    margin: 20px 0;
+}
+.profile-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #00b4d8;
+    margin-bottom: 18px;
+    background: rgba(11,34,51,0.85);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 8px rgba(0,180,216,0.08);
+    padding: 6px 8px 0 8px;
+    align-items: flex-end;
+}
+.profile-tab-btn {
+    background: none;
+    border: none;
+    color: #4dd0e1;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 28px 10px 28px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, box-shadow 0.2s, border-bottom 0.2s;
+    border-bottom: 3px solid transparent;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: -2px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 1px 4px rgba(0,180,216,0.04);
+}
+.profile-tab-btn.active {
+    color: #fff;
+    background: linear-gradient(90deg, #00b4d8 60%, #4dd0e1 100%);
+    border-bottom: 3px solid #00b4d8;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.13);
+    font-weight: 800;
+    z-index: 2;
+    position: relative;
+}
+.profile-tab-content {
+    min-height: 120px;
+}
+.profile-stats-scroll {
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+.recent-games-list {
+    padding: 0 2px;
+}
+.recent-game-item {
+    background: rgba(11,34,51,0.85);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 8px rgba(0,180,216,0.08);
+    font-size: 15px;
+    color: #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.recent-game-item .game-result {
+    font-weight: 700;
+    color: #00b4d8;
+}
+.recent-game-item .game-date {
+    font-size: 13px;
+    color: #b3e5fc;
+}
+.recent-game-item .game-shark {
+    font-size: 14px;
+    color: #ffd700;
+}
+/* Meet the Dev Modal Custom Styles */
+#devModal .modal-content {
+    background: linear-gradient(135deg, #0b2233 80%, #00b4d8 120%);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,180,216,0.25), 0 2px 8px rgba(0,0,0,0.25);
+    padding: 44px 32px 32px 32px;
+    position: relative;
+    max-width: 410px;
+    color: #e2e8f0;
+    animation: devModalPop 0.35s cubic-bezier(.68,-0.55,.27,1.55);
+}
+#devModal .modal-content h2 {
+    color: #4dd0e1;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+#devModal .modal-content img {
+    border: 3px solid #00b4d8;
+    box-shadow: 0 2px 12px rgba(0,180,216,0.18);
+    margin-bottom: 12px;
+    background: #fff;
+}
+#devModal .modal-content h3 {
+    color: #ffd700;
+    font-size: 1.18em;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+#devModal .modal-content p {
+    color: #b3e5fc;
+    font-size: 15px;
+    margin-bottom: 18px;
+    line-height: 1.7;
+}
+#devModal .modal-content a {
+    color: #ffd700;
+    text-decoration: underline;
+    margin: 0 10px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+#devModal .modal-content a:hover {
+    color: #4dd0e1;
+}
+#devModal .modal-content button {
+    background: linear-gradient(135deg, #00b4d8, #4dd0e1);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1em;
+    padding: 12px 0;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0,180,216,0.13);
+    transition: background 0.2s, color 0.2s;
+}
+#devModal .modal-content button:hover {
+    background: linear-gradient(135deg, #0096c7, #00b4d8);
+    color: #ffd700;
+}
+@keyframes devModalPop {
+    0% { opacity: 0; transform: scale(0.85) translateY(30px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
 *{
 margin:0;
 padding:0;
@@ -815,6 +995,19 @@ border:1px dashed #4dd0e1;
 /* AUTH CONTAINER */
 
 .auth-container {
+    /* EASTER EGG HUNT */
+    .easter-egg-hunt {
+        box-shadow: 0 2px 12px rgba(255, 223, 186, 0.5);
+        border-radius: 50%;
+        border: 2.5px solid #ffd700;
+        background: #fffbe7;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+    .easter-egg-hunt:hover {
+        transform: scale(1.13) rotate(-8deg);
+        box-shadow: 0 6px 24px 0 #ffd70099;
+    }
     display: flex;
     gap: 10px;
     align-items: center;

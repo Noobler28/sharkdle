@@ -38,6 +38,7 @@
 
 <h1>Welcome to Sharkdle</h1>
 
+
 <p>Dive into the ultimate shark guessing game</p>
 
 <div id="login-warning" class="login-warning hidden" style="margin-top: 15px; padding: 12px; background: rgba(255, 152, 0, 0.15); border-left: 3px solid #ff9800; border-radius: 6px; color: #ffb74d; font-size: 14px; font-weight: 600;">
@@ -86,8 +87,11 @@
 
 <footer>
 
-<p>Made with ❤️ by the Sharkdle Team</p>
 
+<p>Made with <span style="color:#ff6b6b;font-weight:bold;">❤️</span> by the Sharkdle Team — thanks for playing!</p>
+<div style="margin: 10px 0 8px 0;">
+    <button onclick="openDevModal()" style="background:none;border:none;color:#4dd0e1;cursor:pointer;font-weight:600;text-decoration:underline;font-size:inherit;">Meet the Dev</button>
+</div>
 <div class="links">
 <a href="https://github.com/Noobler28/sharkdle">GitHub</a>
 <a href="updates.html">Updates</a>
@@ -95,6 +99,21 @@
 </div>
 
 <p style="font-size: 12px; color: #888; margin-top: 15px;">© 2026 Sharkdle. All rights reserved.</p>
+
+<!-- Meet the Dev Modal -->
+<div id="devModal" class="modal hidden">
+    <div class="modal-content" style="width:90%;max-width:400px;text-align:center;">
+        <h2 style="margin-top:0;">👨‍💻 Meet the Dev</h2>
+        <img src="images/dev.jpg" alt="Dev Profile" style="width:70px;height:70px;border-radius:50%;border:2px solid #00b4d8;margin-bottom:10px;">
+        <h3 style="margin:10px 0 6px 0;font-size:1.15em;color:#4dd0e1;">Noobler28 (Connor)</h3>
+        <p style="color:#bbb;font-size:14px;margin-bottom:12px;">Hi! I’m Connor, a college student studying marine biology and the solo developer behind Sharkdle. I started this project out of my love for sharks and ocean science. What began as a passion project has grown thanks to your support, and it motivates me to keep building new features and sharing my love for the ocean with you all. Thank you for playing and being part of the Sharkdle community!</p>
+        <div style="margin-bottom:12px;">
+            <a href="https://github.com/Noobler28" target="_blank" style="color:#4dd0e1;text-decoration:underline;margin:0 8px;">GitHub</a>
+            <a href="https://discord.gg/V97Y8545Ve" target="_blank" style="color:#4dd0e1;text-decoration:underline;margin:0 8px;">Discord</a>
+        </div>
+        <button onclick="closeDevModal()" style="width:100%;padding:10px;margin-top:8px;background:#ccc;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Close</button>
+    </div>
+</div>
 
 </footer>
 
@@ -133,53 +152,73 @@
 
 <div class="profile-section" style="display: flex; align-items: center; gap: 20px; margin: 20px 0; padding: 20px; background: rgba(0, 180, 216, 0.1); border-radius: 8px;">
 <div style="position: relative;">
-<img id="profile-pic" src="https://ui-avatars.com/api/?name=User&background=00b4d8&color=fff" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; cursor: pointer;" onclick="openProfilePicModal()">
-<button onclick="openProfilePicModal()" style="position: absolute; bottom: 0; right: 0; background: #00b4d8; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;">✎</button>
+    <img id="profile-pic" src="https://ui-avatars.com/api/?name=User&background=00b4d8&color=fff" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; cursor: pointer;" onclick="openProfilePicModal()">
+    <button onclick="openProfilePicModal()" style="position: absolute; bottom: 0; right: 0; background: #00b4d8; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;">✎</button>
 </div>
 <div style="position: relative; display: flex; align-items: center;">
-<p style="margin: 5px 0; font-weight: 600; font-size: 18px;" id="profile-username">Username</p>
-<button id="edit-profile-btn" onclick="enableUsernameEdit()" style="background: none; border: none; color: #00b4d8; cursor: pointer; font-size: 16px; margin-left: 8px;">✎</button>
-<div id="username-edit-container" class="hidden username-edit-container">
-<input type="text" id="username-input" placeholder="New username" class="username-input">
-<button onclick="saveUsername()" class="btn-save">Save</button>
-<button onclick="cancelUsernameEdit()" class="btn-cancel">Cancel</button>
+    <p style="margin: 5px 0; font-weight: 600; font-size: 18px;" id="profile-username">Username</p>
+    <button id="edit-profile-btn" onclick="enableUsernameEdit()" style="background: none; border: none; color: #00b4d8; cursor: pointer; font-size: 16px; margin-left: 8px;">✎</button>
+    <div id="username-edit-container" class="hidden username-edit-container">
+        <input type="text" id="username-input" placeholder="New username" class="username-input">
+        <button onclick="saveUsername()" class="btn-save">Save</button>
+        <button onclick="cancelUsernameEdit()" class="btn-cancel">Cancel</button>
+    </div>
+</div>
+<div style="margin-left:30px; text-align:center;">
+    <img id="profile-badge-img" src="images/badges/starter.png" alt="Badge" style="width:48px;height:48px;border-radius:8px;border:2px solid #00b4d8;display:block;margin:0 auto 4px;">
+    <span id="profile-badge-label" style="font-size:13px;font-weight:600;">Starter</span>
 </div>
 </div>
+<div style="margin:10px 0 20px 0;">
+    <h4 style="font-size:15px;margin-bottom:6px;">Badges</h4>
+    <div id="badge-select-container" style="display:flex;align-items:center;"></div>
 </div>
 
-<div class="stats-detail" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
-<div style="padding: 15px; background: rgba(77, 208, 225, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Total Guesses</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #00b4d8;" id="profile-xp">0</p>
-</div>
-<div style="padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Games Played</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #ff6b6b;" id="profile-games">0</p>
-</div>
-<div style="padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Wins</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #4caf50;" id="profile-wins">0</p>
-</div>
-<div style="padding: 15px; background: rgba(244, 67, 54, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Losses</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #f44336;" id="profile-losses">0</p>
-</div>
-<div style="padding: 15px; background: rgba(156, 39, 176, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Average Guesses</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #9c27b0;" id="profile-avg-guesses">0</p>
-</div>
-<div style="padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Best Game</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #ffc107;" id="profile-best-game">0</p>
-</div>
-<div style="padding: 15px; background: rgba(0, 188, 212, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Current Streak</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #00bcd4;" id="profile-current-streak">0</p>
-</div>
-<div style="padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; text-align: center;">
-<p style="margin: 0; font-size: 12px; color: #888;">Highest Streak</p>
-<p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #4caf50;" id="profile-highest-streak">0</p>
-</div>
+
+<div class="profile-tabs-container">
+    <div class="profile-tabs">
+        <button class="profile-tab-btn active" id="stats-tab-btn" onclick="showProfileTab('stats')">Stats</button>
+        <button class="profile-tab-btn" id="recent-tab-btn" onclick="showProfileTab('recent')">Recent Games</button>
+    </div>
+    <div class="profile-tab-content" id="stats-tab" style="display:block;">
+        <div class="stats-detail profile-stats-scroll">
+            <div class="stat-card">
+                <span class="stat-label">Total Guesses</span>
+                <span class="stat-value" id="profile-xp">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Games Played</span>
+                <span class="stat-value" id="profile-games">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Wins</span>
+                <span class="stat-value" id="profile-wins">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Losses</span>
+                <span class="stat-value" id="profile-losses">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Average Guesses</span>
+                <span class="stat-value" id="profile-avg-guesses">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Best Game</span>
+                <span class="stat-value" id="profile-best-game">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Current Streak</span>
+                <span class="stat-value" id="profile-current-streak">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Highest Streak</span>
+                <span class="stat-value" id="profile-highest-streak">0</span>
+            </div>
+        </div>
+    </div>
+    <div class="profile-tab-content" id="recent-tab" style="display:none;">
+        <div class="recent-games-list" id="recent-games-list" style="max-height:260px;overflow-y:auto;"></div>
+    </div>
 </div>
 
 <div style="margin: 20px 0; border-top: 1px solid #ddd; padding-top: 20px;">
@@ -237,6 +276,14 @@
 </div>
 
 <script src="script.js"></script>
+<script>
+function openDevModal() {
+    document.getElementById('devModal').classList.remove('hidden');
+}
+function closeDevModal() {
+    document.getElementById('devModal').classList.add('hidden');
+}
+</script>
 
 <script>
 if (window.location.search.includes('openModal=true')) {
@@ -246,3 +293,6 @@ if (window.location.search.includes('openModal=true')) {
 
 </body>
 </html>
+
+
+<!-- Easter Egg Hunt: Egg 1 will be injected here by script.js -->

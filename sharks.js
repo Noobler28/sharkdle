@@ -342,7 +342,7 @@ const sharks = [
             { "name": "Blacktip Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Medium","habitat": "Epipelagic", "yod": 1839 },
             { "name": "Oceanic Whitetip Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Large","habitat": "Epipelagic", "yod": 1861 },
             { "name": "Hardnose Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Medium","habitat": "Epipelagic", "yod": 1839 },
-            { "name": "Blacktip Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Medium","habitat": "Epipelagic", "yod": 1824 },
+            // Leaderboard PFP: Port Jackson Shark uses Shark19.png
             { "name": "Dusky Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Large","habitat": "Epipelagic", "yod": 1818 },
             { "name": "Lost Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Medium","habitat": "Epipelagic", "yod": 2019 },
             { "name": "Caribbean Reef Shark", "family": "Carcharhinidae", "order": "Carcharhiniformes", "genus": "Carcharhinus", "size": "Large","habitat": "Epipelagic", "yod": 1876 },

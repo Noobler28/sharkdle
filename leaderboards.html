@@ -15,6 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         *{
 margin:0;
@@ -519,10 +520,10 @@ h1{
     <header class="navbar">
         <div class="logo">🦈 Sharkdle</div>
         <div>
-            <button onclick="navigate('index.html')" class="nav-btn" title="Home"><i class="fas fa-home"></i><span> Home</span></button>
-            <button onclick="navigate('library.html')" class="nav-btn" title="Library"><i class="fas fa-fish"></i><span> Library</span></button>
-            <button onclick="navigate('sharkpass.html')" class="nav-btn" title="Shark Pass"><i class="fas fa-id-card"></i><span> Pass</span></button>
-            <button onclick="navigate('achievements.html')" class="nav-btn" title="Achievements"><i class="fas fa-trophy"></i><span> Achieve</span></button>
+            <button onclick="navigate('index.html')" class="nav-btn" title="Home"><i class="fas fa-home"></i><span>Home</span></button>
+            <button onclick="navigate('library.html')" class="nav-btn" title="Library"><i class="fas fa-fish"></i><span>Library</span></button>
+            <button onclick="navigate('sharkpass.html')" class="nav-btn" title="Shark Pass"><i class="fas fa-id-card"></i><span>Pass</span></button>
+            <button onclick="navigate('achievements.html')" class="nav-btn" title="Achievements"><i class="fas fa-trophy"></i><span>Achieve</span></button>
         </div>
     </header>
     <div class="leaderboard-container">
@@ -565,7 +566,7 @@ h1{
 
         // Firebase config
         const firebaseConfig = {
-            apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZB0",
+            apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZ0",
             authDomain: "sharkdle-leaderboard.firebaseapp.com",
             projectId: "sharkdle-leaderboard",
             storageBucket: "sharkdle-leaderboard.firebasestorage.app",
@@ -636,20 +637,25 @@ h1{
                 }
                 
                 let rank = 1;
+                let top3Users = [];
+                // Badge system config (must match script.js)
+                const allBadges = [
+                    { id: "starter", name: "Starter", emoji: "🦈", description: "Default badge for all players." },
+                    { id: "dev", name: "Developer", emoji: "💻", description: "Awarded only to the developer.", devOnly: true },
+                    { id: "tester", name: "Tester", emoji: "🎮", description: "Awarded for testing via code redeem.", codeUnlock: true }
+                ];
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const tr = document.createElement('tr');
-                    
                     // Check if this is the current user - use multiple methods including cached profile
                     const isCurrentUser = (currentUserUID && doc.id === currentUserUID) || 
-                                         (currentUserEmail && data.email && data.email === currentUserEmail) ||
-                                         (currentUsername && data.username && data.username.toLowerCase() === currentUsername.toLowerCase()) ||
-                                         (auth.currentUser && (
-                                            doc.id === auth.currentUser.uid || 
-                                            data.uid === auth.currentUser.uid ||
-                                            data.email === auth.currentUser.email
-                                         ));
-                    
+                        (currentUserEmail && data.email && data.email === currentUserEmail) ||
+                        (currentUsername && data.username && data.username.toLowerCase() === currentUsername.toLowerCase()) ||
+                        (auth.currentUser && (
+                            doc.id === auth.currentUser.uid ||    
+                            data.uid === auth.currentUser.uid ||
+                            data.email === auth.currentUser.email
+                        ));
                     // Profile picture logic
                     let profilePicPath = 'images/pfp/shark1.png';
                     if (data.profilePic) {
@@ -661,9 +667,40 @@ h1{
                             profilePicPath = `images/pfp/${data.profilePic}`;
                         }
                     }
-                    const profilePicImg = `<img src="${profilePicPath}" alt="Profile" style="width:38px;height:38px;border-radius:50%;border:2px solid #3e92cc;background:#18304a;object-fit:cover;box-shadow:0 1px 4px rgba(30,41,59,0.12);">`;
+                    // Determine rarity border color
+                    let borderColor = '#3e92cc'; // default blue
+                    if (/leaderPfp\/Shark19\.png$/.test(profilePicPath)) {
+                        borderColor = '#D4AF37'; // Port Jackson - gold
+                    } else if (/codePfp\/Shark17\.png$/.test(profilePicPath)) {
+                        borderColor = '#ff6b6b'; // Wobbegong - red
+                    } else if (/codePfp\/Shark18\.png$/.test(profilePicPath)) {
+                        borderColor = '#ff6b6b'; // Greenland - red
+                    } else if (/levelPfp\/Shark16\.png$/.test(profilePicPath)) {
+                        borderColor = '#ffc107'; // Mako - yellow
+                    } else if (/levelPfp\/Shark1[2-5]\.png$/.test(profilePicPath)) {
+                        borderColor = '#e91e63'; // Epaulette, Saw, Nurse, Oceanic Whitetip - pink
+                    } else if (/levelPfp\//.test(profilePicPath)) {
+                        borderColor = '#4caf50'; // other level rewards - green
+                    }
+                    // Add hover tooltip for profile image (obtainment method)
+                    let pfpObtainment = 'Default Profile Icon';
+                    if (/leaderPfp\/Shark19\.png$/.test(profilePicPath)) {
+                        pfpObtainment = 'Leaderboard Top 3 Reward';
+                    } else if (/codePfp\/Shark17\.png$/.test(profilePicPath)) {
+                        pfpObtainment = 'Obtained from a code';
+                    } else if (/codePfp\/Shark18\.png$/.test(profilePicPath)) {
+                        pfpObtainment = 'Obtained from a code';
+                    } else if (/levelPfp\/Shark(\d+)\.png$/.test(profilePicPath)) {
+                        // Try to match by levelRewards
+                        const match = /levelPfp\/Shark(\d+)\.png$/.exec(profilePicPath);
+                        if (match && match[1]) {
+                            pfpObtainment = `Shark Pass Level ${parseInt(match[1]) - 4}`;
+                            if (parseInt(match[1]) === 15) pfpObtainment = 'Shark Pass Level 15';
+                            if (parseInt(match[1]) === 16) pfpObtainment = 'Shark Pass Level 20';
+                        }
+                    }
+                    const profilePicImg = `<img src="${profilePicPath}" alt="Profile" title="${pfpObtainment}" style="width:38px;height:38px;border-radius:50%;border:2px solid ${borderColor};background:#18304a;object-fit:cover;box-shadow:0 1px 4px rgba(30,41,59,0.12);">`;
                     const username = data.username ? data.username : 'Anonymous';
-                    
                     let rankCell = '';
                     if (rank === 1) {
                         rankCell = `<span style="color:#FFD700;">🏆</span>`;
@@ -674,41 +711,142 @@ h1{
                     } else {
                         rankCell = rank;
                     }
-                    
                     let titleLine = '';
                     if (data.selectedTitle) {
                         titleLine = `<div style="font-size:0.85em;color:#fdd835;">${data.selectedTitle}</div>`;
                     }
-                    
+                    // Badge logic: get equipped badge id, fallback to starter
+                    let badgeId = data.equippedBadge || "starter";
+                    let badge = allBadges.find(b => b.id === badgeId) || allBadges[0];
                     // Add arrow after username if current user
                     let usernameDisplay = `${username}`;
                     if (isCurrentUser) {
-                        usernameDisplay = `${username} <span style="color:#00bcd4; font-size: 1.2em;">←</span>`;
+                        usernameDisplay = `${username} <span style=\"color:#00bcd4; font-size: 1.2em;\">←</span>`;
                     }
                     usernameDisplay = `${usernameDisplay}${titleLine}`;
                     if (isCurrentUser) {
-                        usernameDisplay = `${usernameDisplay} <span style="color:#00b4d8; font-weight: bold;">(You)</span>`;
+                        usernameDisplay = `${usernameDisplay} <span style=\"color:#00b4d8; font-weight: bold;\">(You)</span>`;
                     }
-                    
+                    // Badge rarity colors
+                    let badgeBorder = '#00b4d8';
+                    let badgeBg = 'rgba(0,180,216,0.10)';
+                    let badgeText = '#00b4d8';
+                    if (badge.id === 'dev') {
+                        badgeBorder = '#FFD700';
+                        badgeBg = 'rgba(255,215,0,0.13)';
+                        badgeText = '#FFD700';
+                    } else if (badge.id === 'tester') {
+                        badgeBorder = '#a259e6';
+                        badgeBg = 'rgba(162,89,230,0.13)';
+                        badgeText = '#a259e6';
+                    } else if (badge.id === 'starter') {
+                        badgeBorder = '#00b4d8';
+                        badgeBg = 'rgba(0,180,216,0.10)';
+                        badgeText = '#00b4d8';
+                    }
+                    let badgeDisplay = `<div style='margin-top:2px; display: flex; align-items: center; justify-content: center; gap: 6px;'>
+                        <span style="display:inline-block;font-size:1.1em;background:${badgeBg};border-radius:7px;padding:1px 7px 1px 7px;border:1.5px solid ${badgeBorder};vertical-align:middle;">${badge.emoji}</span>
+                        <span style="font-size:0.85em;color:${badgeText};font-weight:600;">${badge.name}</span>
+                    </div>`;
                     // Highlight row for current user
                     if (isCurrentUser) {
                         tr.style.backgroundColor = 'rgba(0, 188, 212, 0.15)';
                     }
-                    
                     tr.innerHTML = `
                         <td>${rankCell}</td>
                         <td>${profilePicImg}</td>
-                        <td>${usernameDisplay}</td> 
+                        <td>${usernameDisplay}${badgeDisplay}</td> 
                         <td>${data.wins || 0}</td>
                         <td>${data.currentLevel || 0}</td>
                         <td>${data.currentStreak || 0}</td>
                         <td>${data.gamesPlayed || 0}</td>
                     `;
                     tbody.appendChild(tr);
+                    if (rank <= 3) {
+                        top3Users.push({
+                            uid: doc.id,
+                            email: data.email,
+                            username: data.username ? data.username.toLowerCase() : null
+                        });
+                    }
                     rank++;
                 });
+                // Unlock Port Jackson Shark for top 3
+                const isTop3 = top3Users.some(u =>
+                    (currentUserUID && u.uid === currentUserUID) ||
+                    (currentUserEmail && u.email && u.email === currentUserEmail) ||
+                    (currentUsername && u.username && u.username === currentUsername.toLowerCase())
+                );
+                if (isTop3 && currentUserUID) {
+                    const PORTJACKSON_PFP = {
+                        name: "Port Jackson Shark",
+                        imagePath: "images/leaderPfp/Shark19.png",
+                        special: true,
+                        leaderCrown: true
+                    };
+                    // --- Directly update Firestore and localStorage, then update modal UI ---
+                    let profileData = JSON.parse(localStorage.getItem("userProfile") || "{}" );
+                    if (!profileData.earnedCosmetics) profileData.earnedCosmetics = [];
+                    let newlyEarned = false;
+                    // Add to localStorage if not present
+                    if (!profileData.earnedCosmetics.some(c => c.name === PORTJACKSON_PFP.name)) {
+                        profileData.earnedCosmetics.push(PORTJACKSON_PFP);
+                        localStorage.setItem("userProfile", JSON.stringify(profileData));
+                        newlyEarned = true;
+                    }
+                    // Always update Firestore directly, then update localStorage and modal UI
+                    db.collection('userStats').doc(currentUserUID).set({ earnedCosmetics: profileData.earnedCosmetics }, { merge: true }).then(() => {
+                        // Also update localStorage to match Firestore
+                        let updatedProfile = JSON.parse(localStorage.getItem("userProfile") || "{}" );
+                        updatedProfile.earnedCosmetics = profileData.earnedCosmetics;
+                        localStorage.setItem("userProfile", JSON.stringify(updatedProfile));
+                        // Now update modal UI
+                        if (typeof loadAvailablePFPs === 'function') loadAvailablePFPs();
+                        if (typeof loadEarnedCosmetics === 'function') loadEarnedCosmetics();
+                    });
+                    // Only show notification the first time (use localStorage flag)
+                    if (newlyEarned && !localStorage.getItem('pjshark_pfp_popup_shown')) {
+                        localStorage.setItem('pjshark_pfp_popup_shown', 'true');
+                        const notification = document.createElement('div');
+                        notification.setAttribute('data-notification', 'true');
+                        const topPosition = (typeof getNotificationPosition === 'function') ? getNotificationPosition() : 20;
+                        notification.style.cssText = `
+                            position: fixed;
+                            top: ${topPosition}px;
+                            right: 20px;
+                            background: linear-gradient(135deg, #FFD700, #222 80%);
+                            color: #222;
+                            padding: 20px 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+                            z-index: 10000;
+                            font-weight: 700;
+                            max-width: 320px;
+                            animation: slideIn 0.3s ease-out;
+                            border: 2px solid #FFD700;
+                            transition: top 0.3s ease;
+                        `;
+                        notification.innerHTML = `
+                            <div style=\"display: flex; align-items: center; gap: 14px;\">
+                                <div style=\"font-size: 2.2em;\">👑</div>
+                                <div>
+                                    <div style=\"font-weight: 800; font-size: 1.15em; color: #FFD700;\">Leaderboard Reward Unlocked!</div>
+                                    <div style=\"font-size: 1em; color: #222; font-weight: 700;\">Port Jackson Shark</div>
+                                    <div style=\"margin-top: 6px;\"><img src='images/leaderPfp/Shark19.png' alt='PFP Port Jackson Shark' style='width:48px;height:48px;border-radius:8px;border:2px solid #FFD700;box-shadow:0 2px 8px #0002;vertical-align:middle;background:#fff;'></div>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(notification);
+                        setTimeout(() => {
+                            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                            setTimeout(() => notification.remove(), 300);
+                        }, 4000);
+                    }
+                } else {
+                }
                 loadingDiv.style.display = 'none';
                 table.style.display = '';
+                
             } catch (err) {
                 loadingDiv.textContent = 'Failed to load leaderboard.';
                 showLeaderboardPopup();

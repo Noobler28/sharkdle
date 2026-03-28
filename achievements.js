@@ -1,4 +1,4 @@
-// Achievement Definitions
+// Achievement Definitions 
 const achievementDefinitions = {
     // Special Achievements
     special: [

@@ -1,3 +1,126 @@
+// ...existing code...
+// ----- BADGE SYSTEM -----
+const DEV_UID = 'ETPtQC0VA2NiSnX67rS2P2ma2tC2'; // Must match the dev UID used for commands
+const allBadges = [
+    { id: "starter", name: "Starter", emoji: "🦈", description: "Default badge for all players." },
+    { id: "dev", name: "Developer", emoji: "💻", description: "Awarded only to the developer.", devOnly: true },
+    { id: "tester", name: "Tester", emoji: "🎮", description: "Awarded for testing via code redeem.", codeUnlock: true }
+];
+
+function getUnlockedBadges(uid) {
+    // Always unlock starter badge
+    const badges = [allBadges[0]];
+    if (uid === DEV_UID) badges.push(allBadges[1]);
+    // Unlock tester badge if code redeemed
+    try {
+        const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+        if (profileData.testerBadgeUnlocked || hasRedeemedCode('TESTER')) {
+            if (!badges.some(b => b.id === 'tester')) badges.push(allBadges.find(b => b.id === 'tester'));
+        }
+    } catch {}
+    return badges;
+}
+
+function getEquippedBadge() {
+    const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+    const equipped = profileData.equippedBadge || "starter";
+    // Only allow equipped badge if it's unlocked
+    const unlocked = getUnlockedBadges(profileData.uid || (currentUser && currentUser.uid));
+    if (unlocked.some(b => b.id === equipped)) {
+        return equipped;
+    }
+    return "starter";
+}
+
+function setEquippedBadge(badgeId) {
+    const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}" );
+    profileData.equippedBadge = badgeId;
+    localStorage.setItem("userProfile", JSON.stringify(profileData));
+    // Save to Firestore if logged in
+    if (currentUser && db) {
+        db.collection("userStats").doc(currentUser.uid).set({ equippedBadge: badgeId }, { merge: true });
+    }
+    updateProfileBadgeUI();
+}
+
+function updateProfileBadgeUI() {
+    const badgeImg = document.getElementById("profile-badge-img");
+    const badgeLabel = document.getElementById("profile-badge-label");
+    const badgeId = getEquippedBadge();
+    const badge = allBadges.find(b => b.id === badgeId) || allBadges[0];
+    // Remove any previous emoji span
+    let prev = document.getElementById('profile-badge-emoji');
+    if (prev && prev.parentNode) prev.parentNode.removeChild(prev);
+    if (badgeImg) badgeImg.style.display = 'none';
+    // Color rarity logic
+    let borderColor = '#00b4d8', bgColor = 'rgba(0,180,216,0.12)', textColor = '#00b4d8';
+    if (badge.id === 'dev') {
+        borderColor = '#FFD700';
+        bgColor = 'rgba(255,215,0,0.13)';
+        textColor = '#FFD700';
+    } else if (badge.id === 'tester') {
+        borderColor = '#9c27b0';
+        bgColor = 'rgba(156,39,176,0.13)';
+        textColor = '#9c27b0';
+    } else if (badge.id === 'starter') {
+        borderColor = '#00b4d8';
+        bgColor = 'rgba(0,180,216,0.12)';
+        textColor = '#00b4d8';
+    }
+    // Insert emoji with styled container
+    if (badgeImg && badgeImg.parentNode) {
+        const emojiSpan = document.createElement('span');
+        emojiSpan.id = 'profile-badge-emoji';
+        emojiSpan.style.display = 'inline-block';
+        emojiSpan.style.fontSize = '2.2em';
+        emojiSpan.style.verticalAlign = 'middle';
+        emojiSpan.style.background = bgColor;
+        emojiSpan.style.borderRadius = '10px';
+        emojiSpan.style.padding = '6px 16px 6px 16px';
+        emojiSpan.style.marginBottom = '4px';
+        emojiSpan.style.border = `2px solid ${borderColor}`;
+        emojiSpan.style.color = textColor;
+        emojiSpan.textContent = badge.emoji;
+        badgeImg.parentNode.insertBefore(emojiSpan, badgeImg.nextSibling);
+    }
+    if (badgeLabel) {
+        badgeLabel.textContent = badge && badge.name ? badge.name : "Badge";
+        badgeLabel.style.color = textColor;
+    }
+}
+
+function renderBadgeSelection() {
+    const badgeContainer = document.getElementById("badge-select-container");
+    if (!badgeContainer || !currentUser) return;
+    badgeContainer.innerHTML = "";
+    const unlocked = getUnlockedBadges(currentUser.uid);
+    unlocked.forEach(badge => {
+        // Color rarity logic
+        let borderColor = '#00b4d8', bgColor = 'rgba(0,180,216,0.12)', textColor = '#00b4d8';
+        if (badge.id === 'dev') {
+            borderColor = '#FFD700';
+            bgColor = 'rgba(255,215,0,0.13)';
+            textColor = '#FFD700';
+        } else if (badge.id === 'tester') {
+            borderColor = '#9c27b0';
+            bgColor = 'rgba(156,39,176,0.13)';
+            textColor = '#9c27b0';
+        } else if (badge.id === 'starter') {
+            borderColor = '#00b4d8';
+            bgColor = 'rgba(0,180,216,0.12)';
+            textColor = '#00b4d8';
+        }
+        const div = document.createElement("div");
+        div.className = "badge-option";
+        div.style.cssText = `display:inline-block;margin:0 12px 0 0;text-align:center;cursor:pointer;`;
+        div.onclick = () => setEquippedBadge(badge.id);
+        div.innerHTML = `
+          <span style="display:inline-block;font-size:2.1em;background:${bgColor};border-radius:10px;padding:6px 16px 6px 16px;margin-bottom:4px;border:2px solid ${borderColor};color:${textColor};">${badge.emoji}</span><br>
+          <span style='font-size:13px;font-weight:600;color:${textColor};'>${badge.name}</span>
+        `;
+        badgeContainer.appendChild(div);
+    });
+}
 const firebaseConfig = {
     apiKey: "AIzaSyAS9l8O1jRMafPt3r0lF6mqjr2-gl-EbZ0",
     authDomain: "sharkdle-leaderboard.firebaseapp.com",
@@ -11,10 +134,61 @@ const firebaseConfig = {
 
 let auth, db;
 
+// Global sync state to prevent race conditions
+let isSyncing = false;
+let syncQueue = [];
+
+// Global notification system
+function showNotification(message, type = 'info', duration = 3000) {
+    const notification = document.createElement('div');
+    notification.className = `global-notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: ${type === 'error' ? '#d32f2f' : type === 'success' ? '#4caf50' : '#2196F3'};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        animation: slideUp 0.3s ease-out;
+        max-width: 400px;
+        word-wrap: break-word;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), duration);
+}
+
+// Loading state manager
+function showLoadingState(element, show = true) {
+    if (show) {
+        element.disabled = true;
+        element.style.opacity = '0.6';
+        element.style.pointerEvents = 'none';
+    } else {
+        element.disabled = false;
+        element.style.opacity = '1';
+        element.style.pointerEvents = 'auto';
+    }
+}
+
+// Firebase init with retry limit
+let initRetries = 0;
+const MAX_INIT_RETRIES = 10;
+
 function initializeFirebase() {
     if (typeof firebase === 'undefined') {
-        console.warn('Firebase not yet loaded, retrying...');
-        setTimeout(initializeFirebase, 100);
+        if (initRetries < MAX_INIT_RETRIES) {
+            console.warn(`Firebase not loaded, retrying... (${initRetries + 1}/${MAX_INIT_RETRIES})`);
+            initRetries++;
+            setTimeout(initializeFirebase, 100);
+        } else {
+            console.error('Firebase failed to initialize after max retries');
+            showNotification('Connection error: Firebase failed to load', 'error', 5000);
+        }
         return;
     }
     
@@ -24,6 +198,16 @@ function initializeFirebase() {
     
     auth = firebase.auth();
     db = firebase.firestore();
+    
+    // Set up offline support detection
+    window.addEventListener('online', () => {
+        console.log('Connection restored');
+        showNotification('Connection restored', 'success');
+    });
+    window.addEventListener('offline', () => {
+        console.warn('Offline - changes will sync when connection returns');
+        showNotification('Offline - changes will sync when connection returns', 'info', 5000);
+    });
     
     // Set up auth state listener after Firebase is initialized
     setupAuthStateListener();
@@ -49,13 +233,15 @@ const levelRewards = [
     { level: 9, imagePath: 'images/levelPfp/Shark13.png', name: 'Saw Shark' },
     { level: 10, imagePath: 'images/levelPfp/Shark14.png', name: 'Nurse Shark' },
     { level: 15, imagePath: 'images/levelPfp/Shark15.png', name: 'Oceanic Whitetip Shark' },
-    { level: 20, imagePath: 'images/levelPfp/Shark16.png', name: 'Mako Shark' }
+    { level: 20, imagePath: 'images/levelPfp/Shark16.png', name: 'Mako Shark' },
+    // ...existing code...
 ];
 
 // ----- REDEEM CODE SYSTEM -----
 const redeemCodes = {
     'SHARKDLE': { xp: 2500, cosmetics: [{ imagePath: 'images/codePfp/Shark17.png', name: 'Wobbegong Shark' }], description: '2.5k XP + Wobbegong Shark Profile Icon' },
-    'UPDATE1': { xp: 1500, cosmetics: [{ imagePath: 'images/codePfp/Shark18.png', name: 'Greenland Shark' }], description: '1.5k XP + Greenland Shark Profile Icon' }
+    'UPDATE1': { xp: 1500, cosmetics: [{ imagePath: 'images/codePfp/Shark18.png', name: 'Greenland Shark' }], description: '1.5k XP + Greenland Shark Profile Icon' },
+    'TESTER': { badge: 'tester', description: 'Unlocks the Tester badge (🎮)' }
 };
 
 // Keep track of redeemed codes in localStorage
@@ -66,9 +252,22 @@ function getRedeemedCodes() {
 
 function addRedeemedCode(code) {
     const redeemed = getRedeemedCodes();
-    if (!redeemed.includes(code.toUpperCase())) {
-        redeemed.push(code.toUpperCase());
+    const codeUpper = code.toUpperCase();
+    if (!redeemed.includes(codeUpper)) {
+        redeemed.push(codeUpper);
         localStorage.setItem("redeemedCodes", JSON.stringify(redeemed));
+        // Special logic for TESTER
+        if (codeUpper === 'TESTER') {
+            // Mark badge as unlocked in profile
+            const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}" );
+            profileData.testerBadgeUnlocked = true;
+            localStorage.setItem("userProfile", JSON.stringify(profileData));
+            // Save to Firestore if logged in
+            if (currentUser && db) {
+                db.collection("userStats").doc(currentUser.uid).set({ testerBadgeUnlocked: true }, { merge: true });
+            }
+            showNotification('Tester badge unlocked! Go equip it in your profile.', 'success', 4000);
+        }
     }
 }
 
@@ -132,6 +331,8 @@ function getXPInCurrentLevel(totalXP) {
 
 // Authentication State
 var currentUser = null;
+
+// ...existing code...
 
 // Set up auth state listener
 function setupAuthStateListener() {
@@ -294,7 +495,7 @@ async function loadUserProfile() {
         
         let userData = {};
         let firebaseData = null;
-        
+
         if (statsSnap.exists) {
             // Use Firebase data if it exists
             firebaseData = statsSnap.data();
@@ -311,9 +512,11 @@ async function loadUserProfile() {
                 currentStreak: firebaseData.currentStreak || 0,
                 highestStreak: firebaseData.highestStreak || 0,
                 totalXP: firebaseData.totalXP || firebaseData.totalGuesses || 0,
-                earnedCosmetics: firebaseData.earnedCosmetics || []
+                earnedCosmetics: firebaseData.earnedCosmetics || [],
+                // Merge badge unlocks and equipped badge
+                testerBadgeUnlocked: firebaseData.testerBadgeUnlocked || localProfile.testerBadgeUnlocked || false,
+                equippedBadge: firebaseData.equippedBadge || localProfile.equippedBadge || "starter"
             };
-            
             // Merge with local data if local data is newer or more complete
             if (localProfile.totalXP && localProfile.totalXP > (userData.totalXP || 0)) {
                 userData.totalXP = localProfile.totalXP;
@@ -345,7 +548,9 @@ async function loadUserProfile() {
                     gamesPlayed: 0,
                     wins: 0,
                     losses: 0,
-                    earnedCosmetics: []
+                    earnedCosmetics: [],
+                    testerBadgeUnlocked: false,
+                    equippedBadge: "starter"
                 };
                 await statsRef.set(userData);
             }
@@ -372,8 +577,15 @@ async function loadUserProfile() {
             localStorage.setItem("currentLoginDay", firebaseData.currentLoginDay);
         }
         
+        // Load achievements from Firebase
+        if (firebaseData && firebaseData.claimedAchievements) {
+            localStorage.setItem("claimedAchievements", JSON.stringify(firebaseData.claimedAchievements));
+        }
+        if (firebaseData && firebaseData.unlockedAchievements) {
+            localStorage.setItem("unlockedAchievements", JSON.stringify(firebaseData.unlockedAchievements));
+        }
+        
         updateProfileDisplay(userData);
-        loadAvailablePFPs();
         await syncEarnedCosmetics();
         loadEarnedCosmetics();
     } catch (error) {
@@ -416,54 +628,161 @@ function updateProfileDisplay(userData) {
 
 // helper that mirrors profile stats into the main page elements
 function updateIndexStats() {
-    const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+        const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
-    if (currentUser && profileData) {
-        // Logged-in → use profileData
-        const gamesEl = document.getElementById("games");
-        const winsEl = document.getElementById("wins");
-        const lossesEl = document.getElementById("losses");
-        const guessesEl = document.getElementById("profile-guesses");
-        const totalXpEl = document.getElementById("total-xp");
-        const avgGuessesEl = document.getElementById("avg-guesses");
-        const bestGameEl = document.getElementById("best-game");
-        const currentStreakEl = document.getElementById("current-streak");
-        const highestStreakEl = document.getElementById("highest-streak");
+        if (currentUser && profileData) {
+                // Logged-in → use profileData
+                const gamesEl = document.getElementById("games");
+                const winsEl = document.getElementById("wins");
+                const lossesEl = document.getElementById("losses");
+                const guessesEl = document.getElementById("profile-guesses");
+                const totalXpEl = document.getElementById("total-xp");
+                const avgGuessesEl = document.getElementById("avg-guesses");
+                const bestGameEl = document.getElementById("best-game");
+                const currentStreakEl = document.getElementById("current-streak");
+                const highestStreakEl = document.getElementById("highest-streak");
 
-        if (gamesEl) gamesEl.textContent = profileData.gamesPlayed || 0;
-        if (winsEl) winsEl.textContent = profileData.wins || 0;
-        if (lossesEl) lossesEl.textContent = profileData.losses || 0;
-        if (guessesEl) guessesEl.textContent = profileData.totalGuesses || 0;
-        if (totalXpEl) totalXpEl.textContent = profileData.totalXP || 0;
-        if (avgGuessesEl) avgGuessesEl.textContent = (profileData.averageGuesses || 0).toFixed(2);
-        if (bestGameEl) bestGameEl.textContent = profileData.bestGame || 0;
-        if (currentStreakEl) currentStreakEl.textContent = profileData.currentStreak || 0;
-        if (highestStreakEl) highestStreakEl.textContent = profileData.highestStreak || 0;
-    } else {
-        // Logged-out → show 0
-        const gamesEl = document.getElementById("games");
-        const winsEl = document.getElementById("wins");
-        const lossesEl = document.getElementById("losses");
-        const guessesEl = document.getElementById("profile-guesses");
-        const totalXpEl = document.getElementById("total-xp");
-        const avgGuessesEl = document.getElementById("avg-guesses");
-        const bestGameEl = document.getElementById("best-game");
-        const currentStreakEl = document.getElementById("current-streak");
-        const highestStreakEl = document.getElementById("highest-streak");
+                if (gamesEl) gamesEl.textContent = profileData.gamesPlayed || 0;
+                if (winsEl) winsEl.textContent = profileData.wins || 0;
+                if (lossesEl) lossesEl.textContent = profileData.losses || 0;
+                if (guessesEl) guessesEl.textContent = profileData.totalGuesses || 0;
+                if (totalXpEl) totalXpEl.textContent = profileData.totalXP || 0;
+                if (avgGuessesEl) avgGuessesEl.textContent = (profileData.averageGuesses || 0).toFixed(2);
+                if (bestGameEl) bestGameEl.textContent = profileData.bestGame || 0;
+                if (currentStreakEl) currentStreakEl.textContent = profileData.currentStreak || 0;
+                if (highestStreakEl) highestStreakEl.textContent = profileData.highestStreak || 0;
+        } else {
+                // Logged-out → show 0
+                const gamesEl = document.getElementById("games");
+                const winsEl = document.getElementById("wins");
+                const lossesEl = document.getElementById("losses");
+                const guessesEl = document.getElementById("profile-guesses");
+                const totalXpEl = document.getElementById("total-xp");
+                const avgGuessesEl = document.getElementById("avg-guesses");
+                const bestGameEl = document.getElementById("best-game");
+                const currentStreakEl = document.getElementById("current-streak");
+                const highestStreakEl = document.getElementById("highest-streak");
 
-        if (gamesEl) gamesEl.textContent = 0;
-        if (winsEl) winsEl.textContent = 0;
-        if (lossesEl) lossesEl.textContent = 0;
-        if (guessesEl) guessesEl.textContent = 0;
-        if (totalXpEl) totalXpEl.textContent = 0;
-        if (avgGuessesEl) avgGuessesEl.textContent = 0;
-        if (bestGameEl) bestGameEl.textContent = 0;
-        if (currentStreakEl) currentStreakEl.textContent = 0;
-        if (highestStreakEl) highestStreakEl.textContent = 0;
-    }
+                if (gamesEl) gamesEl.textContent = 0;
+                if (winsEl) winsEl.textContent = 0;
+                if (lossesEl) lossesEl.textContent = 0;
+                if (guessesEl) guessesEl.textContent = 0;
+                if (totalXpEl) totalXpEl.textContent = 0;
+                if (avgGuessesEl) avgGuessesEl.textContent = 0;
+                if (bestGameEl) bestGameEl.textContent = 0;
+                if (currentStreakEl) currentStreakEl.textContent = 0;
+                if (highestStreakEl) highestStreakEl.textContent = 0;
+        }
+        // Also update recent games tab if visible
+        var recentTab = document.getElementById('recent-tab');
+        if (recentTab && recentTab.style.display !== 'none') {
+            renderRecentGames();
+        }
 }
 // expose for game files
 window.updateIndexStats = updateIndexStats;
+
+// Profile Tabs Logic
+window.showProfileTab = function(tab) {
+    const statsTab = document.getElementById('stats-tab');
+    const recentTab = document.getElementById('recent-tab');
+    const statsBtn = document.getElementById('stats-tab-btn');
+    const recentBtn = document.getElementById('recent-tab-btn');
+    if (tab === 'stats') {
+        statsTab.style.display = 'block';
+        recentTab.style.display = 'none';
+        statsBtn.classList.add('active');
+        recentBtn.classList.remove('active');
+        animateStatsFromLastView();
+    } else {
+        // Save current stats to localStorage for animation next time
+        saveLastViewedStats();
+        statsTab.style.display = 'none';
+        recentTab.style.display = 'block';
+        statsBtn.classList.remove('active');
+        recentBtn.classList.add('active');
+        renderRecentGames();
+    }
+
+    // Save current tab for persistent tab selection (optional QoL)
+    localStorage.setItem('profileLastTab', tab);
+}
+
+function saveLastViewedStats() {
+    const stats = {
+        totalGuesses: parseInt(document.getElementById('profile-xp')?.textContent) || 0,
+        gamesPlayed: parseInt(document.getElementById('profile-games')?.textContent) || 0,
+        wins: parseInt(document.getElementById('profile-wins')?.textContent) || 0,
+        losses: parseInt(document.getElementById('profile-losses')?.textContent) || 0,
+        averageGuesses: parseFloat(document.getElementById('profile-avg-guesses')?.textContent) || 0,
+        bestGame: parseInt(document.getElementById('profile-best-game')?.textContent) || 0,
+        currentStreak: parseInt(document.getElementById('profile-current-streak')?.textContent) || 0,
+        highestStreak: parseInt(document.getElementById('profile-highest-streak')?.textContent) || 0
+    };
+    localStorage.setItem('lastViewedStats', JSON.stringify(stats));
+}
+
+function animateStatsFromLastView() {
+    const userData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+    const lastStats = JSON.parse(localStorage.getItem('lastViewedStats') || '{}');
+    const statMap = [
+        { id: 'profile-xp', key: 'totalGuesses', decimals: 0 },
+        { id: 'profile-games', key: 'gamesPlayed', decimals: 0 },
+        { id: 'profile-wins', key: 'wins', decimals: 0 },
+        { id: 'profile-losses', key: 'losses', decimals: 0 },
+        { id: 'profile-avg-guesses', key: 'averageGuesses', decimals: 2 },
+        { id: 'profile-best-game', key: 'bestGame', decimals: 0 },
+        { id: 'profile-current-streak', key: 'currentStreak', decimals: 0 },
+        { id: 'profile-highest-streak', key: 'highestStreak', decimals: 0 }
+    ];
+    statMap.forEach(({ id, key, decimals }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const start = (lastStats && typeof lastStats[key] !== 'undefined') ? Number(lastStats[key]) : 0;
+        let end = userData[key] ?? 0;
+        if (typeof end === 'string') end = parseFloat(end);
+        animateNumber(el, start, end, 900, decimals);
+    });
+}
+
+function animateNumber(el, start, end, duration, decimals) {
+    if (start === end) {
+        el.textContent = (typeof end === 'number' ? end.toFixed(decimals) : end);
+        return;
+    }
+    const startTime = performance.now();
+    function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const value = start + (end - start) * progress;
+        el.textContent = value.toFixed(decimals);
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            el.textContent = (typeof end === 'number' ? end.toFixed(decimals) : end);
+        }
+    }
+    requestAnimationFrame(update);
+}
+
+function renderRecentGames() {
+    const recentGamesDiv = document.getElementById('recent-games-list');
+    if (!recentGamesDiv) return;
+    const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+    if (recentGames.length === 0) {
+        recentGamesDiv.innerHTML = '<div style="color:#b3e5fc;text-align:center;padding:20px 0;">No recent games found.</div>';
+        return;
+    }
+    recentGamesDiv.innerHTML = recentGames.slice(0, 10).map(game => `
+        <div class="recent-game-item">
+            <div class="game-result">${game.result === 'Win' ? '🏆 Win' : '❌ Loss'}</div>
+            <div class="game-date">${game.date} ${game.time}</div>
+            <div class="game-shark">Shark: <b>${game.sharkName || 'Unknown'}</b></div>
+            <div>Guesses: <b>${game.guesses}</b></div>
+            <div>Mode: <b>${game.mode || ''}</b></div>
+        </div>
+    `).join('');
+}
 
 // ---------- Username editing helpers ----------
 function enableUsernameEdit() {
@@ -516,6 +835,8 @@ function loginUser() {
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
     const errorEl = document.getElementById("auth-error");
+    const loginSubmitBtn = document.querySelector("#login-form button[type='submit']") || 
+                           document.querySelector("#login-form button:last-of-type");
 
     if (!email || !password) {
         errorEl.textContent = "Please fill in all fields.";
@@ -523,15 +844,30 @@ function loginUser() {
         return;
     }
 
+    // Disable button during login
+    if (loginSubmitBtn) {
+        loginSubmitBtn.disabled = true;
+        loginSubmitBtn.textContent = "Logging in...";
+    }
+
     auth.signInWithEmailAndPassword(email, password)
         .then(result => {
             errorEl.style.display = "none";
+            showNotification('Login successful!', 'success');
             closeLoginModal();
             loadUserProfile();
         })
         .catch(error => {
-            errorEl.textContent = error.message;
+            errorEl.textContent = error.message || "Login failed. Please check your credentials.";
             errorEl.style.display = "block";
+            showNotification('Login failed: ' + (error.message || 'Unknown error'), 'error');
+        })
+        .finally(() => {
+            // Re-enable button
+            if (loginSubmitBtn) {
+                loginSubmitBtn.disabled = false;
+                loginSubmitBtn.textContent = "Login";
+            }
         });
 }
 
@@ -540,6 +876,9 @@ async function signupUser() {
     const password = document.getElementById("signup-password").value.trim();
     const username = document.getElementById("signup-username").value.trim();
     const errorEl = document.getElementById("auth-error");
+    const signupSubmitBtn = document.querySelector("#signup-form button[type='submit']") || 
+                            document.querySelectorAll("#signup-form button")[1] || 
+                            document.querySelector("#signup-form button:last-of-type");
 
     if (!email || !password || !username) {
         errorEl.textContent = "Please fill in all fields.";
@@ -551,6 +890,20 @@ async function signupUser() {
         errorEl.textContent = "Password must be at least 6 characters.";
         errorEl.style.display = "block";
         return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        errorEl.textContent = "Please enter a valid email address.";
+        errorEl.style.display = "block";
+        return;
+    }
+
+    // Disable button during signup
+    if (signupSubmitBtn) {
+        signupSubmitBtn.disabled = true;
+        signupSubmitBtn.textContent = "Creating account...";
     }
 
     try {
@@ -610,8 +963,14 @@ async function signupUser() {
         closeLoginModal();
         loadUserProfile();
     } catch (error) {
-        errorEl.textContent = error.message;
+        errorEl.textContent = error.message || "Account creation failed. Please try again.";
         errorEl.style.display = "block";
+        showNotification('Signup failed: ' + (error.message || 'Unknown error'), 'error');
+    } finally {
+        if (signupSubmitBtn) {
+            signupSubmitBtn.disabled = false;
+            signupSubmitBtn.textContent = "Sign Up";
+        }
     }
 }
 
@@ -651,6 +1010,8 @@ async function openProfileModal() {
         if (document.getElementById("username-edit-container")) {
             cancelUsernameEdit();
         }
+        updateProfileBadgeUI();
+        renderBadgeSelection();
         document.getElementById("profileModal").classList.remove("hidden");
     }
 }
@@ -660,10 +1021,23 @@ function closeProfileModal() {
 }
 
 function openProfilePicModal() {
-    // Ensure both available and earned pfps are loaded before opening
-    loadAvailablePFPs();
-    loadEarnedCosmetics().catch(err => console.error("Error loading earned cosmetics:", err));
-    document.getElementById("profilePicModal").classList.remove("hidden");
+    // Always refresh user profile from Firestore before showing pfps
+    if (typeof loadUserProfile === 'function') {
+        loadUserProfile().then(() => {
+            loadAvailablePFPs();
+            loadEarnedCosmetics().catch(err => console.error("Error loading earned cosmetics:", err));
+            document.getElementById("profilePicModal").classList.remove("hidden");
+        }).catch(err => {
+            // fallback if error
+            loadAvailablePFPs();
+            loadEarnedCosmetics().catch(err => console.error("Error loading earned cosmetics:", err));
+            document.getElementById("profilePicModal").classList.remove("hidden");
+        });
+    } else {
+        loadAvailablePFPs();
+        loadEarnedCosmetics().catch(err => console.error("Error loading earned cosmetics:", err));
+        document.getElementById("profilePicModal").classList.remove("hidden");
+    }
 }
 
 function closeProfilePicModal() {
@@ -796,6 +1170,34 @@ function loadAvailablePFPs() {
         `;
         availablePFPsContainer.appendChild(div);
     }
+
+    // Add Port Jackson Shark if user has it unlocked (earnedCosmetics)
+    const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+    if (profileData.earnedCosmetics && profileData.earnedCosmetics.some(c => c.name === "Port Jackson Shark")) {
+        const div = document.createElement("div");
+        div.style.cssText = "text-align: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; border-radius: 8px;";
+        div.title = "Leaderboard Top 3 Reward";
+        div.onmouseover = () => {
+            div.style.transform = "scale(1.08)";
+            div.style.background = "rgba(212,175,55,0.22)"; // more golden
+        };
+        div.onmouseout = () => {
+            div.style.transform = "scale(1)";
+            div.style.background = "transparent";
+        };
+        div.addEventListener("click", (e) => {
+            e.preventDefault();
+            setProfilePicture("images/leaderPfp/Shark19.png");
+        });
+        div.innerHTML = `
+            <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, #222 60%, #D4AF37 100%); margin: 0 auto 7px; border: 2px solid #D4AF37; position:relative;">
+                <span style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:2em;color:#D4AF37;text-shadow:0 2px 8px #000;">👑</span>
+                <img src="images/leaderPfp/Shark19.png" alt="PFP Port Jackson Shark" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 700; color: #D4AF37;">Port Jackson Shark <span style="color:#D4AF37;font-size:1.1em;vertical-align:middle;">👑</span></p>
+        `;
+        availablePFPsContainer.appendChild(div);
+    }
 }
 
 async function loadEarnedCosmetics() {
@@ -854,18 +1256,30 @@ async function loadEarnedCosmetics() {
 
         unlocked.forEach(cosmetic => {
             const div = document.createElement("div");
-            div.style.cssText = "text-align: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; border-radius: 8px;";
+            div.style.cssText = "text-align: center; cursor: pointer; transition: all 0.3s ease; padding: 6px; border-radius: 8px; position: relative;";
+
+            // Add hover tooltip for shark pass cosmetics
+            if (cosmetic.level && cosmetic.name && !cosmetic.name.includes('Port Jackson Shark')) {
+                div.setAttribute('title', `Level ${cosmetic.level} in the Shark Pass`);
+            }
             
+            // Special styling for Port Jackson Shark (leaderboard pfp)
+            const isBlackTip = cosmetic.name === "Port Jackson Shark" && /Shark19\.png/.test(cosmetic.imagePath);
             // Check rarity tiers: Mako (Shark16) is yellow, Epaulette-Oceanic Whitetip (Shark12-15) are pink
             const isMako = /Shark16\.png/.test(cosmetic.imagePath);
             const isRare = /Shark1[2-5]\.png/.test(cosmetic.imagePath);
-            
             let borderColor = "#4caf50";
             let hoverBgColor = "rgba(76, 175, 80, 0.15)";
             let textColor = "#4caf50";
             let bgColor = "rgba(76, 175, 80, 0.1)";
-            
-            if (isMako) {
+            let crown = "";
+            if (isBlackTip) {
+                borderColor = "#222";
+                hoverBgColor = "rgba(255, 215, 0, 0.18)";
+                textColor = "#FFD700";
+                bgColor = "linear-gradient(135deg, #222 60%, #FFD700 100%)";
+                crown = '<span style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:2em;color:#FFD700;text-shadow:0 2px 8px #000;">👑</span>';
+            } else if (isMako) {
                 borderColor = "#ffc107";
                 hoverBgColor = "rgba(255, 193, 7, 0.15)";
                 textColor = "#ffc107";
@@ -876,7 +1290,6 @@ async function loadEarnedCosmetics() {
                 textColor = "#e91e63";
                 bgColor = "rgba(233, 30, 99, 0.1)";
             }
-            
             div.onmouseover = () => {
                 div.style.transform = "scale(1.08)";
                 div.style.background = hoverBgColor;
@@ -890,13 +1303,14 @@ async function loadEarnedCosmetics() {
                 setProfilePicture(cosmetic.imagePath);
             });
             div.innerHTML = `
-                <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: ${bgColor}; margin: 0 auto 7px; border: 2px solid ${borderColor};">
-                    <img src="${cosmetic.imagePath}" alt="${cosmetic.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="width: 70px; height: 70px; border-radius: 10px; overflow: hidden; background: ${bgColor}; margin: 0 auto 7px; border: 2px solid ${borderColor}; position:relative;">
+                    ${crown}
+                    <img src="${cosmetic.imagePath}" alt="${cosmetic.name === 'Port Jackson Shark' ? 'PFP Port Jackson Shark' : cosmetic.name}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 600; color: ${textColor};">${cosmetic.name}</p>
+                <p style="margin: 5px 0 0 0; font-size: 11px; font-weight: 700; color: ${textColor};">${cosmetic.name === 'Port Jackson Shark' ? 'Port Jackson Shark <span style=\"color:#FFD700;font-size:1.1em;vertical-align:middle;\">👑</span>' : cosmetic.name}</p>
             `;
             earnedPFPsContainer.appendChild(div);
-        });;
+        });
 
 
     } catch (error) {
@@ -913,14 +1327,28 @@ async function syncEarnedCosmetics() {
         const totalXP = parseInt(localStorage.getItem("totalXP")) || parseInt(localStorage.getItem("totalGuesses")) || 0;
         const userLevel = getLevelFromXP(totalXP);
 
-        // Get earned cosmetics
-        const earnedCosmetics = levelRewards.filter(reward => reward.level <= userLevel);
+        // Get level-based cosmetics
+        const levelCosmetics = levelRewards.filter(reward => reward.level <= userLevel);
 
-        // Update Firebase with earned cosmetics
+        // Get existing special cosmetics from Firebase/localStorage
+        let specialCosmetics = [];
+        const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
+        if (Array.isArray(profileData.earnedCosmetics)) {
+            specialCosmetics = profileData.earnedCosmetics.filter(cos => !levelRewards.some(lr => lr.name === cos.name));
+        }
+
+        // Merge level and special cosmetics, avoiding duplicates
+        const earnedCosmetics = [...levelCosmetics];
+        specialCosmetics.forEach(special => {
+            if (!earnedCosmetics.some(ec => ec.name === special.name)) {
+                earnedCosmetics.push(special);
+            }
+        });
+
+        // Update Firebase with merged cosmetics
         const statsRef = db.collection("userStats").doc(currentUser.uid);
         await statsRef.set({ earnedCosmetics: earnedCosmetics }, { merge: true });
 
-        const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
         profileData.earnedCosmetics = earnedCosmetics;
         localStorage.setItem("userProfile", JSON.stringify(profileData));
 
@@ -935,6 +1363,14 @@ async function syncEarnedCosmetics() {
 async function syncStatsToFirebase() {
     if (!firebase.auth().currentUser) return;
 
+    // Prevent race condition: queue sync if one is already in progress
+    if (isSyncing) {
+        console.log('Sync already in progress, queueing...');
+        syncQueue.push(() => syncStatsToFirebase());
+        return;
+    }
+
+    isSyncing = true;
     try {
         const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
         
@@ -977,6 +1413,10 @@ async function syncStatsToFirebase() {
         stats.xpToNextLevel = xpToNextLevel;
         stats.unlockedPfps = unlockedPfps;
 
+        // Sync achievements to Firebase
+        stats.claimedAchievements = JSON.parse(localStorage.getItem("claimedAchievements") || "[]");
+        stats.unlockedAchievements = JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
+
         // Save stats to userStats collection
         const statsRef = db.collection("userStats").doc(firebase.auth().currentUser.uid);
         await statsRef.set(stats, { merge: true });
@@ -998,6 +1438,18 @@ async function syncStatsToFirebase() {
         updateIndexStats();
     } catch (error) {
         console.error("Error syncing stats:", error);
+        if (!navigator.onLine) {
+            console.log('Sync failed: offline');
+        } else {
+            showNotification('Failed to sync stats - will retry', 'error');
+        }
+    } finally {
+        isSyncing = false;
+        // Process queued syncs
+        if (syncQueue.length > 0) {
+            const nextSync = syncQueue.shift();
+            nextSync();
+        }
     }
 }
 

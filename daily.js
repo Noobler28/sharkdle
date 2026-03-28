@@ -395,6 +395,19 @@ if(shark.name === targetShark.name){
 
     localStorage.setItem("userProfile", JSON.stringify(profileData));
 
+    // Add to recent games (for profile modal)
+    const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+    const now = new Date();
+    recentGames.unshift({
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString(),
+        result: 'Win',
+        guesses: guessesTaken,
+        sharkName: targetShark.name,
+        mode: 'Daily'
+    });
+    localStorage.setItem('recentGames', JSON.stringify(recentGames.slice(0, 20)));
+
     // Sync to Firebase
     if (typeof syncStatsToFirebase !== 'undefined') {
         syncStatsToFirebase();
@@ -433,6 +446,19 @@ if(attempts===0){
         }
 
         localStorage.setItem("userProfile", JSON.stringify(profileData));
+
+        // Add to recent games (for profile modal)
+        const recentGames = JSON.parse(localStorage.getItem('recentGames') || '[]');
+        const now = new Date();
+        recentGames.unshift({
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString(),
+            result: 'Loss',
+            guesses: 'X',
+            sharkName: targetShark.name,
+            mode: 'Daily'
+        });
+        localStorage.setItem('recentGames', JSON.stringify(recentGames.slice(0, 20)));
 
         // Sync to Firebase
         if (typeof syncStatsToFirebase !== 'undefined') {

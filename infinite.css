@@ -382,3 +382,213 @@ text-align:center;
     padding-left: 16px;
     color: rgba(255, 255, 255, 0.4);
 }
+
+/* MOBILE MEDIA QUERIES */
+
+@media (max-width: 768px) {
+    .topbar {
+        margin-top: 20px;
+    }
+
+    .topbar h1 {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+    }
+
+    .topbar p {
+        font-size: 14px;
+    }
+
+    .game-container {
+        width: 90%;
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    input {
+        width: 100%;
+        max-width: 100%;
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 12px 24px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+
+    #message {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    #attempts-left {
+        font-size: 14px;
+    }
+
+    .guess-card {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .category {
+        padding: 4px 6px;
+        font-size: 0.8rem;
+    }
+
+    .tooltip .tooltiptext {
+        width: 120px;
+        font-size: 0.9em;
+    }
+
+    #win-lose-screen {
+        padding: 25px;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    #win-lose-screen h1 {
+        font-size: 26px;
+    }
+
+    #win-lose-screen p {
+        font-size: 14px;
+    }
+
+    .suggestions-dropdown {
+        max-height: 200px;
+    }
+
+    .suggestion-item {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        margin-top: 15px;
+    }
+
+    .topbar h1 {
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+
+    .topbar p {
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .game-container {
+        width: 95%;
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 12px;
+    }
+
+    .input-panel {
+        gap: 8px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%;
+        min-height: 44px;
+        border-radius: 8px;
+    }
+
+    #message {
+        margin-top: 6px;
+        font-size: 12px;
+    }
+
+    #attempts-left {
+        font-size: 12px;
+    }
+
+    #guesses {
+        margin-top: 15px;
+        gap: 8px;
+    }
+
+    .guess-card {
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .feedback {
+        margin-top: 6px;
+        gap: 3px;
+    }
+
+    .category {
+        padding: 3px 5px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+    }
+
+    .tooltip .tooltiptext {
+        width: 100px;
+        font-size: 0.85em;
+        left: 50%;
+        margin-left: -50px;
+    }
+
+    .previous-panel {
+        margin-top: 8px;
+        margin-bottom: 15px;
+    }
+
+    .previous-header {
+        font-size: 14px;
+    }
+
+    #win-lose-screen {
+        padding: 20px;
+        width: 90%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    #win-lose-screen h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    #win-lose-screen p {
+        font-size: 13px;
+        margin: 6px 0;
+    }
+
+    .bubble {
+        width: 20px;
+        height: 20px;
+    }
+
+    .suggestions-dropdown {
+        max-height: 150px;
+        border-radius: 10px;
+        margin-top: 3px;
+    }
+
+    .suggestion-item {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .suggestion-item:hover {
+        padding-left: 14px;
+    }
+}

@@ -168,7 +168,8 @@
         /* Filter Groups */
         .filters-container {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
             gap: 30px;
             justify-content: center;
             padding: 20px;
@@ -184,7 +185,9 @@
         .filter-group {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
+            width: 100%;
         }
         .filter-group label {
             color: #4dd0e1;
@@ -219,6 +222,41 @@
             color: #fff;
             border-color: #4dd0e1;
             box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
+        /* Year Filter Inputs */
+        .year-filter-input {
+            background: rgba(11, 34, 51, 0.6);
+            border: 2px solid #00b4d8;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            padding: 8px 12px;
+            width: 110px;
+            transition: all 0.3s;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0,180,216,0.10);
+        }
+        .year-filter-input:focus {
+            border-color: #4dd0e1;
+            box-shadow: 0 0 12px rgba(77, 208, 225, 0.25);
+            background: rgba(11, 34, 51, 0.8);
+        }
+        .year-filter-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .filter-group .year-filter-label {
+            color: #4dd0e1;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 8px;
+        }
+        .filter-group .year-filter-sep {
+            color: #4dd0e1;
+            font-weight: 600;
+            margin: 0 8px;
         }
         /* SPECIES COUNT */
         #species-count {
@@ -813,7 +851,7 @@
 
     <!-- Size and Depth Filters -->
     <div class="filters-container">
-        <div class="filter-group">
+        <div style="width:100%"><div class="filter-group">
             <label>Size:</label>
             <div class="filter-buttons">
                 <button class="filter-option" data-filter="size" data-value="Tiny">Tiny (0-3FT)</button>
@@ -823,8 +861,8 @@
                 <button class="filter-option" data-filter="size" data-value="Giant">Giant (20FT+)</button>
                 <button class="filter-option clear-size" data-filter="size" data-value="">Clear</button>
             </div>
-        </div>
-        <div class="filter-group">
+        </div></div>
+        <div style="width:100%"><div class="filter-group">
             <label>Depth:</label>
             <div class="filter-buttons">
                 <button class="filter-option" data-filter="habitat" data-value="Epipelagic">Epipelagic (0-200m)</button>
@@ -832,7 +870,13 @@
                 <button class="filter-option" data-filter="habitat" data-value="Bathypelagic">Bathypelagic (1000-4000m)</button>
                 <button class="filter-option clear-habitat" data-filter="habitat" data-value="">Clear</button>
             </div>
-        </div>
+        </div></div>
+        <div style="width:100%"><div class="filter-group">
+            <span class="year-filter-label">Year Range:</span>
+            <input type="number" id="year-earliest" class="year-filter-input" placeholder="e.g. 1900" min="0">
+            <span class="year-filter-sep">to</span>
+            <input type="number" id="year-latest" class="year-filter-input" placeholder="e.g. 2011" min="0">
+        </div></div>
     </div>
     
     <div id="species-count"></div>
@@ -840,6 +884,7 @@
     <div id="no-results" class="no-results" style="display:none;">No sharks found matching your search.</div>
     <!-- Shark list -->
     <script src="sharks.js"></script>
+    <script src="library.js"></script>
     <script>
         function navigate(page) {
             window.location.href = page;
@@ -976,13 +1021,13 @@
         }
 
         function filterSharks(searchTerm) {
+            const yearEarliest = document.getElementById('year-earliest')?.value;
+            const yearLatest = document.getElementById('year-latest')?.value;
             const term = searchTerm.toLowerCase().trim();
-            
             let baseSharks = [...allSharks];
             if (showOnlyHearted) {
                 baseSharks = baseSharks.filter(shark => heartedSharks.has(shark.name));
             }
-            
             // Apply size filter
             if (activeFilters.size) {
                 const sizeValues = mapSizeCategoryToDataValues(activeFilters.size);
@@ -990,12 +1035,33 @@
                     baseSharks = baseSharks.filter(shark => sizeValues.includes(shark.size));
                 }
             }
-            
             // Apply habitat filter
             if (activeFilters.habitat) {
                 baseSharks = baseSharks.filter(shark => shark.habitat === activeFilters.habitat);
             }
-            
+
+            // Year range filter (strict, only valid years) - moved below depth
+            if (yearEarliest || yearLatest) {
+                let earliest = yearEarliest ? parseInt(yearEarliest, 10) : null;
+                let latest = yearLatest ? parseInt(yearLatest, 10) : null;
+                // Swap if earliest > latest
+                if (earliest !== null && latest !== null && earliest > latest) {
+                    [earliest, latest] = [latest, earliest];
+                }
+                baseSharks = baseSharks.filter(shark => {
+                    const yod = Number(shark.yod);
+                    if (!yod || isNaN(yod)) return false;
+                    if (earliest !== null && latest !== null) {
+                        return yod >= earliest && yod <= latest;
+                    } else if (earliest !== null) {
+                        return yod >= earliest;
+                    } else if (latest !== null) {
+                        return yod <= latest;
+                    }
+                    return true;
+                });
+            }
+
             if (!term) {
                 filteredSharks = baseSharks;
             } else {
@@ -1003,10 +1069,10 @@
                     shark.name.toLowerCase().includes(term) ||
                     shark.family.toLowerCase().includes(term) ||
                     shark.order.toLowerCase().includes(term) ||
-                    shark.genus.toLowerCase().includes(term)
+                    shark.genus.toLowerCase().includes(term) ||
+                    (shark.yod && shark.yod.toString() === term)
                 );
             }
-            
             renderSharkGalleryByOrder();
         }
 
@@ -1106,10 +1172,7 @@
         }
 
         function updateSpeciesCount() {
-            const visibleSharks = filteredSharks.filter(shark => {
-                return !collapsedSections.has(shark.order);
-            });
-            document.getElementById('species-count').textContent = `Showing ${visibleSharks.length} shark${visibleSharks.length !== 1 ? 's' : ''}`;
+            document.getElementById('species-count').textContent = `Showing ${filteredSharks.length} shark${filteredSharks.length !== 1 ? 's' : ''}`;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1151,6 +1214,17 @@
                     });
                     
                     // Re-filter based on search input
+                    const searchInput = document.getElementById('shark-search');
+                    filterSharks(searchInput.value);
+                    updateSpeciesCount();
+                });
+            });
+
+            // Year filter listeners
+            const yearEarliest = document.getElementById('year-earliest');
+            const yearLatest = document.getElementById('year-latest');
+            [yearEarliest, yearLatest].forEach(input => {
+                input.addEventListener('input', function() {
                     const searchInput = document.getElementById('shark-search');
                     filterSharks(searchInput.value);
                     updateSpeciesCount();

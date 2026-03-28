@@ -58,6 +58,8 @@ const achievementDefinitions = {
         { id: 'guess_master', name: 'Guess Master', description: 'Average 3 or fewer guesses per win', icon: '🎯', points: 150, type: 'efficiency' }
     ],
     
+
+    
     // Milestone Achievements
     milestones: [
     ]
@@ -67,6 +69,8 @@ const achievementDefinitions = {
 document.addEventListener('DOMContentLoaded', function() {
     loadAndDisplayAchievements();
 });
+
+
 
 // Retroactively unlock achievements that players have already earned based on current stats
 function retroactivelyUnlockAchievements(profileData, unlockedAchievements) {
@@ -133,12 +137,18 @@ function loadAndDisplayAchievements() {
 
 function renderAchievements(profileData, unlockedAchievements) {
     const container = document.getElementById('achievements-content');
+    if (!container) {
+        console.warn("renderAchievements: #achievements-content not found in DOM");
+        return;
+    }
     container.innerHTML = '';
-    
+
     // Render special achievements
     if (achievementDefinitions.special.length > 0) {
         container.appendChild(createCategorySection('🌟 Special Achievements', 'special', profileData, unlockedAchievements));
     }
+    
+
     
     // Render win milestones
     if (achievementDefinitions.wins.length > 0) {
@@ -258,10 +268,10 @@ function createAchievementCard(achievement, profileData, unlockedAchievements) {
                 this.style.transform = 'scale(1)';
                 this.style.boxShadow = 'none';
             };
-            claimBtn.onclick = function(e) {
+            claimBtn.onclick = async function(e) {
                 e.stopPropagation();
-                claimAchievementReward(achievement.id, achievement.points);
-                // Reload achievements to update display
+                await claimAchievementReward(achievement.id, achievement.points);
+        w        // Reload achievements to update display
                 setTimeout(() => loadAndDisplayAchievements(), 300);
             };
             
@@ -340,6 +350,17 @@ function unlockAchievement(achievementId) {
         unlockedAchievements.push(achievementId);
         localStorage.setItem("unlockedAchievements", JSON.stringify(unlockedAchievements));
         
+        // Sync to Firebase to sync achievements across devices
+        if (window.syncStatsToFirebase) {
+            try {
+                window.syncStatsToFirebase().catch(error => 
+                    console.error("Error syncing achievements to Firebase:", error)
+                );
+            } catch (error) {
+                console.error("Error calling syncStatsToFirebase:", error);
+            }
+        }
+        
         // Show notification (if on achievements page)
         const allAchievements = Object.values(achievementDefinitions).flat();
         const achievement = allAchievements.find(a => a.id === achievementId);
@@ -350,7 +371,7 @@ function unlockAchievement(achievementId) {
 }
 
 // Function to claim achievement reward and add XP
-function claimAchievementReward(achievementId, points) {
+async function claimAchievementReward(achievementId, points) {
     const claimedAchievements = JSON.parse(localStorage.getItem("claimedAchievements") || "[]");
     
     if (!claimedAchievements.includes(achievementId)) {
@@ -360,7 +381,29 @@ function claimAchievementReward(achievementId, points) {
         // Add XP to user profile
         const profileData = JSON.parse(localStorage.getItem("userProfile") || "{}");
         profileData.totalXP = (profileData.totalXP || 0) + points;
+        
+        // Handle special cosmetic rewards from achievement definitions
+        const allAchievements = Object.values(achievementDefinitions).flat();
+        const achievement = allAchievements.find(a => a.id === achievementId);
+        if (achievement && achievement.cosmetic) {
+            if (!profileData.earnedCosmetics) {
+                profileData.earnedCosmetics = [];
+            }
+            if (!profileData.earnedCosmetics.some(c => c.name === achievement.cosmetic.name)) {
+                profileData.earnedCosmetics.push(achievement.cosmetic);
+            }
+        }
+        
         localStorage.setItem("userProfile", JSON.stringify(profileData));
+        
+        // Sync to Firebase to prevent duplicate claims on other devices
+        if (window.syncStatsToFirebase) {
+            try {
+                await window.syncStatsToFirebase();
+            } catch (error) {
+                console.error("Error syncing achievements to Firebase:", error);
+            }
+        }
         
         // Show claim notification
         showClaimNotification(points);

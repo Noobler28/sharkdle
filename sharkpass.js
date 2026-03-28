@@ -180,18 +180,46 @@ function createRewardElement(reward, unlocked = false, isNext = false, claimable
     if (unlocked) wrapper.classList.add("unlocked");
     if (isNext) wrapper.classList.add("next");
 
+    // --- Rarity color logic (circle border) ---
+    const isBlackTip = reward.name === "Port Jackson Shark" && /Shark19\.png/.test(reward.img);
+    const isMako = /Shark16\.png/.test(reward.img);
+    const isRare = /Shark1[2-5]\.png/.test(reward.img);
+    let rarityBorder = "#4caf50";
+    if (isBlackTip) {
+        rarityBorder = "#222";
+    } else if (isMako) {
+        rarityBorder = "#ffc107";
+    } else if (isRare) {
+        rarityBorder = "#e91e63";
+    }
+
+    // Outer card border (rarity color)
+    wrapper.style.cssText = `text-align: center; transition: all 0.3s ease; padding: 6px; border-radius: 8px; position: relative; background: transparent; border: 3px solid ${rarityBorder};`;
+    wrapper.onmouseover = () => {
+        wrapper.style.transform = "scale(1.08)";
+    };
+    wrapper.onmouseout = () => {
+        wrapper.style.transform = "scale(1)";
+    };
+
+    // --- Reward image as a circle, with rarity border (no extra border) ---
+    const imgWrap = document.createElement("div");
+    imgWrap.style.cssText = `width: 70px; height: 70px; border-radius: 50%; overflow: hidden; background: #222; margin: 0 auto 7px; border: 4px solid ${rarityBorder}; position:relative; display:flex; align-items:center; justify-content:center;`;
     const img = document.createElement("img");
     img.src = reward.img;
     img.alt = reward.name;
+    img.style.cssText = "width: 90%; height: 90%; object-fit: cover; border-radius: 50%; background: #222; border: none;";
     if (!unlocked) {
         img.classList.add("locked");
     }
+    imgWrap.appendChild(img);
+    wrapper.appendChild(imgWrap);
 
+    // --- Reward name (rarity color) ---
     const label = document.createElement("div");
     label.className = "reward-name";
+    label.style.cssText = `margin: 5px 0 0 0; font-size: 11px; font-weight: 700; color: ${rarityBorder};`;
     label.textContent = reward.name;
-
-    wrapper.appendChild(img);
     wrapper.appendChild(label);
 
     if (claimable) {

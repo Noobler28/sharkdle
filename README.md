@@ -1,6 +1,6 @@
 # 🦈 Sharkdle
 
-A Wordle‑style shark‑guessing game built by Connor Eagle / Noobler28
+A Wordle‑style shark‑guessing game built by **Connor Eagle / Noobler28**
 
 Test your shark knowledge, unlock cosmetics, earn achievements, and dive deeper into the world of sharks — one guess at a time.
 
@@ -14,7 +14,7 @@ Test your shark knowledge, unlock cosmetics, earn achievements, and dive deeper 
 
 Current Version: 1.2
 
-### 🔧 Fixes & Improvements
+## 🔧 Fixes & Improvements (v1.2)
 
 Fixed an issue where the library did not preserve collapsed sections after searching, and added more tweaks
 
@@ -24,19 +24,20 @@ Corrected cosmetic display errors (e.g., Angel Shark appearing as Wobbegong Shar
 
 Updated placeholder names for original cosmetics
 
-### ✨ New Features
+## ✨ New Features (v1.2)
 
-Achievements System - Earn XP by completing in-game milestones
+🏆 Achievements System - Earn XP by completing in-game milestones
 
-Practice Mode - Enjoy unlimited guesses with no restrictions (Note: Practice mode does not award XP or track stats)
+🧠 Practice Mode - Enjoy unlimited guesses with no restrictions (Note: Practice mode does not award XP or track stats)
 
-Enhanced Shark Information - Added details such as size and depth zone to assist with more accurate guessing (This feature is still being refined — feedback is appreciated)
+📘 Enhanced Shark Information - Added details such as size and depth zone to assist with more accurate guessing (This feature is still being refined — feedback is appreciated)
 
-Redeemable Codes - Use code **Sharkdle** AND **Update1** to claim free rewards
+🎁 Redeemable Codes - Use code **Sharkdle** AND **Update1** to claim free rewards
 
-### 🎯 Quality of Life Updates
+## 🎯 Quality of Life Updates
 
-Improved visual feedback - Correct guesses now display in green | Incorrect guesses display in red
+Improved visual feedback - Correct guesses now display in green
+                            Incorrect guesses display in red
 
 Previously guessed sharks now appear grayed out in suggestions
 

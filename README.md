@@ -1,4 +1,4 @@
-#🦈 Sharkdle
+# 🦈 Sharkdle
 
 A Wordle‑style shark‑guessing game built by Connor Eagle / Noobler28
 

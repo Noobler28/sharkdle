@@ -36,16 +36,27 @@ Updated placeholder names for original cosmetics
 
 ## 🎯 Quality of Life Updates
 
-Improved visual feedback - Correct guesses now display in green
-                            Incorrect guesses display in red
+Improved visual feedback - Correct guesses now display in green and Incorrect guesses display in red
 
-Previously guessed sharks now appear grayed out in suggestions
+Previously guessed sharks now appear **grayed out** in suggestions
 
 General UI and usability improvements, including enhanced mobile support
 
-### ℹ️ Additional Notes
-Built using JavaScript, HTML, and CSS
+## 🛠️ Tech Stack
+HTML, CSS, JavaScript
+
+Hosted via GitHub Pages
 
 Ongoing updates and improvements are planned
 
-Thank you for playing Sharkdle! 🦈
+## 📜 License
+Copyright (c) 2026 Sharkdle. All Rights Reserved.
+
+This project is not open-source.
+
+No part of the source code, assets, or content may be copied, modified, redistributed, or used in any form without explicit written permission from the author.
+
+## 🦈 Thank You for Playing!
+Sharkdle is an ongoing project with frequent updates, improvements, and new features planned.
+
+Your support, feedback, and shark‑guessing skills help make the game better every day.

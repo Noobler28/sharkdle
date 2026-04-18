@@ -45,6 +45,8 @@ General UI and usability improvements, including enhanced mobile support
 ## 🛠️ Tech Stack
 HTML, CSS, JavaScript
 
+Firebase is used for storing Player Data
+
 Hosted via GitHub Pages
 
 Ongoing updates and improvements are planned
